@@ -410,11 +410,58 @@ function ShowcaseMockup({ highlight = false }: { highlight?: boolean }) {
   );
 }
 
+function AnimatedCounter({ value, label, prefix = "", suffix = "" }: { value: number; label: string; prefix?: string; suffix?: string }) {
+  const [count, setCount] = useState(0);
+  const ref = useRef<HTMLDivElement>(null);
+  const [hasAnimated, setHasAnimated] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasAnimated) {
+          setHasAnimated(true);
+          let start = 0;
+          const end = value;
+          const duration = 2000;
+          const increment = end / (duration / 16);
+          const timer = setInterval(() => {
+            start += increment;
+            if (start >= end) {
+              clearInterval(timer);
+              setCount(end);
+            } else {
+              setCount(Math.floor(start * 10) / 10);
+            }
+          }, 16);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+    return () => observer.disconnect();
+  }, [value, hasAnimated]);
+
+  return (
+    <div ref={ref} className="text-left space-y-0.5">
+      <div className="text-2xl md:text-3xl font-black font-mono text-slate-50 flex items-baseline gap-0.5">
+        <span>{prefix}</span>
+        <span>{count.toLocaleString()}</span>
+        <span className="text-sky-400 font-extrabold">{suffix}</span>
+      </div>
+      <div className="text-[9px] text-slate-500 font-bold uppercase tracking-wider">{label}</div>
+    </div>
+  );
+}
+
 function EdTechLandingPage() {
   const [scrolled, setScrolled] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [demoVideoOpen, setDemoVideoOpen] = useState(false);
   const [highlightShowcase, setHighlightShowcase] = useState(false);
+  const [activeSection, setActiveSection] = useState("home");
 
   // Set this to a URL string (e.g. YouTube embed or MP4 path) to trigger the popup modal mode.
   const DEMO_VIDEO_URL = null; 
@@ -440,6 +487,20 @@ function EdTechLandingPage() {
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 40);
+
+      const sections = ["showcase", "features", "technology", "faq"];
+      let current = "home";
+      for (const section of sections) {
+        const el = document.getElementById(section);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= 140 && rect.bottom >= 140) {
+            current = section;
+            break;
+          }
+        }
+      }
+      setActiveSection(current);
     };
     const handleMouseMove = (e: MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY });
@@ -557,7 +618,16 @@ function EdTechLandingPage() {
       ))}
 
       {/* 2. STICKY NAVBAR */}
-      <header className={`border-b sticky top-0 z-50 transition-all duration-300 ${scrolled ? "bg-slate-950/90 border-slate-900 py-3.5 backdrop-blur-md shadow-md" : "bg-transparent border-transparent py-5.5"}`}>
+      <motion.header 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className={`sticky top-0 z-50 border-b transition-all duration-300 ${
+          scrolled 
+            ? "bg-slate-950/80 border-slate-900/60 py-3.5 backdrop-blur-lg shadow-lg" 
+            : "bg-transparent border-transparent py-5"
+        }`}
+      >
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2.5 group">
             <div className="h-9 w-9 rounded-xl gradient-primary flex items-center justify-center text-primary-foreground shadow-lg group-hover:scale-105 transition-transform duration-300">
@@ -570,10 +640,54 @@ function EdTechLandingPage() {
 
           {/* Nav items */}
           <nav className="hidden lg:flex items-center gap-8 text-xs font-semibold text-slate-400">
-            <a href="#features" className="hover:text-slate-100 transition-colors">Features</a>
-            <a href="#showcase" className="hover:text-slate-100 transition-colors">How It Works</a>
-            <a href="#technology" className="hover:text-slate-100 transition-colors">Technology</a>
-            <a href="#faq" className="hover:text-slate-100 transition-colors">FAQ</a>
+            <a 
+              href="#showcase" 
+              className={`relative py-1 transition-colors hover:text-slate-100 ${activeSection === "showcase" ? "text-sky-400 font-bold" : ""}`}
+            >
+              How It Works
+              {activeSection === "showcase" && (
+                <motion.span 
+                  layoutId="activeNavDot" 
+                  className="absolute bottom-[-4px] left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-sky-400 rounded-full shadow-[0_0_8px_rgba(14,165,233,0.8)]"
+                />
+              )}
+            </a>
+            <a 
+              href="#features" 
+              className={`relative py-1 transition-colors hover:text-slate-100 ${activeSection === "features" ? "text-sky-400 font-bold" : ""}`}
+            >
+              Features
+              {activeSection === "features" && (
+                <motion.span 
+                  layoutId="activeNavDot" 
+                  className="absolute bottom-[-4px] left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-sky-400 rounded-full shadow-[0_0_8px_rgba(14,165,233,0.8)]"
+                />
+              )}
+            </a>
+            <a 
+              href="#technology" 
+              className={`relative py-1 transition-colors hover:text-slate-100 ${activeSection === "technology" ? "text-sky-400 font-bold" : ""}`}
+            >
+              Technology
+              {activeSection === "technology" && (
+                <motion.span 
+                  layoutId="activeNavDot" 
+                  className="absolute bottom-[-4px] left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-sky-400 rounded-full shadow-[0_0_8px_rgba(14,165,233,0.8)]"
+                />
+              )}
+            </a>
+            <a 
+              href="#faq" 
+              className={`relative py-1 transition-colors hover:text-slate-100 ${activeSection === "faq" ? "text-sky-400 font-bold" : ""}`}
+            >
+              FAQ
+              {activeSection === "faq" && (
+                <motion.span 
+                  layoutId="activeNavDot" 
+                  className="absolute bottom-[-4px] left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-sky-400 rounded-full shadow-[0_0_8px_rgba(14,165,233,0.8)]"
+                />
+              )}
+            </a>
           </nav>
 
           {/* Access Buttons */}
@@ -597,30 +711,39 @@ function EdTechLandingPage() {
             </Link>
           </div>
         </div>
-      </header>
+      </motion.header>
 
       {/* 3. HERO SECTION */}
-      <section className="max-w-7xl mx-auto px-6 pt-16 pb-24 md:py-32 grid gap-12 lg:grid-cols-12 items-center relative z-10">
+      <section className="max-w-7xl mx-auto px-6 pt-8 pb-16 md:pt-12 md:pb-24 grid gap-12 lg:grid-cols-12 items-center relative z-10">
         
         {/* Left Side Content */}
-        <div className="lg:col-span-6 space-y-6 text-left">
-          
-          {/* Option 1: AI-Powered Face Recognition Attendance (With Pulsing Glow Animation) */}
+        <motion.div 
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="lg:col-span-5 space-y-6 text-left"
+        >
+          {/* Badge */}
           <div className="inline-flex">
             <Badge className="bg-sky-500/10 border border-sky-400/20 text-sky-400 py-1.5 px-3.5 rounded-full text-xs font-semibold uppercase tracking-wider gap-1.5 backdrop-blur-md animate-pulse shadow-[0_0_15px_rgba(14,165,233,0.15)]">
               <Sparkles className="h-3.5 w-3.5" /> AI-Powered Face Recognition Attendance
             </Badge>
           </div>
 
+          {/* Heading */}
           <div className="relative">
             {/* Spotlight effect behind the hero heading */}
             <div className="absolute -inset-10 bg-[radial-gradient(circle_at_center,rgba(14,165,233,0.18)_0%,transparent_60%)] blur-3xl pointer-events-none z-0" />
-            <h1 className="relative z-10 text-4xl md:text-6xl font-black tracking-tight leading-[1.05] bg-gradient-to-b from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">
-              AI Smart Attendance System
+            <h1 className="relative z-10 text-4xl md:text-6xl font-black tracking-tight leading-[1.1] bg-gradient-to-b from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">
+              <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-500">
+                AI
+                <span className="absolute -inset-1 bg-sky-500/25 rounded-lg blur-md -z-10 animate-pulse pointer-events-none" />
+              </span>{" "}
+              Smart Attendance System
             </h1>
           </div>
 
-          <p className="text-base md:text-lg font-semibold text-sky-400/90 leading-relaxed max-w-xl">
+          <p className="text-sm md:text-base font-semibold text-sky-400/90 leading-relaxed max-w-xl">
             Transform classroom attendance with AI-powered face recognition, secure authentication, real-time analytics, and intelligent automation.
           </p>
 
@@ -629,62 +752,77 @@ function EdTechLandingPage() {
           </p>
 
           {/* Action buttons */}
-          <div className="flex flex-wrap gap-3.5 pt-2">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="flex flex-wrap gap-3.5 pt-2"
+          >
             <Link to="/auth">
-              <Button size="lg" className="gradient-primary text-primary-foreground font-bold rounded-2xl h-12 px-6 shadow-xl shadow-primary/20 hover:scale-[1.02] transition-transform text-sm">
+              <Button size="lg" className="gradient-primary text-primary-foreground font-bold rounded-2xl h-12 px-6 shadow-xl shadow-primary/20 hover:scale-[1.03] hover:shadow-primary/30 transition-all duration-300 text-sm flex items-center justify-center gap-1.5">
                 Get Started <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
             <a href="#showcase" onClick={handleWatchDemo}>
-              <Button size="lg" variant="outline" className="text-slate-300 border-slate-800 hover:bg-slate-900 bg-slate-950/20 rounded-2xl h-12 px-6 text-sm font-bold">
+              <Button size="lg" variant="outline" className="text-slate-300 border-slate-800 hover:border-slate-700 hover:bg-slate-900 bg-slate-950/20 rounded-2xl h-12 px-6 text-sm font-bold hover:scale-[1.03] transition-all duration-300">
                 Watch Demo
               </Button>
             </a>
             <a href="https://github.com/namratadakhole" target="_blank" rel="noreferrer">
-              <Button size="lg" variant="outline" className="text-slate-400 border-slate-900 hover:text-white rounded-2xl h-12 px-4">
-                <Github className="h-4 w-4" />
+              <Button size="lg" variant="outline" className="text-slate-400 border-slate-900 hover:border-slate-850 hover:text-white bg-slate-950/10 rounded-2xl h-12 px-5 text-sm font-semibold hover:scale-[1.03] transition-all duration-300 flex items-center gap-2">
+                GitHub Repository
               </Button>
             </a>
-          </div>
+          </motion.div>
 
-          {/* Trust Badges */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-6 border-t border-slate-900 max-w-md">
-            <div className="flex items-center gap-2 text-xs text-slate-400">
-              <CheckCircle2 className="h-4 w-4 text-sky-400 shrink-0" />
-              <span>✓ AI Face Recognition</span>
+          {/* Trust Section */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="pt-6 border-t border-slate-900/60 max-w-xl space-y-3"
+          >
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block">Built with</span>
+            <div className="flex flex-wrap gap-2">
+              {["React", "TypeScript", "Flask", "Python", "OpenCV", "MediaPipe", "SQLite", "Tailwind CSS"].map((tech) => (
+                <Badge key={tech} className="bg-slate-900/40 hover:bg-slate-900 border border-slate-800/80 hover:border-slate-700 text-slate-400 hover:text-sky-400 transition-all duration-200 text-[10px] font-semibold px-2.5 py-1 rounded-lg">
+                  {tech}
+                </Badge>
+              ))}
             </div>
-            <div className="flex items-center gap-2 text-xs text-slate-400">
-              <CheckCircle2 className="h-4 w-4 text-sky-400 shrink-0" />
-              <span>✓ Real-Time Attendance</span>
-            </div>
-            <div className="flex items-center gap-2 text-xs text-slate-400">
-              <CheckCircle2 className="h-4 w-4 text-sky-400 shrink-0" />
-              <span>✓ Subject-wise Analytics</span>
-            </div>
-            <div className="flex items-center gap-2 text-xs text-slate-400">
-              <CheckCircle2 className="h-4 w-4 text-sky-400 shrink-0" />
-              <span>✓ Secure Authentication</span>
-            </div>
-            <div className="flex items-center gap-2 text-xs text-slate-400">
-              <CheckCircle2 className="h-4 w-4 text-sky-400 shrink-0" />
-              <span>✓ Role-Based Access</span>
-            </div>
-          </div>
-        </div>
+          </motion.div>
+
+          {/* Statistics Counters */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.6 }}
+            className="grid grid-cols-2 gap-x-8 gap-y-5 pt-6 border-t border-slate-900/60 max-w-md"
+          >
+            <AnimatedCounter value={99.8} label="Recognition Accuracy" suffix="%" />
+            <AnimatedCounter value={1000} label="Attendance Records" suffix="+" />
+            <AnimatedCounter value={500} label="Registered Students" suffix="+" />
+            <AnimatedCounter value={20} label="Faculty Members" suffix="+" />
+          </motion.div>
+        </motion.div>
 
         {/* Right Side - Real Product Showcase Preview (Mockup UI elements) */}
-        <div className="lg:col-span-6 flex items-center justify-center relative">
-          
+        <motion.div 
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
+          className="lg:col-span-7 flex items-center justify-center relative"
+        >
           {/* Blue glow behind the dashboard preview */}
           <div className="absolute -inset-12 bg-[radial-gradient(circle_at_center,rgba(56,189,248,0.18)_0%,transparent_70%)] rounded-full blur-3xl pointer-events-none" />
 
-          <div className="relative w-full max-w-[490px] h-[400px] md:h-[480px]">
+          <div className="relative w-full max-w-[570px] h-[400px] md:h-[480px]">
             
             {/* Live Camera Preview Widget */}
             <motion.div
-              animate={{ y: [0, -8, 0] }}
+              animate={{ y: [0, -10, 0] }}
               transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute top-0 left-0 w-full max-w-[340px] bg-slate-900/60 border border-slate-800 rounded-3xl p-4.5 backdrop-blur-xl shadow-2xl flex flex-col gap-3 z-20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]"
+              className="absolute top-0 left-0 w-full max-w-[370px] bg-slate-900/60 border border-slate-800 rounded-3xl p-4.5 backdrop-blur-xl shadow-2xl flex flex-col gap-3 z-20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]"
             >
               <div className="flex items-center justify-between">
                 <span className="text-[10px] uppercase font-bold text-sky-400 tracking-wider flex items-center gap-1.5">
@@ -696,11 +834,11 @@ function EdTechLandingPage() {
               </div>
 
               {/* Simulation Screen */}
-              <div className="h-[170px] rounded-2xl bg-slate-950 relative overflow-hidden flex items-center justify-center border border-slate-800/60">
+              <div className="h-[180px] rounded-2xl bg-slate-950 relative overflow-hidden flex items-center justify-center border border-slate-800/60">
                 <Video className="h-8 w-8 text-slate-800" />
                 
                 {/* Custom Face Detection Rectangle overlay */}
-                <div className="absolute top-[20%] left-[25%] w-[85px] h-[85px] border-2 border-emerald-400 border-dashed rounded-xl shadow-[0_0_15px_rgba(52,211,153,0.15)] flex items-center justify-center">
+                <div className="absolute top-[20%] left-[25%] w-[90px] h-[90px] border-2 border-emerald-400 border-dashed rounded-xl shadow-[0_0_15px_rgba(52,211,153,0.15)] flex items-center justify-center">
                   <div className="absolute top-[-20px] left-0 bg-emerald-400 text-[8px] text-slate-950 font-black px-1.5 py-0.5 rounded shadow">
                     Ravi Verma
                   </div>
@@ -716,7 +854,8 @@ function EdTechLandingPage() {
               <div className="flex items-center justify-between border-t border-slate-800/80 pt-3">
                 <div className="text-left">
                   <span className="text-[9px] text-slate-500 uppercase tracking-wider block font-bold">Identified Student</span>
-                  <span className="text-xs font-bold text-slate-100">Ravi Verma (Sem 7)</span>
+                  <span className="text-xs font-bold text-slate-100">Ravi Verma</span>
+                  <span className="text-[9px] text-slate-400 block font-mono">Roll: CS21009 • Sem 7</span>
                 </div>
                 <div className="text-right">
                   <span className="text-[9px] text-slate-500 uppercase tracking-wider block font-bold">Confidence Score</span>
@@ -728,8 +867,8 @@ function EdTechLandingPage() {
             {/* Attendance marked successfully banner popup */}
             <motion.div
               animate={{ y: [0, 8, 0], x: [0, 4, 0] }}
-              transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute bottom-16 right-0 w-[240px] bg-slate-900/70 border border-slate-800 rounded-2xl p-4.5 backdrop-blur-xl shadow-2xl flex flex-col gap-3.5 z-30 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]"
+              transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+              className="absolute bottom-20 right-0 w-[250px] bg-slate-900/70 border border-slate-800 rounded-2xl p-4.5 backdrop-blur-xl shadow-2xl flex flex-col gap-3.5 z-30 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]"
             >
               <div className="flex items-center gap-3">
                 <div className="h-8 w-8 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
@@ -756,8 +895,8 @@ function EdTechLandingPage() {
             {/* Attendance analytics mini chart widget */}
             <motion.div
               animate={{ y: [0, 6, 0], x: [0, -6, 0] }}
-              transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute bottom-4 left-6 w-[200px] bg-slate-900/75 border border-slate-800/80 rounded-2xl p-4 backdrop-blur-xl shadow-2xl z-10 text-left shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]"
+              transition={{ duration: 6.5, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+              className="absolute bottom-4 left-6 w-[210px] bg-slate-900/75 border border-slate-800/80 rounded-2xl p-4 backdrop-blur-xl shadow-2xl z-10 text-left shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]"
             >
               <span className="text-[9px] uppercase font-bold text-slate-500 tracking-wider">Attendance Rate</span>
               <div className="text-xl font-mono font-black text-slate-200 mt-1">94.5%</div>
@@ -773,54 +912,7 @@ function EdTechLandingPage() {
             </motion.div>
 
           </div>
-        </div>
-      </section>
-
-      {/* 4. STATISTICS SECTION (Animated Counters) */}
-      <section id="stats" className="bg-slate-900/20 border-y border-slate-900 py-16 relative z-10">
-        <div className="max-w-7xl mx-auto px-6 grid gap-8 grid-cols-2 md:grid-cols-6 text-center">
-          <div className="space-y-1.5">
-            <div className="text-3xl md:text-4xl font-black text-primary font-mono">
-              <Counter value={520} suffix="+" />
-            </div>
-            <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Students Registered</div>
-          </div>
-
-          <div className="space-y-1.5">
-            <div className="text-3xl md:text-4xl font-black text-emerald-400 font-mono">
-              <Counter value={12} />
-            </div>
-            <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Faculty members</div>
-          </div>
-
-          <div className="space-y-1.5">
-            <div className="text-3xl md:text-4xl font-black text-indigo-400 font-mono">
-              <Counter value={42} />
-            </div>
-            <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Subjects</div>
-          </div>
-
-          <div className="space-y-1.5">
-            <div className="text-3xl md:text-4xl font-black text-purple-400 font-mono">
-              <Counter value={3200} suffix="+" />
-            </div>
-            <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Attendance Records</div>
-          </div>
-
-          <div className="space-y-1.5">
-            <div className="text-3xl md:text-4xl font-black text-sky-400 font-mono">
-              <Counter value={99} suffix=".8%" />
-            </div>
-            <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Recognition Accuracy</div>
-          </div>
-
-          <div className="space-y-1.5">
-            <div className="text-3xl md:text-4xl font-black text-amber-400 font-mono">
-              <Counter value={2200} suffix="+" />
-            </div>
-            <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Reports Generated</div>
-          </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* 5. PRODUCT CREDIBILITY SECTION */}
