@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import {
   ScanFace,
   ArrowRight,
@@ -194,38 +194,126 @@ function ShowcaseMockup() {
 
 function EdTechLandingPage() {
   const [scrolled, setScrolled] = useState(false);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 40);
     };
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    };
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("mousemove", handleMouseMove);
+    };
   }, []);
+
+  const { scrollY } = useScroll();
+  const yParallax1 = useTransform(scrollY, [0, 1000], [0, -120]);
+  const yParallax2 = useTransform(scrollY, [0, 1000], [0, 80]);
+  const yParallax3 = useTransform(scrollY, [0, 1000], [0, -40]);
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 selection:bg-primary selection:text-primary-foreground relative overflow-hidden">
       
-      {/* 1. BACKGROUND DECORATIONS */}
-      {/* Grid Pattern */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#0284c708_1px,transparent_1px),linear-gradient(to_bottom,#0284c708_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
-      
-      {/* Animated blue gradients */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] rounded-full bg-sky-500/10 blur-[130px] pointer-events-none" />
-      <div className="absolute bottom-[20%] right-[-10%] w-[550px] h-[550px] rounded-full bg-blue-600/10 blur-[130px] pointer-events-none" />
-      
-      {/* Tiny Floating Particles Mockup (CSS only) */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
-        <div className="absolute top-[20%] left-[30%] w-1.5 h-1.5 bg-sky-400 rounded-full animate-pulse" />
-        <div className="absolute top-[60%] left-[80%] w-1 h-1 bg-blue-400 rounded-full animate-ping" />
-        <div className="absolute top-[80%] left-[15%] w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style={{ animationDuration: '6s' }} />
-      </div>
+      {/* CSS Animations style block */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes scrollGrid {
+          from {
+            background-position: 0 0;
+          }
+          to {
+            background-position: 64px 64px;
+          }
+        }
+        @keyframes auroraFloat {
+          0% {
+            transform: translate(-30%, -20%) rotate(0deg) scale(1);
+            opacity: 0.15;
+          }
+          50% {
+            transform: translate(-20%, -10%) rotate(180deg) scale(1.1);
+            opacity: 0.35;
+          }
+          100% {
+            transform: translate(-30%, -20%) rotate(360deg) scale(1);
+            opacity: 0.15;
+          }
+        }
+      `}} />
 
-      {/* Subtle AI Circuit Pattern lines */}
-      <svg className="absolute inset-0 w-full h-full pointer-events-none stroke-sky-500/5 stroke-[1] fill-none" xmlns="http://www.w3.org/2000/svg">
+      {/* 1. BACKGROUND DECORATIONS */}
+      {/* Moving Grid Pattern */}
+      <div 
+        className="absolute inset-0 bg-[linear-gradient(to_right,#0284c705_1px,transparent_1px),linear-gradient(to_bottom,#0284c705_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none z-0"
+        style={{ animation: "scrollGrid 25s linear infinite" }}
+      />
+      
+      {/* Premium Aurora Gradient (Parallax Scroll linked) */}
+      <motion.div 
+        style={{ y: yParallax1 }}
+        className="absolute top-[-15%] left-[-10%] w-[120%] h-[75%] overflow-hidden pointer-events-none opacity-20 blur-[130px] z-0 select-none"
+      >
+        <div 
+          className="absolute top-0 left-0 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-sky-600 via-blue-600 to-indigo-750" 
+          style={{ animation: "auroraFloat 22s infinite alternate ease-in-out" }}
+        />
+        <div 
+          className="absolute bottom-0 right-[15%] w-[700px] h-[700px] rounded-full bg-gradient-to-tr from-emerald-500 via-teal-650 to-sky-650" 
+          style={{ animation: "auroraFloat 28s infinite alternate-reverse ease-in-out" }}
+        />
+      </motion.div>
+      
+      {/* Glowing blue and indigo blurred circles (Parallax) */}
+      <motion.div 
+        style={{ y: yParallax2 }}
+        className="absolute top-[25%] right-[-10%] w-[400px] h-[400px] rounded-full bg-indigo-600/10 blur-[120px] pointer-events-none z-0"
+      />
+      <motion.div 
+        style={{ y: yParallax3 }}
+        className="absolute bottom-[10%] left-[-5%] w-[450px] h-[450px] rounded-full bg-sky-500/10 blur-[130px] pointer-events-none z-0"
+      />
+      
+      {/* Mouse Follow Spotlight with Low Opacity */}
+      <div 
+        className="pointer-events-none absolute inset-0 z-10 transition-opacity duration-300 opacity-60"
+        style={{
+          background: `radial-gradient(600px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(14, 165, 233, 0.05), transparent 80%)`,
+        }}
+      />
+
+      {/* AI Circuit Path lines with Very Low Opacity (opacity-20) */}
+      <svg className="absolute inset-0 w-full h-full pointer-events-none stroke-sky-500/10 stroke-[1.2] fill-none opacity-20 z-0" xmlns="http://www.w3.org/2000/svg">
         <path d="M 0 120 H 150 L 190 160 V 280 L 170 300 H 60" />
         <path d="M 1400 350 H 1150 L 1110 390 V 550 L 1130 570 H 1250" />
       </svg>
+      
+      {/* Floating Particles using Framer Motion */}
+      {[...Array(10)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute rounded-full bg-sky-450/30 pointer-events-none z-0"
+          style={{
+            width: Math.random() * 4 + 2,
+            height: Math.random() * 4 + 2,
+            left: `${Math.random() * 95}%`,
+            top: `${Math.random() * 85 + 5}%`,
+          }}
+          animate={{
+            y: [0, -50, 0],
+            x: [0, Math.random() * 20 - 10, 0],
+            opacity: [0.1, 0.6, 0.1],
+          }}
+          transition={{
+            duration: Math.random() * 10 + 12,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+      ))}
 
       {/* 2. STICKY NAVBAR */}
       <header className={`border-b sticky top-0 z-50 transition-all duration-300 ${scrolled ? "bg-slate-950/90 border-slate-900 py-3.5 backdrop-blur-md shadow-md" : "bg-transparent border-transparent py-5.5"}`}>
@@ -283,9 +371,13 @@ function EdTechLandingPage() {
             </Badge>
           </div>
 
-          <h1 className="text-4xl md:text-6xl font-black tracking-tight leading-[1.05] bg-gradient-to-b from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">
-            AI Smart Attendance System
-          </h1>
+          <div className="relative">
+            {/* Spotlight effect behind the hero heading */}
+            <div className="absolute -inset-10 bg-[radial-gradient(circle_at_center,rgba(14,165,233,0.18)_0%,transparent_60%)] blur-3xl pointer-events-none z-0" />
+            <h1 className="relative z-10 text-4xl md:text-6xl font-black tracking-tight leading-[1.05] bg-gradient-to-b from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">
+              AI Smart Attendance System
+            </h1>
+          </div>
 
           <p className="text-base md:text-lg font-semibold text-sky-400/90 leading-relaxed max-w-xl">
             Transform classroom attendance with AI-powered face recognition, secure authentication, real-time analytics, and intelligent automation.
@@ -341,13 +433,17 @@ function EdTechLandingPage() {
 
         {/* Right Side - Real Product Showcase Preview (Mockup UI elements) */}
         <div className="lg:col-span-6 flex items-center justify-center relative">
+          
+          {/* Blue glow behind the dashboard preview */}
+          <div className="absolute -inset-12 bg-[radial-gradient(circle_at_center,rgba(56,189,248,0.18)_0%,transparent_70%)] rounded-full blur-3xl pointer-events-none" />
+
           <div className="relative w-full max-w-[490px] h-[400px] md:h-[480px]">
             
             {/* Live Camera Preview Widget */}
             <motion.div
               animate={{ y: [0, -8, 0] }}
               transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute top-0 left-0 w-full max-w-[340px] bg-slate-900/80 border border-slate-800 rounded-3xl p-4.5 backdrop-blur-xl shadow-2xl flex flex-col gap-3 z-20"
+              className="absolute top-0 left-0 w-full max-w-[340px] bg-slate-900/60 border border-slate-800 rounded-3xl p-4.5 backdrop-blur-xl shadow-2xl flex flex-col gap-3 z-20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]"
             >
               <div className="flex items-center justify-between">
                 <span className="text-[10px] uppercase font-bold text-sky-400 tracking-wider flex items-center gap-1.5">
@@ -392,7 +488,7 @@ function EdTechLandingPage() {
             <motion.div
               animate={{ y: [0, 8, 0], x: [0, 4, 0] }}
               transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute bottom-16 right-0 w-[240px] bg-slate-900/90 border border-slate-800 rounded-2xl p-4.5 backdrop-blur-xl shadow-2xl flex flex-col gap-3.5 z-30"
+              className="absolute bottom-16 right-0 w-[240px] bg-slate-900/70 border border-slate-800 rounded-2xl p-4.5 backdrop-blur-xl shadow-2xl flex flex-col gap-3.5 z-30 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]"
             >
               <div className="flex items-center gap-3">
                 <div className="h-8 w-8 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
@@ -420,7 +516,7 @@ function EdTechLandingPage() {
             <motion.div
               animate={{ y: [0, 6, 0], x: [0, -6, 0] }}
               transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute bottom-4 left-6 w-[200px] bg-slate-900/80 border border-slate-800 rounded-2xl p-4 backdrop-blur-xl shadow-2xl z-10 text-left"
+              className="absolute bottom-4 left-6 w-[200px] bg-slate-900/75 border border-slate-800/80 rounded-2xl p-4 backdrop-blur-xl shadow-2xl z-10 text-left shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]"
             >
               <span className="text-[9px] uppercase font-bold text-slate-500 tracking-wider">Attendance Rate</span>
               <div className="text-xl font-mono font-black text-slate-200 mt-1">94.5%</div>
