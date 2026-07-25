@@ -11,8 +11,13 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as StudentRegisterRouteImport } from './routes/student/register'
+import { Route as StudentLoginRouteImport } from './routes/student/login'
+import { Route as FacultyRegisterRouteImport } from './routes/faculty/register'
+import { Route as FacultyLoginRouteImport } from './routes/faculty/login'
 import { Route as AppTrainRouteImport } from './routes/_app.train'
 import { Route as AppStudentsRouteImport } from './routes/_app.students'
 import { Route as AppStudentDashboardRouteImport } from './routes/_app.student-dashboard'
@@ -33,6 +38,11 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppRoute = AppRouteImport.update({
   id: '/_app',
   getParentRoute: () => rootRouteImport,
@@ -40,6 +50,26 @@ const AppRoute = AppRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudentRegisterRoute = StudentRegisterRouteImport.update({
+  id: '/student/register',
+  path: '/student/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudentLoginRoute = StudentLoginRouteImport.update({
+  id: '/student/login',
+  path: '/student/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FacultyRegisterRoute = FacultyRegisterRouteImport.update({
+  id: '/faculty/register',
+  path: '/faculty/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FacultyLoginRoute = FacultyLoginRouteImport.update({
+  id: '/faculty/login',
+  path: '/faculty/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppTrainRoute = AppTrainRouteImport.update({
@@ -90,6 +120,7 @@ const AppAnalyticsRoute = AppAnalyticsRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/analytics': typeof AppAnalyticsRoute
@@ -101,9 +132,14 @@ export interface FileRoutesByFullPath {
   '/student-dashboard': typeof AppStudentDashboardRoute
   '/students': typeof AppStudentsRoute
   '/train': typeof AppTrainRoute
+  '/faculty/login': typeof FacultyLoginRoute
+  '/faculty/register': typeof FacultyRegisterRoute
+  '/student/login': typeof StudentLoginRoute
+  '/student/register': typeof StudentRegisterRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/analytics': typeof AppAnalyticsRoute
@@ -115,11 +151,16 @@ export interface FileRoutesByTo {
   '/student-dashboard': typeof AppStudentDashboardRoute
   '/students': typeof AppStudentsRoute
   '/train': typeof AppTrainRoute
+  '/faculty/login': typeof FacultyLoginRoute
+  '/faculty/register': typeof FacultyRegisterRoute
+  '/student/login': typeof StudentLoginRoute
+  '/student/register': typeof StudentRegisterRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
+  '/auth': typeof AuthRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/_app/analytics': typeof AppAnalyticsRoute
@@ -131,11 +172,16 @@ export interface FileRoutesById {
   '/_app/student-dashboard': typeof AppStudentDashboardRoute
   '/_app/students': typeof AppStudentsRoute
   '/_app/train': typeof AppTrainRoute
+  '/faculty/login': typeof FacultyLoginRoute
+  '/faculty/register': typeof FacultyRegisterRoute
+  '/student/login': typeof StudentLoginRoute
+  '/student/register': typeof StudentRegisterRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
     | '/login'
     | '/register'
     | '/analytics'
@@ -147,9 +193,14 @@ export interface FileRouteTypes {
     | '/student-dashboard'
     | '/students'
     | '/train'
+    | '/faculty/login'
+    | '/faculty/register'
+    | '/student/login'
+    | '/student/register'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/auth'
     | '/login'
     | '/register'
     | '/analytics'
@@ -161,10 +212,15 @@ export interface FileRouteTypes {
     | '/student-dashboard'
     | '/students'
     | '/train'
+    | '/faculty/login'
+    | '/faculty/register'
+    | '/student/login'
+    | '/student/register'
   id:
     | '__root__'
     | '/'
     | '/_app'
+    | '/auth'
     | '/login'
     | '/register'
     | '/_app/analytics'
@@ -176,13 +232,22 @@ export interface FileRouteTypes {
     | '/_app/student-dashboard'
     | '/_app/students'
     | '/_app/train'
+    | '/faculty/login'
+    | '/faculty/register'
+    | '/student/login'
+    | '/student/register'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
+  AuthRoute: typeof AuthRoute
   LoginRoute: typeof LoginRoute
   RegisterRoute: typeof RegisterRoute
+  FacultyLoginRoute: typeof FacultyLoginRoute
+  FacultyRegisterRoute: typeof FacultyRegisterRoute
+  StudentLoginRoute: typeof StudentLoginRoute
+  StudentRegisterRoute: typeof StudentRegisterRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -201,6 +266,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_app': {
       id: '/_app'
       path: ''
@@ -213,6 +285,34 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/student/register': {
+      id: '/student/register'
+      path: '/student/register'
+      fullPath: '/student/register'
+      preLoaderRoute: typeof StudentRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/student/login': {
+      id: '/student/login'
+      path: '/student/login'
+      fullPath: '/student/login'
+      preLoaderRoute: typeof StudentLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faculty/register': {
+      id: '/faculty/register'
+      path: '/faculty/register'
+      fullPath: '/faculty/register'
+      preLoaderRoute: typeof FacultyRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faculty/login': {
+      id: '/faculty/login'
+      path: '/faculty/login'
+      fullPath: '/faculty/login'
+      preLoaderRoute: typeof FacultyLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_app/train': {
@@ -310,8 +410,13 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
+  AuthRoute: AuthRoute,
   LoginRoute: LoginRoute,
   RegisterRoute: RegisterRoute,
+  FacultyLoginRoute: FacultyLoginRoute,
+  FacultyRegisterRoute: FacultyRegisterRoute,
+  StudentLoginRoute: StudentLoginRoute,
+  StudentRegisterRoute: StudentRegisterRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

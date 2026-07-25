@@ -16,12 +16,16 @@ export const Route = createFileRoute("/register")({
   head: () => ({
     meta: [{ title: "User Registration · SmartAttend AI" }],
   }),
-  component: StandaloneRegisterPage,
+  component: () => <RegisterPageComponent />,
 });
 
-function StandaloneRegisterPage() {
+export interface RegisterPageProps {
+  initialRole?: "student" | "professor";
+}
+
+export function RegisterPageComponent({ initialRole = "student" }: RegisterPageProps = {}) {
   const navigate = useNavigate();
-  const [role, setRole] = useState<"student" | "professor">("student");
+  const [role, setRole] = useState<"student" | "professor">(initialRole);
 
   // Common Fields
   const [fullName, setFullName] = useState("");

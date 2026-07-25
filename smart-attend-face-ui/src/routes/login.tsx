@@ -11,17 +11,22 @@ import { showSuccess, showError, showWarning, showInfo } from "@/lib/notificatio
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "Welcome & Auth · SmartAttend AI" }] }),
-  component: LoginPage,
+  component: () => <LoginPageComponent />,
 });
 
-function LoginPage() {
+export interface LoginPageProps {
+  initialRole?: "professor" | "student" | null;
+  initialAction?: "login" | "register" | null;
+}
+
+export function LoginPageComponent({ initialRole = null, initialAction = null }: LoginPageProps = {}) {
   const navigate = useNavigate();
 
   // STEP 1: Main Action Choice (login vs register)
-  const [mainAction, setMainAction] = useState<"login" | "register" | null>(null);
+  const [mainAction, setMainAction] = useState<"login" | "register" | null>(initialAction);
 
   // STEP 2: Role Selection (professor vs student)
-  const [selectedRole, setSelectedRole] = useState<"professor" | "student" | null>(null);
+  const [selectedRole, setSelectedRole] = useState<"professor" | "student" | null>(initialRole);
 
   // Form State - Common
   const [fullName, setFullName] = useState("");
