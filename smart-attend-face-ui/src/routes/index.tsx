@@ -29,6 +29,9 @@ import {
   Download,
   CheckCircle2,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  X,
   Layers,
   Clock,
   Check
@@ -135,56 +138,271 @@ function FaqItem({ question, answer }: { question: string; answer: string }) {
 }
 
 // Screenshot Slideshow Carousel in a laptop mockup
-function ShowcaseMockup() {
+function ShowcaseMockup({ highlight = false }: { highlight?: boolean }) {
   const slides = [
-    { title: "Faculty Dashboard", desc: "Start live sessions, manage database, and configure settings.", color: "from-blue-600 to-indigo-700" },
-    { title: "Student Dashboard", desc: "Real-time attendance percentage, exam eligibility, and subject-wise metrics.", color: "from-emerald-600 to-teal-700" },
-    { title: "Student Registration", desc: "Allows students to set up accounts, configure emails, and input roll numbers.", color: "from-cyan-600 to-blue-700" },
-    { title: "Attendance capturing", desc: "Automatically captures and saves 20 high-quality facial samples.", color: "from-purple-600 to-pink-700" },
-    { title: "Analytics Console", desc: "Interactive charts showing student engagement and monthly patterns.", color: "from-amber-600 to-orange-700" },
+    { 
+      title: "Faculty Dashboard", 
+      desc: "Complete control panel for professors to manage course codes, semester catalogs, departments, and register sessions.", 
+      color: "from-blue-600 to-indigo-700",
+      type: "faculty"
+    },
+    { 
+      title: "Student Dashboard", 
+      desc: "Personal portal for students to monitor attendance rates, check subject-wise details, and track threshold targets.", 
+      color: "from-emerald-600 to-teal-700",
+      type: "student"
+    },
+    { 
+      title: "Student Registration", 
+      desc: "Allows new students to enroll by filling details and performing automated face captures.", 
+      color: "from-cyan-600 to-blue-700",
+      type: "register"
+    },
+    { 
+      title: "Attendance Recognition", 
+      desc: "Automatically detects student faces through the webcam feed and logs attendance instantly.", 
+      color: "from-purple-600 to-pink-700",
+      type: "attendance"
+    },
+    { 
+      title: "Analytics Console", 
+      desc: "Interactive chart metrics, exam eligibility checkers, and statistical rate sheets showing student engagement.", 
+      color: "from-amber-600 to-orange-700",
+      type: "analytics"
+    },
   ];
 
   const [active, setActive] = useState(0);
+  const [direction, setDirection] = useState(0);
 
   useEffect(() => {
     const timer = setInterval(() => {
+      setDirection(1);
       setActive((prev) => (prev + 1) % slides.length);
-    }, 4500);
+    }, 5500);
     return () => clearInterval(timer);
   }, []);
 
+  const handleNext = () => {
+    setDirection(1);
+    setActive((prev) => (prev + 1) % slides.length);
+  };
+
+  const handlePrev = () => {
+    setDirection(-1);
+    setActive((prev) => (prev - 1 + slides.length) % slides.length);
+  };
+
+  // Helper function to render a mockup visual on the right of the slide
+  const renderSlideMockup = (type: string) => {
+    switch (type) {
+      case "faculty":
+        return (
+          <div className="w-full h-full bg-slate-950/80 border border-slate-800 rounded-xl p-3 flex flex-col gap-2 font-sans text-xs">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+              <span className="font-bold text-slate-200">Professor Console</span>
+              <Badge className="bg-sky-500/20 text-sky-400 border-none text-[9px] py-0">ADMIN</Badge>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div className="p-2 bg-slate-900 rounded-lg border border-slate-800 text-left">
+                <span className="text-[9px] text-slate-500 block uppercase font-bold">Subject</span>
+                <span className="font-semibold text-slate-300">Artificial Intelligence</span>
+              </div>
+              <div className="p-2 bg-slate-900 rounded-lg border border-slate-800 text-left">
+                <span className="text-[9px] text-slate-500 block uppercase font-bold">Total Students</span>
+                <span className="font-semibold text-slate-350">32 Enrolled</span>
+              </div>
+            </div>
+            <div className="flex-1 bg-slate-900 rounded-lg border border-slate-800 p-2 flex flex-col justify-between text-left">
+              <span className="text-[9px] text-slate-500 uppercase font-bold">Roster Actions</span>
+              <div className="flex justify-between items-center mt-1">
+                <span className="text-[10px] text-slate-400">Class threshold: 75%</span>
+                <div className="h-4 w-12 bg-sky-500 rounded text-[9px] flex items-center justify-center font-bold text-slate-950">Active</div>
+              </div>
+            </div>
+          </div>
+        );
+      case "student":
+        return (
+          <div className="w-full h-full bg-slate-950/80 border border-slate-800 rounded-xl p-3 flex flex-col gap-2 font-sans text-xs">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+              <span className="font-bold text-slate-200">Student Dashboard</span>
+              <Badge className="bg-emerald-500/20 text-emerald-400 border-none text-[9px] py-0">CS21001</Badge>
+            </div>
+            <div className="flex items-center gap-3 bg-slate-900 rounded-lg border border-slate-800 p-2.5">
+              <div className="h-10 w-10 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-black">92%</div>
+              <div className="text-left flex-1">
+                <h5 className="font-bold text-slate-200 text-[11px]">Overall Attendance</h5>
+                <span className="text-[9px] text-emerald-400 font-semibold uppercase">✓ Exam Eligible</span>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-1.5 text-[9px] text-slate-400">
+              <div className="p-1.5 bg-slate-900 rounded border border-slate-800 text-left">
+                <span className="block text-slate-500">Operating Systems</span>
+                <span className="font-bold text-slate-300">85.0%</span>
+              </div>
+              <div className="p-1.5 bg-slate-900 rounded border border-slate-800 text-left">
+                <span className="block text-slate-500">Computer Networks</span>
+                <span className="font-bold text-slate-300">94.2%</span>
+              </div>
+            </div>
+          </div>
+        );
+      case "register":
+        return (
+          <div className="w-full h-full bg-slate-950/80 border border-slate-800 rounded-xl p-3 flex flex-col gap-2 font-sans text-xs">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-1.5">
+              <span className="font-bold text-slate-200">Face Capture Form</span>
+            </div>
+            <div className="space-y-1.5 text-left text-[9px]">
+              <div>
+                <span className="text-slate-500 block">Full Name</span>
+                <div className="h-5 px-1.5 bg-slate-900 border border-slate-800 rounded flex items-center text-slate-300">Ravi Verma</div>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <span className="text-slate-500 block">Roll Number</span>
+                  <div className="h-5 px-1.5 bg-slate-900 border border-slate-800 rounded flex items-center text-slate-300">CS21009</div>
+                </div>
+                <div>
+                  <span className="text-slate-500 block">Semester</span>
+                  <div className="h-5 px-1.5 bg-slate-900 border border-slate-800 rounded flex items-center text-slate-300">7</div>
+                </div>
+              </div>
+            </div>
+            <div className="h-8 bg-sky-500/10 border border-sky-400/20 text-sky-400 text-[10px] rounded flex items-center justify-center gap-1.5 font-bold">
+              <Video className="h-3.5 w-3.5 animate-pulse" /> Capture Face (12/20 completed)
+            </div>
+          </div>
+        );
+      case "attendance":
+        return (
+          <div className="w-full h-full bg-slate-950/80 border border-slate-800 rounded-xl p-3 flex flex-col gap-2 font-sans text-xs relative overflow-hidden">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+              <span className="font-bold text-slate-200">Active Camera Sensor</span>
+              <span className="h-2 w-2 rounded-full bg-rose-500 animate-pulse" />
+            </div>
+            <div className="flex-1 bg-slate-900 rounded-lg border border-slate-800 flex items-center justify-center relative overflow-hidden">
+              <ScanFace className="h-10 w-10 text-slate-800" />
+              {/* Bounding box mock overlay */}
+              <div className="absolute top-[20%] left-[30%] w-[60px] h-[60px] border border-dashed border-emerald-400 rounded-lg">
+                <span className="absolute top-[-14px] left-0 bg-emerald-400 text-[7px] text-slate-950 font-bold px-1 rounded">Ravi Verma</span>
+              </div>
+            </div>
+            <div className="flex justify-between items-center text-[9px]">
+              <span className="text-slate-400">Match score: 99.8%</span>
+              <span className="text-emerald-400 font-bold">✓ Logged successfully</span>
+            </div>
+          </div>
+        );
+      case "analytics":
+        return (
+          <div className="w-full h-full bg-slate-950/80 border border-slate-800 rounded-xl p-3 flex flex-col gap-2 font-sans text-xs">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+              <span className="font-bold text-slate-200">Roster Analytics</span>
+              <Badge className="bg-amber-500/20 text-amber-400 border-none text-[9px] py-0">STATS</Badge>
+            </div>
+            {/* Mock chart layout */}
+            <div className="flex-1 flex items-end gap-2.5 px-2 pb-1">
+              <div className="w-full bg-amber-500/20 rounded h-[35%]" />
+              <div className="w-full bg-amber-500/20 rounded h-[65%]" />
+              <div className="w-full bg-amber-500/20 rounded h-[50%]" />
+              <div className="w-full bg-amber-500/20 rounded h-[80%]" />
+              <div className="w-full bg-amber-500 rounded h-[95%]" />
+            </div>
+            <div className="flex justify-between items-center text-[8px] text-slate-500">
+              <span>Mon</span>
+              <span>Tue</span>
+              <span>Wed</span>
+              <span>Thu</span>
+              <span>Fri</span>
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 z-10">
+    <div className="w-full max-w-4xl mx-auto px-4 z-10 relative group">
+      
+      {/* Navigation Arrows */}
+      <button 
+        onClick={handlePrev}
+        className="absolute left-[-10px] md:left-[-35px] top-[45%] -translate-y-1/2 z-35 h-9 w-9 rounded-full bg-slate-900/90 border border-slate-800 text-slate-450 hover:text-white flex items-center justify-center hover:bg-slate-850 transition-colors shadow-xl cursor-pointer"
+      >
+        <ChevronLeft className="h-4.5 w-4.5" />
+      </button>
+      <button 
+        onClick={handleNext}
+        className="absolute right-[-10px] md:right-[-35px] top-[45%] -translate-y-1/2 z-35 h-9 w-9 rounded-full bg-slate-900/90 border border-slate-800 text-slate-450 hover:text-white flex items-center justify-center hover:bg-slate-850 transition-colors shadow-xl cursor-pointer"
+      >
+        <ChevronRight className="h-4.5 w-4.5" />
+      </button>
+
       {/* Laptop Mockup Frame */}
-      <div className="relative mx-auto border-gray-800 bg-gray-800 border-[8px] md:border-[12px] rounded-t-3xl h-[240px] sm:h-[360px] md:h-[480px] max-w-[850px] shadow-2xl overflow-hidden">
+      <div 
+        className={`relative mx-auto border-gray-850 bg-gray-800 border-[8px] md:border-[12px] rounded-t-3xl h-[260px] sm:h-[360px] md:h-[450px] max-w-[800px] shadow-2xl overflow-hidden transition-all duration-500 ${
+          highlight ? "ring-4 ring-sky-500 shadow-[0_0_35px_rgba(14,165,233,0.45)] scale-[1.01]" : ""
+        }`}
+      >
         <div className="rounded-lg overflow-hidden h-full w-full relative">
-          <div className="absolute inset-0 bg-slate-900 flex flex-col justify-between p-6 text-white relative transition-all duration-700 select-none">
-            <div className={`absolute inset-0 bg-gradient-to-tr ${slides[active].color} opacity-95 mix-blend-multiply z-0`} />
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
+          <div className="absolute inset-0 bg-slate-900 text-white select-none overflow-hidden">
+            
+            {/* Slider animation wrapper */}
+            <AnimatePresence initial={false} custom={direction} mode="wait">
+              <motion.div
+                key={active}
+                custom={direction}
+                initial={{ opacity: 0, x: direction * 80 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -direction * 80 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="absolute inset-0 flex flex-col justify-between p-5 md:p-8 z-10"
+              >
+                {/* Background color gradient overlay */}
+                <div className={`absolute inset-0 bg-gradient-to-tr ${slides[active].color} opacity-95 mix-blend-multiply z-0`} />
+                <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808010_1px,transparent_1px),linear-gradient(to_bottom,#80808010_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
 
-            <div className="z-10 flex justify-between items-start">
-              <Badge className="bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm border-none font-semibold">Live Preview</Badge>
-              <div className="text-xs text-white/60 font-mono">0{active + 1} / 0{slides.length}</div>
-            </div>
+                <div className="z-10 flex justify-between items-start">
+                  <Badge className="bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm border-none font-semibold text-[9px] py-0.5">Live Mockup Preview</Badge>
+                  <div className="text-[10px] text-white/60 font-mono">0{active + 1} / 0{slides.length}</div>
+                </div>
 
-            <div className="z-10 space-y-3 text-left max-w-xl">
-              <h3 className="text-xl md:text-3xl font-extrabold tracking-tight">{slides[active].title}</h3>
-              <p className="text-xs md:text-sm text-white/95 leading-relaxed">{slides[active].desc}</p>
-            </div>
+                {/* Grid Split Content */}
+                <div className="z-10 grid gap-6 md:grid-cols-2 items-center flex-1 py-4">
+                  {/* Left slide text */}
+                  <div className="space-y-2 md:space-y-3.5 text-left max-w-sm">
+                    <h3 className="text-xl md:text-3xl font-extrabold tracking-tight leading-tight">{slides[active].title}</h3>
+                    <p className="text-[10px] md:text-xs text-white/90 leading-relaxed">{slides[active].desc}</p>
+                  </div>
+
+                  {/* Right slide visual mockup */}
+                  <div className="hidden sm:block h-[190px] w-full max-w-[280px] mx-auto">
+                    {renderSlideMockup(slides[active].type)}
+                  </div>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+
           </div>
         </div>
       </div>
       {/* Laptop Base */}
-      <div className="relative mx-auto bg-gray-900 rounded-b-xl rounded-t-sm h-[14px] max-w-[920px] shadow-lg" />
-      <div className="relative mx-auto bg-gray-800 rounded-b-xl h-[4px] max-w-[150px]" />
+      <div className="relative mx-auto bg-gray-900 rounded-b-xl rounded-t-sm h-[14px] max-w-[860px] shadow-lg" />
+      <div className="relative mx-auto bg-gray-800 rounded-b-xl h-[4px] max-w-[140px]" />
 
       {/* Slide Indicators */}
-      <div className="flex justify-center gap-2 mt-6">
+      <div className="flex justify-center gap-2 mt-5">
         {slides.map((_, idx) => (
           <button
             key={idx}
-            onClick={() => setActive(idx)}
-            className={`h-2 rounded-full transition-all duration-300 ${active === idx ? "w-6 bg-primary" : "w-2 bg-slate-700 hover:bg-slate-600"}`}
+            onClick={() => {
+              setDirection(idx > active ? 1 : -1);
+              setActive(idx);
+            }}
+            className={`h-2 rounded-full transition-all duration-300 ${active === idx ? "w-6 bg-primary" : "w-2 bg-slate-700 hover:bg-slate-650"}`}
           />
         ))}
       </div>
@@ -195,6 +413,29 @@ function ShowcaseMockup() {
 function EdTechLandingPage() {
   const [scrolled, setScrolled] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [demoVideoOpen, setDemoVideoOpen] = useState(false);
+  const [highlightShowcase, setHighlightShowcase] = useState(false);
+
+  // Set this to a URL string (e.g. YouTube embed or MP4 path) to trigger the popup modal mode.
+  const DEMO_VIDEO_URL = null; 
+
+  const handleWatchDemo = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (DEMO_VIDEO_URL) {
+      setDemoVideoOpen(true);
+    } else {
+      const showcaseEl = document.getElementById("showcase");
+      if (showcaseEl) {
+        showcaseEl.scrollIntoView({ behavior: "smooth" });
+        
+        // Brief highlight flash overlay animation
+        setHighlightShowcase(true);
+        setTimeout(() => {
+          setHighlightShowcase(false);
+        }, 2200);
+      }
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -394,7 +635,7 @@ function EdTechLandingPage() {
                 Get Started <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
-            <a href="#showcase">
+            <a href="#showcase" onClick={handleWatchDemo}>
               <Button size="lg" variant="outline" className="text-slate-300 border-slate-800 hover:bg-slate-900 bg-slate-950/20 rounded-2xl h-12 px-6 text-sm font-bold">
                 Watch Demo
               </Button>
@@ -628,7 +869,7 @@ function EdTechLandingPage() {
           </p>
         </div>
 
-        <ShowcaseMockup />
+        <ShowcaseMockup highlight={highlightShowcase} />
       </section>
 
       {/* 7. FEATURES GRID (Highlights) */}
@@ -909,7 +1150,7 @@ function EdTechLandingPage() {
                 Get Started
               </Button>
             </Link>
-            <a href="#showcase">
+            <a href="#showcase" onClick={handleWatchDemo}>
               <Button size="lg" variant="outline" className="text-slate-300 border-slate-800 hover:bg-slate-900 bg-slate-950/20 rounded-2xl h-11 px-6 text-xs font-bold">
                 Watch Demo
               </Button>
@@ -968,6 +1209,54 @@ function EdTechLandingPage() {
           </div>
         </div>
       </footer>
+
+      {/* 14. DEMO VIDEO MODAL (If added in the future) */}
+      <AnimatePresence>
+        {demoVideoOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 backdrop-blur-md p-4"
+          >
+            <motion.div 
+              initial={{ scale: 0.95, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 20 }}
+              transition={{ type: "spring", duration: 0.4 }}
+              className="relative w-full max-w-4xl bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl"
+            >
+              {/* Close Button */}
+              <button 
+                onClick={() => setDemoVideoOpen(false)}
+                className="absolute top-4 right-4 z-[110] bg-slate-950/80 text-slate-450 hover:text-white p-2 rounded-full border border-slate-800 transition-colors cursor-pointer"
+                aria-label="Close video demo"
+              >
+                <X className="h-5 w-5" />
+              </button>
+
+              <div className="aspect-video w-full bg-black flex items-center justify-center">
+                {DEMO_VIDEO_URL && (DEMO_VIDEO_URL.includes("youtube.com") || DEMO_VIDEO_URL.includes("youtu.be")) ? (
+                  <iframe 
+                    src={DEMO_VIDEO_URL} 
+                    className="w-full h-full border-none" 
+                    title="SmartAttend AI Demo Video" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowFullScreen
+                  />
+                ) : (
+                  <video 
+                    src={DEMO_VIDEO_URL || ""} 
+                    controls 
+                    autoPlay 
+                    className="w-full h-full"
+                  />
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
