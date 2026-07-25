@@ -1,0 +1,67 @@
+# Dependency directories
+node_modules/
+/smart-attend-face-ui/node_modules/
+
+# Build outputs
+dist/
+.output/
+/smart-attend-face-ui/dist/
+/smart-attend-face-ui/.output/
+/smart-attend-face-ui/.next/
+/smart-attend-face-ui/.svelte-kit/
+/smart-attend-face-ui/.wrangler/
+/smart-attend-face-ui/.tanstack/
+
+# Local configuration/cache
+.vite/
+.eslintcache
+/smart-attend-face-ui/.vite/
+
+# Python environment and cache
+venv/
+.venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+face_attendance_system/backend/__pycache__/
+face_attendance_system/__pycache__/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Databases and data files
+*.db
+*.sqlite
+database/*.db
+face_attendance_system/backend/database/*.db
+face_attendance_system/backend/students.db
+face_attendance_system/backend/database/students.db
+
+# Model and face encoding files
+*.pkl
+*.pickle
+encodings.pkl
+face_attendance_system/backend/encodings.pkl
+face_attendance_system/models/encodings.pickle
+
+# Captured datasets
+dataset/
+face_attendance_system/dataset/
+
+# Reports and logs
+*.csv
+*.xlsx
+reports/
+face_attendance_system/reports/
+face_attendance_system/database/*.csv
+face_attendance_system/database/*.xlsx
+*.log
+
+# OS specific files
+.DS_Store
+Thumbs.db
