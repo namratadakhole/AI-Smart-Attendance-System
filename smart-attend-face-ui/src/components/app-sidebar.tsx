@@ -62,6 +62,7 @@ export function AppSidebar() {
   const handleLogout = () => {
     localStorage.removeItem("userRole");
     localStorage.removeItem("userData");
+    localStorage.removeItem("authToken");
     navigate({ to: "/login" as any });
   };
 

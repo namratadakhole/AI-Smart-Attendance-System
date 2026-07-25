@@ -8,6 +8,7 @@ DATABASE = os.path.join(DATABASE_DIR, "students.db")
 
 def init_db():
     conn = sqlite3.connect(DATABASE)
+    conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 
     # Create students table
@@ -19,7 +20,36 @@ def init_db():
         department TEXT NOT NULL,
         semester TEXT NOT NULL,
         registered_on TEXT NOT NULL,
-        image_folder TEXT NOT NULL
+        image_folder TEXT NOT NULL,
+        email TEXT UNIQUE,
+        password TEXT
+    )
+    """)
+
+    # Alter students table if email or password missing (in case table already existed without them)
+    cursor.execute("PRAGMA table_info(students)")
+    student_cols = [col[1] for col in cursor.fetchall()]
+    if "email" not in student_cols:
+        try:
+            cursor.execute("ALTER TABLE students ADD COLUMN email TEXT")
+        except Exception:
+            pass
+    if "password" not in student_cols:
+        try:
+            cursor.execute("ALTER TABLE students ADD COLUMN password TEXT")
+        except Exception:
+            pass
+
+    # Create faculty table
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS faculty (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        full_name TEXT NOT NULL,
+        employee_id TEXT UNIQUE NOT NULL,
+        department TEXT NOT NULL,
+        email TEXT UNIQUE NOT NULL,
+        password TEXT NOT NULL,
+        registered_on TEXT NOT NULL
     )
     """)
 
@@ -134,6 +164,59 @@ def init_db():
                 INSERT OR IGNORE INTO subjects (subject_code, subject_name, semester, department, faculty_id)
                 VALUES (?, ?, ?, ?, ?)
             """, (code, name, sem, dept, fac))
+
+    # ==========================================
+    # DATA MIGRATION SECTION
+    # ==========================================
+    import bcrypt
+
+    # 1. Migrate student credentials from users table to students table
+    cursor.execute("SELECT * FROM users WHERE role = 'student'")
+    existing_users_students = cursor.fetchall()
+    for row in existing_users_students:
+        pwd = row["password"]
+        # Hash if plain text
+        if not pwd.startswith("$2b$"):
+            pwd = bcrypt.hashpw(pwd.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        
+        # Check if student exists in students table
+        cursor.execute("SELECT id FROM students WHERE LOWER(roll_no) = LOWER(?)", (row["roll_no"],))
+        student_match = cursor.fetchone()
+        if student_match:
+            cursor.execute("UPDATE students SET email = ?, password = ? WHERE id = ?", (row["email"], pwd, student_match[0]))
+        else:
+            # Insert full student record if missing
+            cursor.execute("""
+                INSERT INTO students (full_name, roll_no, department, semester, email, password, registered_on, image_folder)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """, (row["full_name"], row["roll_no"], row["department"], row["semester"] or "7", row["email"], pwd, row["registered_on"], f"dataset/{row['full_name']}"))
+
+    # 2. Migrate faculty credentials from users table to faculty table
+    cursor.execute("SELECT * FROM users WHERE role = 'professor' OR role = 'faculty'")
+    existing_users_faculty = cursor.fetchall()
+    for row in existing_users_faculty:
+        pwd = row["password"]
+        if not pwd.startswith("$2b$"):
+            pwd = bcrypt.hashpw(pwd.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        
+        emp_id = row["employee_id"] or f"EMP_{row['id']}"
+        cursor.execute("SELECT id FROM faculty WHERE LOWER(employee_id) = LOWER(?)", (emp_id,))
+        faculty_match = cursor.fetchone()
+        if not faculty_match:
+            cursor.execute("""
+                INSERT INTO faculty (full_name, employee_id, department, email, password, registered_on)
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (row["full_name"], emp_id, row["department"], row["email"], pwd, row["registered_on"]))
+
+    # 3. Seed default Professor account if faculty table is empty
+    cursor.execute("SELECT COUNT(*) FROM faculty")
+    fac_cnt = cursor.fetchone()[0]
+    if fac_cnt == 0:
+        default_pwd = bcrypt.hashpw("admin123".encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        cursor.execute("""
+            INSERT INTO faculty (full_name, employee_id, department, email, password, registered_on)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, ("Professor Sharma", "EMP101", "Computer Science & Engineering", "faculty@university.edu", default_pwd, "2026-07-20 12:00:00"))
 
     conn.commit()
     conn.close()

@@ -160,6 +160,7 @@ function StudentDashboardPage() {
   const handleLogout = () => {
     localStorage.removeItem("userRole");
     localStorage.removeItem("userData");
+    localStorage.removeItem("authToken");
     toast.info("Logged out of Student Portal.");
     navigate({ to: "/login" as any });
   };

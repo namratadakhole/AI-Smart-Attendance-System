@@ -25,6 +25,20 @@ import camera
 from camera import camera_manager
 from recognizer import recognize_frame
 import face_recognition
+import bcrypt
+import jwt
+import time
+
+JWT_SECRET = "smart-attendance-super-secret-key-2026"
+
+def generate_token(user_id, role, email):
+    payload = {
+        "user_id": user_id,
+        "role": role,
+        "email": email,
+        "exp": time.time() + 86400  # 24 hours
+    }
+    return jwt.encode(payload, JWT_SECRET, algorithm="HS256")
 
 app = Flask(__name__)
 CORS(app)
@@ -1452,54 +1466,43 @@ def login_user():
         username_or_email = data.get("username", "").strip() or data.get("email", "").strip()
         password = data.get("password", "").strip()
 
-        if not username_or_email:
-            return jsonify({"success": False, "message": "Professor username or email is required"}), 400
+        if not username_or_email or not password:
+            return jsonify({"success": False, "message": "Email/Employee ID and Password are required"}), 400
 
         conn = get_connection()
         cursor = conn.cursor()
         
-        # Check SQLite users table
+        # Check SQLite faculty table only
         cursor.execute("""
-            SELECT * FROM users 
-            WHERE (role = 'professor' OR role = 'faculty') 
-            AND (LOWER(email) = LOWER(?) OR LOWER(employee_id) = LOWER(?) OR LOWER(full_name) = LOWER(?))
-        """, (username_or_email, username_or_email, username_or_email))
+            SELECT * FROM faculty 
+            WHERE (LOWER(email) = LOWER(?) OR LOWER(employee_id) = LOWER(?))
+        """, (username_or_email, username_or_email))
         user_row = cursor.fetchone()
 
-        if user_row:
-            u = dict(user_row)
-            if u["password"] != password and password != "admin123":
-                conn.close()
-                return jsonify({"success": False, "message": "Invalid password for Professor account"}), 401
+        if not user_row:
             conn.close()
-            return jsonify({
-                "success": True,
-                "role": "professor",
-                "user": {
-                    "id": u["id"],
-                    "name": u["full_name"],
-                    "employee_id": u.get("employee_id", "EMP101"),
-                    "department": u["department"],
-                    "email": u["email"],
-                    "role": "professor"
-                }
-            })
+            return jsonify({"success": False, "message": "Account not found."}), 404
 
-        # Fallback to Settings default professor
-        cursor.execute("SELECT key, value FROM settings")
-        cfg = {r["key"]: r["value"] for r in cursor.fetchall()}
+        u = dict(user_row)
+        
+        # Verify password using bcrypt
+        if not bcrypt.checkpw(password.encode('utf-8'), u["password"].encode('utf-8')):
+            conn.close()
+            return jsonify({"success": False, "message": "Incorrect password."}), 401
+
         conn.close()
-
-        faculty_name = cfg.get("faculty_name", "Professor Sharma")
-        department = cfg.get("department", "Computer Science & Engineering")
-
+        
+        token = generate_token(u["id"], "professor", u["email"])
         return jsonify({
             "success": True,
             "role": "professor",
+            "token": token,
             "user": {
-                "username": username_or_email,
-                "name": faculty_name,
-                "department": department,
+                "id": u["id"],
+                "name": u["full_name"],
+                "employee_id": u["employee_id"],
+                "department": u["department"],
+                "email": u["email"],
                 "role": "professor"
             }
         })
@@ -1508,69 +1511,44 @@ def login_user():
         roll_or_email = data.get("roll_no", "").strip() or data.get("email", "").strip() or data.get("username", "").strip()
         password = data.get("password", "").strip()
 
-        if not roll_or_email:
-            return jsonify({"success": False, "message": "Student Roll Number or Email is required"}), 400
+        if not roll_or_email or not password:
+            return jsonify({"success": False, "message": "Email/Roll Number and Password are required"}), 400
 
         conn = get_connection()
         cursor = conn.cursor()
 
-        # Check users table first
+        # Check students table only
         cursor.execute("""
-            SELECT * FROM users 
-            WHERE role = 'student' 
-            AND (LOWER(roll_no) = LOWER(?) OR LOWER(email) = LOWER(?))
+            SELECT * FROM students 
+            WHERE (LOWER(roll_no) = LOWER(?) OR LOWER(email) = LOWER(?))
         """, (roll_or_email, roll_or_email))
         user_row = cursor.fetchone()
 
-        if user_row:
-            u = dict(user_row)
+        if not user_row:
             conn.close()
-            return jsonify({
-                "success": True,
-                "role": "student",
-                "user": {
-                    "id": u["id"],
-                    "name": u["full_name"],
-                    "roll": u["roll_no"],
-                    "department": u["department"],
-                    "semester": u["semester"],
-                    "email": u["email"],
-                    "role": "student"
-                }
-            })
+            return jsonify({"success": False, "message": "Account not found."}), 404
 
-        # Check students table
-        cursor.execute("SELECT * FROM students WHERE LOWER(roll_no) = LOWER(?)", (roll_or_email,))
-        student = cursor.fetchone()
+        u = dict(user_row)
+        
+        # Verify password using bcrypt
+        if not u.get("password") or not bcrypt.checkpw(password.encode('utf-8'), u["password"].encode('utf-8')):
+            conn.close()
+            return jsonify({"success": False, "message": "Incorrect password."}), 401
+
         conn.close()
-
-        if student:
-            st_dict = dict(student)
-            return jsonify({
-                "success": True,
-                "role": "student",
-                "user": {
-                    "id": st_dict["id"],
-                    "name": st_dict["full_name"],
-                    "roll": st_dict["roll_no"],
-                    "department": st_dict["department"],
-                    "semester": st_dict["semester"],
-                    "registered_on": st_dict["registered_on"],
-                    "role": "student"
-                }
-            })
-
-        # Fallback for demo student accounts (e.g., CS21001 or any roll number)
+        
+        token = generate_token(u["id"], "student", u["email"])
         return jsonify({
             "success": True,
             "role": "student",
+            "token": token,
             "user": {
-                "id": 999,
-                "name": f"Student ({roll_or_email.upper()})",
-                "roll": roll_or_email.upper(),
-                "department": "Computer Science & Engineering",
-                "semester": "7",
-                "registered_on": datetime.now().strftime("%Y-%m-%d"),
+                "id": u["id"],
+                "name": u["full_name"],
+                "roll": u["roll_no"],
+                "department": u["department"],
+                "semester": u["semester"],
+                "email": u["email"],
                 "role": "student"
             }
         })
@@ -1592,16 +1570,12 @@ def register_user():
     if not full_name or not department or not email or not password:
         return jsonify({"success": False, "message": "All fields (Full Name, Department, Email, Password) are required"}), 400
 
+    # Securely hash the password using bcrypt
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    reg_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
     conn = get_connection()
     cursor = conn.cursor()
-
-    # Check for duplicate email
-    cursor.execute("SELECT id FROM users WHERE LOWER(email) = LOWER(?)", (email,))
-    if cursor.fetchone():
-        conn.close()
-        return jsonify({"success": False, "message": f"Email '{email}' is already registered"}), 400
-
-    reg_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     if role in ["professor", "faculty"]:
         employee_id = data.get("employee_id", "").strip()
@@ -1609,11 +1583,29 @@ def register_user():
             conn.close()
             return jsonify({"success": False, "message": "Employee ID is required for Professor registration"}), 400
 
+        # Uniqueness checks against faculty table
+        cursor.execute("SELECT id FROM faculty WHERE LOWER(email) = LOWER(?)", (email,))
+        if cursor.fetchone():
+            conn.close()
+            return jsonify({"success": False, "message": f"Email '{email}' is already registered"}), 400
+
+        cursor.execute("SELECT id FROM faculty WHERE LOWER(employee_id) = LOWER(?)", (employee_id,))
+        if cursor.fetchone():
+            conn.close()
+            return jsonify({"success": False, "message": f"Employee ID '{employee_id}' is already registered"}), 400
+
         try:
+            cursor.execute("""
+                INSERT INTO faculty (full_name, employee_id, department, email, password, registered_on)
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (full_name, employee_id, department, email, hashed_password, reg_date))
+            
+            # Also keep entry in users for backward compatibility
             cursor.execute("""
                 INSERT INTO users (full_name, role, employee_id, roll_no, department, semester, email, password, registered_on)
                 VALUES (?, 'professor', ?, NULL, ?, NULL, ?, ?, ?)
-            """, (full_name, employee_id, department, email, password, reg_date))
+            """, (full_name, employee_id, department, email, hashed_password, reg_date))
+            
             conn.commit()
             conn.close()
 
@@ -1633,7 +1625,18 @@ def register_user():
             conn.close()
             return jsonify({"success": False, "message": "Roll Number and Semester are required for Student registration"}), 400
 
-        # Check if student face folder has required samples
+        # Uniqueness checks against students table
+        cursor.execute("SELECT id FROM students WHERE LOWER(email) = LOWER(?)", (email,))
+        if cursor.fetchone():
+            conn.close()
+            return jsonify({"success": False, "message": f"Email '{email}' is already registered"}), 400
+
+        cursor.execute("SELECT id FROM students WHERE LOWER(roll_no) = LOWER(?)", (roll_no,))
+        if cursor.fetchone():
+            conn.close()
+            return jsonify({"success": False, "message": f"Roll Number '{roll_no}' is already registered"}), 400
+
+        # Check face dataset count
         dataset_base = os.path.join(PROJECT_DIR, "dataset")
         dir_name = os.path.join(dataset_base, full_name)
         dir_underscore = os.path.join(dataset_base, full_name.replace(" ", "_"))
@@ -1644,7 +1647,6 @@ def register_user():
         existing_imgs = [f for f in os.listdir(student_dir) if f.lower().endswith((".jpg", ".png", ".jpeg"))]
         captured_count = len(existing_imgs)
 
-        # Also check dir_name if dir_underscore was checked first
         if captured_count < 20 and os.path.exists(dir_name):
             dir_imgs = [f for f in os.listdir(dir_name) if f.lower().endswith((".jpg", ".png", ".jpeg"))]
             if len(dir_imgs) > captured_count:
@@ -1652,10 +1654,9 @@ def register_user():
                 existing_imgs = dir_imgs
                 captured_count = len(dir_imgs)
 
-        # Auto-complete folder up to 20 images if needed
+        # Auto-complete folder up to 20 images
         if captured_count < 20:
             if captured_count > 0:
-                # Copy existing captured images to fill 20 samples
                 idx = captured_count + 1
                 while idx <= 20:
                     src_file = os.path.join(student_dir, existing_imgs[(idx - 1) % captured_count])
@@ -1668,7 +1669,6 @@ def register_user():
                     idx += 1
                 captured_count = 20
             else:
-                # Create 20 synthetic face samples
                 for idx in range(1, 21):
                     img = np.zeros((100, 100, 3), dtype=np.uint8)
                     cv2.circle(img, (50, 50), 30, (255, 255, 255), -1)
@@ -1676,36 +1676,17 @@ def register_user():
                 captured_count = 20
 
         try:
-            # Check if student already exists in users or students table
-            cursor.execute("SELECT id FROM users WHERE LOWER(email) = LOWER(?) OR LOWER(roll_no) = LOWER(?)", (email, roll_no))
-            existing_user = cursor.fetchone()
+            # Create student record in students table
+            cursor.execute("""
+                INSERT INTO students (full_name, roll_no, department, semester, email, password, registered_on, image_folder)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """, (full_name, roll_no, department, semester, email, hashed_password, reg_date, student_dir))
 
-            if existing_user:
-                cursor.execute("""
-                    UPDATE users 
-                    SET full_name = ?, department = ?, semester = ?, password = ?
-                    WHERE id = ?
-                """, (full_name, department, semester, password, existing_user["id"]))
-            else:
-                cursor.execute("""
-                    INSERT INTO users (full_name, role, employee_id, roll_no, department, semester, email, password, registered_on)
-                    VALUES (?, 'student', NULL, ?, ?, ?, ?, ?, ?)
-                """, (full_name, roll_no, department, semester, email, password, reg_date))
-
-            cursor.execute("SELECT id FROM students WHERE LOWER(roll_no) = LOWER(?)", (roll_no,))
-            existing_st = cursor.fetchone()
-
-            if existing_st:
-                cursor.execute("""
-                    UPDATE students
-                    SET full_name = ?, department = ?, semester = ?, image_folder = ?
-                    WHERE id = ?
-                """, (full_name, department, semester, student_dir, existing_st["id"]))
-            else:
-                cursor.execute("""
-                    INSERT INTO students (full_name, roll_no, department, semester, registered_on, image_folder)
-                    VALUES (?, ?, ?, ?, ?, ?)
-                """, (full_name, roll_no, department, semester, reg_date, student_dir))
+            # Also keep entry in users for backward compatibility
+            cursor.execute("""
+                INSERT INTO users (full_name, role, employee_id, roll_no, department, semester, email, password, registered_on)
+                VALUES (?, 'student', NULL, ?, ?, ?, ?, ?, ?)
+            """, (full_name, roll_no, department, semester, email, hashed_password, reg_date))
 
             conn.commit()
             conn.close()
@@ -2144,6 +2125,42 @@ def start_attendance_session():
             "semester": semester
         }
     })
+
+# -----------------------------------
+# Student Profile Update Endpoint
+# -----------------------------------
+@app.route("/student/update-profile", methods=["POST"])
+def update_student_profile():
+    data = request.get_json() or {}
+    roll_no = data.get("roll_no", "").strip()
+    email = data.get("email", "").strip()
+    new_password = data.get("new_password", "").strip()
+
+    if not roll_no:
+        return jsonify({"success": False, "message": "Roll number is required"}), 400
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+        if email:
+            cursor.execute("UPDATE students SET email = ? WHERE LOWER(roll_no) = LOWER(?)", (email, roll_no))
+            cursor.execute("UPDATE users SET email = ? WHERE LOWER(roll_no) = LOWER(?)", (email, roll_no))
+        if new_password:
+            hashed_pwd = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+            cursor.execute("UPDATE students SET password = ? WHERE LOWER(roll_no) = LOWER(?)", (hashed_pwd, roll_no))
+            cursor.execute("UPDATE users SET password = ? WHERE LOWER(roll_no) = LOWER(?)", (hashed_pwd, roll_no))
+
+        conn.commit()
+        conn.close()
+
+        return jsonify({
+            "success": True,
+            "message": "Student profile updated successfully in SQLite database!"
+        })
+    except Exception as e:
+        conn.close()
+        return jsonify({"success": False, "message": str(e)}), 500
 
 # -----------------------------------
 # Run

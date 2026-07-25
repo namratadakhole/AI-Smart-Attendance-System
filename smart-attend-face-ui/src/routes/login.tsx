@@ -64,6 +64,9 @@ function LoginPage() {
       if (res && res.success) {
         localStorage.setItem("userRole", res.role);
         localStorage.setItem("userData", JSON.stringify(res.user));
+        if (res.token) {
+          localStorage.setItem("authToken", res.token);
+        }
 
         toast.success(`Welcome back, ${res.user.name || "User"}!`, {
           description: `Signed in as ${res.role.toUpperCase()}`,
