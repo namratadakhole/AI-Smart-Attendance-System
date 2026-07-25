@@ -18,7 +18,7 @@ import {
   BarChart, Bar
 } from "recharts";
 import { getStudentDashboardData, updateStudentProfile, getStudentSubjectAttendance } from "@/api/attendance";
-import { toast } from "sonner";
+import { showSuccess, showError, showWarning, showInfo } from "@/lib/notifications";
 
 export const Route = createFileRoute("/_app/student-dashboard")({
   head: () => ({ meta: [{ title: "Student Dashboard · SmartAttend AI" }] }),
@@ -115,7 +115,7 @@ function StudentDashboardPage() {
       }
     } catch (err) {
       console.error("Error fetching student dashboard data:", err);
-      toast.error("Unable to load live student attendance metrics.");
+      showError("Load Error", "Unable to load live student attendance metrics.");
     } finally {
       setLoading(false);
     }
@@ -125,7 +125,7 @@ function StudentDashboardPage() {
     e.preventDefault();
 
     if (newPassword && newPassword !== confirmNewPassword) {
-      toast.error("New Password and Confirm Password do not match.");
+      showError("Validation Error", "New Password and Confirm Password do not match.");
       return;
     }
 
@@ -140,18 +140,16 @@ function StudentDashboardPage() {
       });
 
       if (res && res.success) {
-        toast.success("Profile Updated Successfully!", {
-          description: "Your updated contact and credentials have been saved to SQLite.",
-        });
+        showSuccess("Profile Updated Successfully!", "Your updated contact and credentials have been saved to SQLite.");
         setNewPassword("");
         setConfirmNewPassword("");
         loadStudentData(currentRoll);
       } else {
-        toast.error(res?.message || "Failed to update profile.");
+        showError("Profile Update Failed", res?.message || "Failed to update profile.");
       }
     } catch (err: any) {
       console.error("Profile update error:", err);
-      toast.error("Failed to update profile info.");
+      showError("Profile Update Failed", "Failed to update profile info.");
     } finally {
       setSavingProfile(false);
     }
@@ -161,7 +159,7 @@ function StudentDashboardPage() {
     localStorage.removeItem("userRole");
     localStorage.removeItem("userData");
     localStorage.removeItem("authToken");
-    toast.info("Logged out of Student Portal.");
+    showSuccess("Logout Successful", "Logged out of Student Portal.");
     navigate({ to: "/login" as any });
   };
 

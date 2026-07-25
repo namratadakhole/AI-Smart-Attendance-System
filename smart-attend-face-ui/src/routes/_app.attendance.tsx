@@ -9,7 +9,7 @@ import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { students as mockStudents } from "@/lib/mock-data";
-import { toast } from "sonner";
+import { showSuccess, showError, showWarning, showInfo } from "@/lib/notifications";
 
 export const Route = createFileRoute("/_app/attendance")({
   head: () => ({
@@ -103,9 +103,7 @@ function AttendancePage() {
 
             if (!notifiedRef.current.has(r.name)) {
               notifiedRef.current.add(r.name);
-              toast.success(`Attendance marked for ${r.name}`, {
-                description: `Roll: ${r.roll || "N/A"} · ${r.department || selectedDept}`,
-              });
+              showSuccess(`Attendance marked for ${r.name}`, `Roll: ${r.roll || "N/A"} · ${r.department || selectedDept}`);
             }
           });
         } else {
@@ -129,9 +127,7 @@ function AttendancePage() {
 
             if (!notifiedRef.current.has(name)) {
               notifiedRef.current.add(name);
-              toast.success(`Attendance marked for ${name}`, {
-                description: `Roll: ${roll} · ${department}`,
-              });
+              showSuccess(`Attendance marked for ${name}`, `Roll: ${roll} · ${department}`);
             }
           });
         }
@@ -161,12 +157,10 @@ function AttendancePage() {
       });
 
       setRunning(true);
-      toast.info("Subject Attendance Session Started!", {
-        description: `Subject: ${chosenSub?.subject_name || "Selected Subject"} · ${selectedDept} (Sem ${selectedSem})`,
-      });
+      showInfo("Subject Attendance Session Started!", `Subject: ${chosenSub?.subject_name || "Selected Subject"} · ${selectedDept} (Sem ${selectedSem})`);
     } catch (err) {
       console.error(err);
-      toast.error("Unable to start live attendance session.");
+      showError("Session Start Failed", "Unable to start live attendance session.");
     } finally {
       setLoading(false);
     }
@@ -177,10 +171,10 @@ function AttendancePage() {
       await stopAttendance();
       setRunning(false);
       notifiedRef.current.clear();
-      toast.info("Attendance session ended.");
+      showInfo("Attendance Session Stopped", "Attendance session ended.");
     } catch (err) {
       console.error(err);
-      toast.error("Unable to stop attendance session.");
+      showError("Session Stop Failed", "Unable to stop attendance session.");
     }
   };
 

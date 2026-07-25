@@ -15,7 +15,7 @@ import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from "recharts";
 import { getReportsData, exportReportExcel, exportReportPDF, getAttendanceRecords } from "@/api/attendance";
-import { toast } from "sonner";
+import { showSuccess, showError, showWarning, showInfo } from "@/lib/notifications";
 
 export const Route = createFileRoute("/_app/records")({
   head: () => ({ meta: [{ title: "Attendance History & Reports · SmartAttend AI" }] }),
@@ -122,12 +122,12 @@ function ReportsPage() {
 
   const handleExcelExport = () => {
     exportReportExcel({ department: filterDept, semester: filterSem });
-    toast.success("Excel report generated & downloaded.");
+    showSuccess("Report Exported", "Excel report generated & downloaded.");
   };
 
   const handlePdfExport = () => {
     exportReportPDF({ department: filterDept, semester: filterSem });
-    toast.success("PDF report generated & opened.");
+    showSuccess("Report Exported", "PDF report generated & opened.");
   };
 
   // Filter & Pagination logic for History Table

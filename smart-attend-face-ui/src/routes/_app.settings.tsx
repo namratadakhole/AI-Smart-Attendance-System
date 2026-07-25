@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { getSettings, saveSettings, getSubjects, createSubject, updateSubject, deleteSubject } from "@/api/attendance";
-import { toast } from "sonner";
+import { showSuccess, showError, showWarning, showInfo } from "@/lib/notifications";
 
 export const Route = createFileRoute("/_app/settings")({
   head: () => ({ meta: [{ title: "Settings & Subject Management · SmartAttend AI" }] }),
@@ -99,13 +99,13 @@ function SettingsPage() {
       });
 
       if (res && res.success) {
-        toast.success("Institutional Settings saved successfully to SQLite!");
+        showSuccess("Settings Saved", "Institutional Settings saved successfully to SQLite!");
       } else {
-        toast.error("Failed to save settings.");
+        showError("Save Failed", "Failed to save settings.");
       }
     } catch (err) {
       console.error("Save error:", err);
-      toast.error("Unable to save settings to database.");
+      showError("Database Error", "Unable to save settings to database.");
     } finally {
       setSaving(false);
     }
@@ -114,7 +114,7 @@ function SettingsPage() {
   const handleSaveSubject = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newSubCode.trim() || !newSubName.trim()) {
-      toast.error("Subject Code and Name are required.");
+      showError("Validation Error", "Subject Code and Name are required.");
       return;
     }
 
@@ -129,11 +129,11 @@ function SettingsPage() {
         });
 
         if (res && res.success) {
-          toast.success(`Subject '${newSubName}' updated successfully!`);
+          showSuccess("Subject Updated", `Subject '${newSubName}' updated successfully!`);
           resetSubForm();
           reloadSubjects();
         } else {
-          toast.error(res?.message || "Failed to update subject.");
+          showError("Update Failed", res?.message || "Failed to update subject.");
         }
       } else {
         const res = await createSubject({
@@ -144,16 +144,16 @@ function SettingsPage() {
         });
 
         if (res && res.success) {
-          toast.success(`Subject '${newSubName}' created successfully!`);
+          showSuccess("Subject Created", `Subject '${newSubName}' created successfully!`);
           resetSubForm();
           reloadSubjects();
         } else {
-          toast.error(res?.message || "Failed to create subject.");
+          showError("Creation Failed", res?.message || "Failed to create subject.");
         }
       }
     } catch (err: any) {
       console.error(err);
-      toast.error("Subject save error.");
+      showError("Save Error", "Subject save error.");
     } finally {
       setSavingSub(false);
     }
@@ -174,14 +174,14 @@ function SettingsPage() {
     try {
       const res = await deleteSubject(subId);
       if (res && res.success) {
-        toast.success(`Subject '${subName}' deleted.`);
+        showSuccess("Subject Deleted", `Subject '${subName}' deleted.`);
         reloadSubjects();
       } else {
-        toast.error("Failed to delete subject.");
+        showError("Deletion Failed", "Failed to delete subject.");
       }
     } catch (err) {
       console.error(err);
-      toast.error("Error deleting subject.");
+      showError("Error", "Error deleting subject.");
     }
   };
 

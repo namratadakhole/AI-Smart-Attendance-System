@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { startAttendance, stopAttendance, registerUser } from "@/api/attendance";
-import { toast } from "sonner";
+import { showSuccess, showError, showWarning, showInfo } from "@/lib/notifications";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -81,9 +81,7 @@ function StandaloneRegisterPage() {
 
             if (res.data.count >= 20 || res.data.completed) {
               setIsAutoCapturing(false);
-              toast.success("All 20 Face Samples Captured Successfully!", {
-                description: "You may now click 'Complete Student Registration'.",
-              });
+              showSuccess("Face Registration Completed", "All 20 Face Samples Captured Successfully! You may now click 'Complete Student Registration'.");
             }
           }
         } catch (err) {
@@ -103,13 +101,13 @@ function StandaloneRegisterPage() {
       const res = await startAttendance();
       if (res && res.status === "success") {
         setCameraActive(true);
-        toast.info("Camera feed started successfully.", { description: "Live webcam stream active." });
+        showInfo("Camera Initialized", "Camera feed started successfully. Live webcam stream active.");
       } else {
-        toast.error("Failed to start camera from backend.");
+        showError("Camera Error", "Failed to start camera from backend.");
       }
     } catch (err: any) {
       console.error("Camera start error:", err);
-      toast.error("Unable to start backend camera service.");
+      showError("Camera Error", "Unable to start backend camera service.");
     } finally {
       setStartingCamera(false);
     }
@@ -119,7 +117,7 @@ function StandaloneRegisterPage() {
     try {
       setIsAutoCapturing(false);
       await stopAttendance();
-      toast.info("Camera feed stopped.");
+      showInfo("Camera Stopped", "Camera feed stopped.");
     } catch (err) {
       console.error("Error stopping camera:", err);
     } finally {
@@ -129,7 +127,7 @@ function StandaloneRegisterPage() {
 
   const toggleAutoCapture = async () => {
     if (!fullName.trim()) {
-      toast.warning("Please enter Student Full Name first before starting face capture.");
+      showWarning("Validation Warning", "Please enter Student Full Name first before starting face capture.");
       return;
     }
 
@@ -141,7 +139,7 @@ function StandaloneRegisterPage() {
         setIsAutoCapturing(true);
         setGuidanceMsg("Camera started. Auto-capturing face samples...");
       } else {
-        toast.error("Failed to start webcam.");
+        showError("Webcam Error", "Failed to start webcam.");
       }
       setStartingCamera(false);
       return;
@@ -160,18 +158,18 @@ function StandaloneRegisterPage() {
     e.preventDefault();
 
     if (!fullName.trim() || !department.trim() || !email.trim() || !password.trim()) {
-      toast.warning("Please fill in all basic registration fields.");
+      showWarning("Validation Warning", "Please fill in all basic registration fields.");
       return;
     }
 
     if (password !== confirmPassword) {
-      toast.error("Password and Confirm Password do not match.");
+      showError("Validation Error", "Password and Confirm Password do not match.");
       return;
     }
 
     if (role === "professor") {
       if (!employeeId.trim()) {
-        toast.warning("Employee ID is required for Professor registration.");
+        showWarning("Validation Warning", "Employee ID is required for Professor registration.");
         return;
       }
 
@@ -187,31 +185,29 @@ function StandaloneRegisterPage() {
         });
 
         if (res && res.success) {
-          toast.success("Registration Successful!", {
-            description: "Account created! Redirecting to Login page...",
-          });
+          showSuccess("Registration Successful!", "Account created! Redirecting to Login page...");
           resetForm();
           setTimeout(() => {
             navigate({ to: "/login" as any });
           }, 1000);
         } else {
-          toast.error(res?.message || "Professor registration failed.");
+          showError("Registration Failed", res?.message || "Professor registration failed.");
         }
       } catch (err: any) {
         console.error("Register error:", err);
-        toast.error(err.response?.data?.message || "Registration failed.");
+        showError("Registration Failed", err.response?.data?.message || "Registration failed.");
       } finally {
         setLoading(false);
       }
     } else {
       // Student Registration
       if (!rollNo.trim() || !semester.trim()) {
-        toast.warning("Roll Number and Semester are required for Student registration.");
+        showWarning("Validation Warning", "Roll Number and Semester are required for Student registration.");
         return;
       }
 
       if (sampleCount < 20) {
-        toast.error(`Student face registration incomplete! Required 20 samples. (${sampleCount}/20 captured)`);
+        showError("Face Registration Incomplete", `Required 20 samples. (${sampleCount}/20 captured). Please capture enough face samples first.`);
         return;
       }
 
@@ -234,20 +230,18 @@ function StandaloneRegisterPage() {
         }
 
         if (res && res.success) {
-          toast.success("Registration Successful!", {
-            description: `Student account created for ${fullName} (${rollNo}). Redirecting to Login page...`,
-          });
+          showSuccess("Registration Successful!", `Student account created for ${fullName} (${rollNo}). Redirecting to Login page...`);
           handleStopCamera();
           resetForm();
           setTimeout(() => {
             navigate({ to: "/login" as any });
           }, 1000);
         } else {
-          toast.error(res?.message || "Student registration failed.");
+          showError("Student Registration Failed", res?.message || "Student registration failed.");
         }
       } catch (err: any) {
         console.error("Register error:", err);
-        toast.error(err.response?.data?.message || "Student registration failed.");
+        showError("Student Registration Failed", err.response?.data?.message || "Student registration failed.");
       } finally {
         setLoading(false);
       }

@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { getStudents, deleteStudent, updateStudent } from "@/api/attendance";
+import { showSuccess, showError, showWarning } from "@/lib/notifications";
 
 export const Route = createFileRoute("/_app/students")({
   head: () => ({ meta: [{ title: "Students · SmartAttend AI" }] }),
@@ -41,7 +42,7 @@ function StudentsPage() {
   const [editName, setEditName] = useState("");
   const [editRoll, setEditRoll] = useState("");
   const [editDept, setEditDept] = useState("");
-  const [editSem, setEditSem] = useState("");
+  const [editSem, setEditSem] = useState("1");
   const [savingEdit, setSavingEdit] = useState(false);
 
   const fetchRoster = async () => {
@@ -55,6 +56,7 @@ function StudentsPage() {
       }
     } catch (err) {
       console.error("Error loading student database:", err);
+      showError("Connection Error", "Failed to fetch student roster from server.");
       setStudents([]);
     } finally {
       setLoading(false);
@@ -76,7 +78,7 @@ function StudentsPage() {
   const handleSaveEdit = async () => {
     if (!editingStudent) return;
     if (!editName.trim() || !editRoll.trim() || !editDept.trim() || !editSem.trim()) {
-      alert("All fields (Name, Roll No, Department, Semester) are required.");
+      showWarning("Validation Error", "All fields (Name, Roll No, Department, Semester) are required.");
       return;
     }
 
@@ -90,16 +92,16 @@ function StudentsPage() {
       });
 
       if (res.success) {
-        alert(res.message || "Student updated successfully.");
+        showSuccess("Student Updated", res.message || "Student updated successfully.");
         setEditingStudent(null);
         fetchRoster();
       } else {
-        alert(res.message || "Failed to update student.");
+        showError("Update Failed", res.message || "Failed to update student.");
       }
     } catch (err: any) {
       console.error("Edit error:", err);
       const msg = err.response?.data?.message || "Failed to update student in database.";
-      alert(msg);
+      showError("Database Error", msg);
     } finally {
       setSavingEdit(false);
     }
@@ -114,15 +116,15 @@ function StudentsPage() {
     try {
       const res = await deleteStudent(Number(id));
       if (res && res.success) {
-        alert(res.message || `Student "${name}" deleted successfully.`);
+        showSuccess("Student Deleted", res.message || `Student "${name}" deleted successfully.`);
       } else {
-        alert(res.message || "Deletion completed.");
+        showSuccess("Deletion Completed", res.message || "Deletion completed.");
       }
       fetchRoster();
     } catch (err: any) {
       console.error("Delete failed:", err);
       const msg = err.response?.data?.message || "Failed to delete student from database.";
-      alert(msg);
+      showError("Database Error", msg);
     }
   };
 

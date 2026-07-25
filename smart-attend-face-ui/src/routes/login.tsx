@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { loginUser, registerUser } from "@/api/attendance";
-import { toast } from "sonner";
+import { showSuccess, showError, showWarning, showInfo } from "@/lib/notifications";
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "Welcome & Auth · SmartAttend AI" }] }),
@@ -68,9 +68,7 @@ function LoginPage() {
           localStorage.setItem("authToken", res.token);
         }
 
-        toast.success(`Welcome back, ${res.user.name || "User"}!`, {
-          description: `Signed in as ${res.role.toUpperCase()}`,
-        });
+        showSuccess(`Welcome back, ${res.user.name || "User"}!`, `Signed in as ${res.role.toUpperCase()}`);
 
         if (res.role === "student") {
           navigate({ to: "/student-dashboard" as any });
@@ -78,11 +76,11 @@ function LoginPage() {
           navigate({ to: "/dashboard" as any });
         }
       } else {
-        toast.error(res?.message || "Invalid credentials.");
+        showError("Authentication Failed", res?.message || "Invalid credentials.");
       }
     } catch (err: any) {
       console.error("Login error:", err);
-      toast.error("Login failed.");
+      showError("Login Error", "Login failed.");
     } finally {
       setLoading(false);
     }
@@ -92,12 +90,12 @@ function LoginPage() {
     e.preventDefault();
 
     if (!fullName.trim() || !employeeId.trim() || !department.trim() || !email.trim() || !password.trim()) {
-      toast.warning("Please fill in all Professor registration fields.");
+      showWarning("Validation Warning", "Please fill in all Professor registration fields.");
       return;
     }
 
     if (password !== confirmPassword) {
-      toast.error("Password and Confirm Password do not match.");
+      showError("Validation Error", "Password and Confirm Password do not match.");
       return;
     }
 
@@ -118,27 +116,25 @@ function LoginPage() {
       }
 
       if (res && res.success) {
-        toast.success("Professor Account Registered Successfully!", {
-          description: "No face samples required. Proceeding to Professor Login...",
-        });
+        showSuccess("Professor Registered", "Professor Account Registered Successfully! Proceeding to Professor Login...");
 
         // Switch to Login flow
         setMainAction("login");
         setSelectedRole("professor");
         setUsername(email.trim());
       } else {
-        toast.error(res?.message || "Professor registration failed.");
+        showError("Registration Failed", res?.message || "Professor registration failed.");
       }
     } catch (err: any) {
       console.error(err);
-      toast.error("Professor registration failed.");
+      showError("Registration Error", "Professor registration failed.");
     } finally {
       setLoading(false);
     }
   };
 
   const handleStudentRegisterRedirect = () => {
-    toast.info("Redirecting to Student Registration (Face Capture Required)...");
+    showInfo("Registration Setup", "Redirecting to Student Registration (Face Capture Required)...");
     navigate({ to: "/register" as any });
   };
 
