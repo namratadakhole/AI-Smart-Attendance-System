@@ -1,0 +1,13 @@
+# Ignore everything inside dataset
+dataset/**
+
+# Keep the dataset folder
+!dataset/.gitkeep
+
+# Ignore generated files
+encodings.pickle
+attendance.db
+
+# Python cache
+__pycache__/
+*.pyc
