@@ -803,10 +803,10 @@ function EdTechLandingPage() {
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.7, ease: "easeOut" }}
-          className="lg:col-span-6 flex items-center justify-center relative w-full lg:-mt-16 lg:translate-y-[-16px]"
+          className="lg:col-span-6 flex items-center justify-center relative w-full lg:-mt-28 lg:translate-y-[-32px]"
         >
           {/* Intense premium blue/cyan lighting backdrop glow behind the glass container */}
-          <div className="absolute -inset-20 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.38)_0%,rgba(6,182,212,0.15)_45%,transparent_75%)] rounded-full blur-[120px] pointer-events-none" />
+          <div className="absolute -inset-24 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.48)_0%,rgba(6,182,212,0.22)_45%,transparent_75%)] rounded-full blur-[130px] pointer-events-none" />
 
           {/* Single premium glass container shell (Increased by 30% width/height limits) */}
           <div className="relative w-full max-w-[820px] z-20 group/panel">
@@ -819,7 +819,7 @@ function EdTechLandingPage() {
               className="w-full bg-slate-950/40 border border-white/10 rounded-3xl p-5 md:p-6 backdrop-blur-2xl shadow-[0_35px_70px_-15px_rgba(0,0,0,0.9)] hover:border-white/25 transition-all duration-300 relative overflow-hidden flex flex-col gap-4"
             >
               {/* Internal card glow highlight */}
-              <div className="absolute -inset-16 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.22)_0%,rgba(6,182,212,0.1)_45%,transparent_75%)] blur-3xl opacity-90 group-hover/panel:opacity-100 transition-opacity duration-500 pointer-events-none z-0" />
+              <div className="absolute -inset-20 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.32)_0%,rgba(6,182,212,0.15)_45%,transparent_75%)] blur-3xl opacity-90 group-hover/panel:opacity-100 transition-opacity duration-500 pointer-events-none z-0" />
 
               {/* Subtle glass light sheen sweep animation overlay on hover */}
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover/panel:animate-[shimmer_1.5s_infinite] pointer-events-none" />
@@ -843,7 +843,7 @@ function EdTechLandingPage() {
               <div className="grid grid-cols-12 gap-4 flex-1">
                 {/* Sidebar Navigation */}
                 <div className="col-span-3 border-r border-slate-900 pr-3 flex flex-col gap-3 text-left">
-                  <div className="flex items-center gap-2 py-1 px-1.5 rounded-lg bg-white/5 border border-white/5">
+                  <div className="flex items-center gap-2 py-1 px-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-sky-500/30 hover:shadow-[0_0_12px_rgba(56,189,248,0.15)] transition-all duration-300">
                     <div className="h-5 w-5 rounded-md bg-gradient-to-br from-sky-400 to-blue-500 flex items-center justify-center text-[10px] font-black text-slate-950 font-mono">SA</div>
                     <div className="flex-1 min-w-0">
                       <span className="block text-[10px] font-bold text-slate-200 truncate">IIT Kharagpur</span>
@@ -857,7 +857,7 @@ function EdTechLandingPage() {
                       { label: "Analytics", icon: TrendingUp },
                       { label: "Settings", icon: ShieldCheck }
                     ].map((item) => (
-                      <div key={item.label} className={`flex items-center gap-2 px-2 py-1.5 rounded-lg text-[10px] font-semibold transition-all ${item.active ? "bg-sky-500/10 text-sky-400 border border-sky-500/10" : "text-slate-500 hover:text-slate-350 hover:bg-white/5"}`}>
+                      <div key={item.label} className={`flex items-center gap-2 px-2 py-1.5 rounded-lg text-[10px] font-semibold transition-all ${item.active ? "bg-sky-500/10 text-sky-400 border border-sky-500/20 shadow-[0_0_15px_rgba(56,189,248,0.15)]" : "text-slate-500 hover:text-slate-350 hover:bg-white/5"}`}>
                         <item.icon className="h-3.5 w-3.5" />
                         <span>{item.label}</span>
                       </div>
@@ -881,7 +881,7 @@ function EdTechLandingPage() {
                   {/* Inner Row 1: Camera Scan + Identified profile details */}
                   <div className="grid grid-cols-12 gap-3">
                     {/* Live Camera (30% larger viewport representation) */}
-                    <div className="col-span-7 h-[175px] rounded-xl bg-slate-950/90 relative overflow-hidden flex items-center justify-center border border-slate-900 group/feed">
+                    <div className="col-span-7 h-[175px] rounded-xl bg-slate-950/90 relative overflow-hidden flex items-center justify-center border border-white/5 hover:border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.05)] hover:shadow-[0_0_20px_rgba(6,182,212,0.2)] transition-all duration-300 group/feed">
                       <Video className="h-8 w-8 text-slate-800 group-hover/feed:text-slate-700 transition-colors" />
                       
                       {/* Scanning HUD Grid overlay */}
@@ -905,7 +905,7 @@ function EdTechLandingPage() {
                     </div>
 
                     {/* Meta stats details */}
-                    <div className="col-span-5 flex flex-col justify-between p-2.5 rounded-xl bg-slate-950/50 border border-slate-900 text-xs">
+                    <div className="col-span-5 flex flex-col justify-between p-2.5 rounded-xl bg-slate-950/50 border border-white/5 hover:border-sky-500/30 shadow-[0_0_15px_rgba(56,189,248,0.05)] hover:shadow-[0_0_20px_rgba(56,189,248,0.2)] transition-all duration-300 text-xs">
                       <div className="space-y-1">
                         <span className="text-[7.5px] font-black text-slate-500 uppercase tracking-widest block">Logged Attendance</span>
                         <h5 className="font-extrabold text-slate-100 text-xs truncate">Ravi Verma</h5>
@@ -930,7 +930,7 @@ function EdTechLandingPage() {
 
                   {/* Inner Row 2: Attendance rate stats & Interactive mini graph logs */}
                   <div className="grid grid-cols-12 gap-3">
-                    <div className="col-span-4 p-2.5 rounded-xl bg-slate-950/50 border border-slate-900 flex flex-col justify-between">
+                    <div className="col-span-4 p-2.5 rounded-xl bg-slate-950/50 border border-white/5 hover:border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.05)] hover:shadow-[0_0_20px_rgba(6,182,212,0.2)] transition-all duration-300 flex flex-col justify-between">
                       <span className="text-[7.5px] font-black text-slate-500 uppercase tracking-widest block">Class Attendance Rate</span>
                       <div className="flex items-baseline gap-1 mt-1">
                         <span className="text-sm font-mono font-black text-slate-200">94.5%</span>
@@ -938,7 +938,7 @@ function EdTechLandingPage() {
                       </div>
                     </div>
                     
-                    <div className="col-span-8 p-2.5 rounded-xl bg-slate-950/50 border border-slate-900 flex items-center justify-between gap-4">
+                    <div className="col-span-8 p-2.5 rounded-xl bg-slate-950/50 border border-white/5 hover:border-sky-500/30 shadow-[0_0_15px_rgba(56,189,248,0.05)] hover:shadow-[0_0_20px_rgba(56,189,248,0.2)] transition-all duration-300 flex items-center justify-between gap-4">
                       <div className="flex-1">
                         <span className="text-[7.5px] font-black text-slate-500 uppercase tracking-widest block">Weekly Sessions Metrics</span>
                         <span className="text-[9px] text-slate-400 block mt-0.5">Average threshold score: 92%</span>
