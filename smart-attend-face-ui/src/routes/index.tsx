@@ -707,15 +707,15 @@ function EdTechLandingPage() {
         </div>
       </motion.header>
 
-      {/* 3. HERO SECTION */}
-      <section className="max-w-7xl mx-auto px-6 pt-2 pb-16 md:pt-4 md:pb-24 grid gap-12 lg:grid-cols-12 items-center relative z-10">
+      {/* 3. HERO SECTION (Redesigned SaaS Layout) */}
+      <section className="max-w-7xl mx-auto px-6 pt-4 pb-20 md:pt-6 md:pb-28 grid gap-12 grid-cols-1 lg:grid-cols-10 items-center relative z-10">
         
-        {/* Left Side Content */}
+        {/* Left Side Content (40% Column Width) */}
         <motion.div 
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="lg:col-span-5 flex flex-col gap-5 text-left"
+          className="lg:col-span-4 flex flex-col gap-6 text-left"
         >
           {/* Badge */}
           <div className="inline-flex">
@@ -728,12 +728,9 @@ function EdTechLandingPage() {
           <div className="relative">
             {/* Spotlight effect behind the hero heading */}
             <div className="absolute -inset-10 bg-[radial-gradient(circle_at_center,rgba(14,165,233,0.18)_0%,transparent_60%)] blur-3xl pointer-events-none z-0" />
-            <h1 className="relative z-10 text-5xl md:text-7xl font-black tracking-tight leading-[1.05] bg-gradient-to-b from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">
-              <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-500">
-                AI
-                <span className="absolute -inset-1 bg-sky-500/25 rounded-lg blur-md -z-10 animate-pulse pointer-events-none" />
-              </span>{" "}
-              Smart Attendance System
+            <h1 className="relative z-10 text-5xl sm:text-7xl lg:text-[76px] font-black tracking-tight leading-[0.95] bg-gradient-to-b from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">
+              AI Smart Attendance <br className="hidden lg:inline" />
+              System
             </h1>
           </div>
 
@@ -753,17 +750,17 @@ function EdTechLandingPage() {
             className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 w-full max-w-[620px]"
           >
             <Link to="/auth" className="w-full">
-              <Button size="lg" className="w-full gradient-primary text-primary-foreground font-bold rounded-2xl h-[52px] px-4 shadow-xl shadow-primary/20 hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] transition-all duration-300 text-sm flex items-center justify-center gap-1.5">
+              <Button size="lg" className="w-full gradient-primary text-primary-foreground font-black rounded-2xl h-[56px] px-6 shadow-xl shadow-primary/20 hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] transition-all duration-300 text-sm md:text-base flex items-center justify-center gap-2">
                 Get Started <ArrowRight className="h-4 w-4 shrink-0" />
               </Button>
             </Link>
             <a href="#showcase" onClick={handleWatchDemo} className="w-full">
-              <Button size="lg" variant="outline" className="w-full text-slate-300 border-slate-800 hover:border-slate-700 hover:bg-slate-900 bg-slate-950/20 rounded-2xl h-[52px] px-4 text-sm font-bold hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(59,130,246,0.15)] transition-all duration-300 flex items-center justify-center">
+              <Button size="lg" variant="outline" className="w-full text-slate-350 border-slate-800 hover:border-slate-700 hover:bg-slate-900 bg-slate-950/20 rounded-2xl h-[56px] px-6 text-sm md:text-base font-black hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(59,130,246,0.15)] transition-all duration-300 flex items-center justify-center">
                 Watch Demo
               </Button>
             </a>
             <a href="https://github.com/namratadakhole" target="_blank" rel="noreferrer" className="w-full">
-              <Button size="lg" variant="outline" className="w-full text-slate-400 border-slate-900 hover:border-slate-850 hover:text-white bg-slate-950/10 rounded-2xl h-[52px] px-4 text-sm font-semibold hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(59,130,246,0.15)] transition-all duration-300 flex items-center justify-center gap-1">
+              <Button size="lg" variant="outline" className="w-full text-slate-400 border-slate-900 hover:border-slate-850 hover:text-white bg-slate-950/10 rounded-2xl h-[56px] px-6 text-sm md:text-base font-semibold hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(59,130,246,0.15)] transition-all duration-300 flex items-center justify-center gap-1">
                 GitHub Repo
               </Button>
             </a>
@@ -800,137 +797,161 @@ function EdTechLandingPage() {
           </motion.div>
         </motion.div>
 
-        {/* Right Side - Real Product Showcase Preview (Mockup UI elements) */}
+        {/* Right Side Content - Visual Focus SaaS Mockup Dashboard (60% Column Width) */}
         <motion.div 
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.7, ease: "easeOut" }}
-          className="lg:col-span-7 flex items-center justify-center relative w-full"
+          className="lg:col-span-6 flex items-center justify-center relative w-full"
         >
-          {/* Blue glow directly behind the unified product panel */}
-          <div className="absolute -inset-4 bg-[radial-gradient(circle_at_center,rgba(56,189,248,0.2)_0%,transparent_70%)] rounded-full blur-3xl pointer-events-none" />
+          {/* Intense premium blue lighting backdrop glow behind the glass container */}
+          <div className="absolute -inset-10 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.22)_0%,transparent_70%)] rounded-full blur-[100px] pointer-events-none" />
 
-          {/* Unified Premium Glassmorphism Product Showcase Panel (20% Larger) */}
-          <div className="relative w-full max-w-[620px] z-20 group/panel">
-            {/* Soft blue glow backdrop with hover expansion */}
-            <div className="absolute -inset-1.5 bg-gradient-to-r from-sky-500/10 to-blue-500/10 rounded-3xl blur-2xl opacity-75 group-hover/panel:opacity-100 group-hover/panel:scale-[1.02] transition-all duration-500 pointer-events-none" />
+          {/* Single premium glass container shell (Increased by 30% width/height limits) */}
+          <div className="relative w-full max-w-[820px] z-20 group/panel">
+            {/* Inner hover neon border glow */}
+            <div className="absolute -inset-1.5 bg-gradient-to-r from-sky-500/15 to-blue-500/15 rounded-3xl blur-2xl opacity-75 group-hover/panel:opacity-100 group-hover/panel:scale-[1.02] transition-all duration-500 pointer-events-none" />
 
             <motion.div
               animate={{ y: [0, -8, 0] }}
               transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-              className="w-full bg-slate-950/40 border border-white/10 rounded-3xl p-5 md:p-6 backdrop-blur-2xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.7)] flex flex-col gap-5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] hover:border-white/20 transition-all duration-300 relative overflow-hidden"
+              className="w-full bg-slate-950/40 border border-white/10 rounded-3xl p-5 md:p-6 backdrop-blur-2xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] hover:border-white/20 transition-all duration-300 relative overflow-hidden flex flex-col gap-4"
             >
-              {/* Subtle light sheen sweep animation overlay on hover */}
+              {/* Subtle glass light sheen sweep animation overlay on hover */}
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover/panel:animate-[shimmer_1.5s_infinite] pointer-events-none" />
 
-              {/* Header: Live Feed Label + Session Clock */}
-              <div className="flex items-center justify-between pb-3 border-b border-slate-850">
-                <span className="text-[10px] uppercase font-bold text-sky-400 tracking-wider flex items-center gap-1.5">
-                  <span className="h-2 w-2 rounded-full bg-cyan-400 animate-pulse" /> Live Camera Stream
-                </span>
-                <div className="flex items-center gap-1.5 text-[9px] text-slate-400 font-mono">
-                  <Clock className="h-3.5 w-3.5 text-slate-500" /> 10:15 AM
+              {/* Top Window Control Bar Chrome */}
+              <div className="flex items-center justify-between pb-3 border-b border-slate-900">
+                <div className="flex items-center gap-1.5">
+                  <span className="h-2.5 w-2.5 rounded-full bg-slate-800" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-slate-850" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-slate-900" />
+                </div>
+                <div className="flex items-center gap-2 text-[10px] text-slate-500 font-mono bg-slate-950/50 px-3 py-1 rounded-lg border border-slate-900">
+                  <Globe className="h-3 w-3 text-sky-500/50" /> smartattend.ai/console
+                </div>
+                <div className="flex items-center gap-1">
+                  <Badge className="bg-sky-500/10 border border-sky-500/20 text-sky-400 text-[9px] font-mono">v1.2.0</Badge>
                 </div>
               </div>
 
-              {/* Main Panel Content: Inner grid layout */}
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-stretch">
-                
-                {/* Left Inner Column: Live Camera Video with Bounding Box detection */}
-                <div className="md:col-span-7 h-[220px] rounded-2xl bg-slate-950/80 relative overflow-hidden flex items-center justify-center border border-slate-850">
-                  <Video className="h-8 w-8 text-slate-800" />
-                  
-                  {/* Face Detection Bounding Box overlay */}
-                  <div className="absolute top-[20%] left-[23%] w-[95px] h-[95px] border-2 border-cyan-400 border-dashed rounded-xl shadow-[0_0_20px_rgba(52,211,153,0.15)] flex items-center justify-center">
-                    <div className="absolute top-[-22px] left-0 bg-cyan-400 text-[8px] text-slate-950 font-black px-1.5 py-0.5 rounded shadow">
-                      Ravi Verma
-                    </div>
-                    {/* Bounding markers */}
-                    <div className="absolute top-[-2px] left-[-2px] w-2.5 h-2.5 border-t-2 border-l-2 border-cyan-300" />
-                    <div className="absolute top-[-2px] right-[-2px] w-2.5 h-2.5 border-t-2 border-r-2 border-cyan-300" />
-                    <div className="absolute bottom-[-2px] left-[-2px] w-2.5 h-2.5 border-b-2 border-l-2 border-cyan-300" />
-                    <div className="absolute bottom-[-2px] right-[-2px] w-2.5 h-2.5 border-b-2 border-r-2 border-cyan-300" />
-                  </div>
-                  
-                  {/* Face detection HUD status */}
-                  <div className="absolute bottom-2.5 left-3 text-[8px] font-mono text-cyan-400 bg-slate-950/80 px-2 py-0.5 rounded-full border border-cyan-500/10">
-                    SCANNING: ACTIVE
-                  </div>
-                </div>
-
-                {/* Right Inner Column: Metadata & Status details */}
-                <div className="md:col-span-5 flex flex-col justify-between gap-4 p-1">
-                  
-                  {/* Student Details */}
-                  <div className="space-y-1.5 text-left">
-                    <span className="text-[8px] text-slate-500 uppercase tracking-widest font-black block">Identified Student</span>
-                    <h4 className="text-sm font-extrabold text-slate-100">Ravi Verma</h4>
-                    <span className="text-[10px] text-slate-400 block font-mono">Roll: CS21009</span>
-                    <span className="text-[10px] text-slate-500 block font-mono">CSE Dept • Semester 7</span>
-                  </div>
-
-                  {/* Divider */}
-                  <div className="border-t border-slate-850/60 my-1" />
-
-                  {/* Matching Confidence Score */}
-                  <div className="space-y-1 text-left">
-                    <span className="text-[8px] text-slate-500 uppercase tracking-widest font-black block">Confidence Match</span>
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-xs font-bold text-cyan-400">99.8%</span>
-                      <span className="text-[9px] text-slate-500 font-medium">high accuracy</span>
+              {/* Dashboard Grid - Sidebar + Content */}
+              <div className="grid grid-cols-12 gap-4 flex-1">
+                {/* Sidebar Navigation */}
+                <div className="col-span-3 border-r border-slate-900 pr-3 flex flex-col gap-3 text-left">
+                  <div className="flex items-center gap-2 py-1 px-1.5 rounded-lg bg-white/5 border border-white/5">
+                    <div className="h-5 w-5 rounded-md bg-gradient-to-br from-sky-400 to-blue-500 flex items-center justify-center text-[10px] font-black text-slate-950 font-mono">SA</div>
+                    <div className="flex-1 min-w-0">
+                      <span className="block text-[10px] font-bold text-slate-200 truncate">IIT Kharagpur</span>
                     </div>
                   </div>
+                  <div className="flex flex-col gap-1">
+                    {[
+                      { label: "Overview", icon: Cpu, active: true },
+                      { label: "Students", icon: GraduationCap },
+                      { label: "Attendance", icon: ScanFace },
+                      { label: "Analytics", icon: TrendingUp },
+                      { label: "Settings", icon: ShieldCheck }
+                    ].map((item) => (
+                      <div key={item.label} className={`flex items-center gap-2 px-2 py-1.5 rounded-lg text-[10px] font-semibold transition-all ${item.active ? "bg-sky-500/10 text-sky-400 border border-sky-500/10" : "text-slate-500 hover:text-slate-350 hover:bg-white/5"}`}>
+                        <item.icon className="h-3.5 w-3.5" />
+                        <span>{item.label}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
 
-                  {/* Divider */}
-                  <div className="border-t border-slate-850/60 my-1" />
+                {/* Main Content Dashboard panel */}
+                <div className="col-span-9 flex flex-col gap-4 text-left pl-1">
+                  {/* Inner Header */}
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="text-[11px] uppercase font-black text-slate-500 tracking-wider">Faculty Console</h4>
+                      <h3 className="text-sm font-bold text-slate-200">Artificial Intelligence Session</h3>
+                    </div>
+                    <Badge className="bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[9px] font-mono py-0.5 px-2">
+                      <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse mr-1 inline-block" /> ACTIVE SCANNER
+                    </Badge>
+                  </div>
 
-                  {/* Attendance Logged status info */}
-                  <div className="space-y-1 text-left">
-                    <span className="text-[8px] text-slate-500 uppercase tracking-widest font-black block">Status</span>
-                    <div className="flex items-center gap-2">
-                      <Badge className="bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 py-0.5 px-2 rounded-lg text-[9px] font-semibold uppercase">
-                        Present
-                      </Badge>
+                  {/* Inner Row 1: Camera Scan + Identified profile details */}
+                  <div className="grid grid-cols-12 gap-3">
+                    {/* Live Camera (30% larger viewport representation) */}
+                    <div className="col-span-7 h-[175px] rounded-xl bg-slate-950/90 relative overflow-hidden flex items-center justify-center border border-slate-900 group/feed">
+                      <Video className="h-8 w-8 text-slate-800 group-hover/feed:text-slate-700 transition-colors" />
+                      
+                      {/* Scanning HUD Grid overlay */}
+                      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_45%,#06b6d415_50%,transparent_55%)] bg-[size:100%_20px] animate-[pulse_2s_infinite] pointer-events-none" />
+
+                      {/* Face recognition bounding boxes inside console */}
+                      <div className="absolute top-[18%] left-[20%] w-[90px] h-[90px] border-2 border-cyan-400 border-dashed rounded-xl shadow-[0_0_25px_rgba(6,182,212,0.2)] flex items-center justify-center">
+                        <div className="absolute top-[-22px] left-0 bg-cyan-450 text-[8px] text-slate-950 font-black px-1.5 py-0.5 rounded shadow flex items-center gap-1 font-mono">
+                          ✓ Ravi Verma
+                        </div>
+                        {/* Box corner markers */}
+                        <div className="absolute top-[-2px] left-[-2px] w-2.5 h-2.5 border-t-2 border-l-2 border-cyan-300" />
+                        <div className="absolute top-[-2px] right-[-2px] w-2.5 h-2.5 border-t-2 border-r-2 border-cyan-300" />
+                        <div className="absolute bottom-[-2px] left-[-2px] w-2.5 h-2.5 border-b-2 border-l-2 border-cyan-300" />
+                        <div className="absolute bottom-[-2px] right-[-2px] w-2.5 h-2.5 border-b-2 border-r-2 border-cyan-300" />
+                      </div>
+
+                      <div className="absolute bottom-2 left-2 text-[8px] font-mono text-cyan-400 bg-slate-950/80 px-2 py-0.5 rounded-full border border-cyan-500/10">
+                        SCANNING IN PROGRESS
+                      </div>
+                    </div>
+
+                    {/* Meta stats details */}
+                    <div className="col-span-5 flex flex-col justify-between p-2.5 rounded-xl bg-slate-950/50 border border-slate-900 text-xs">
+                      <div className="space-y-1">
+                        <span className="text-[7.5px] font-black text-slate-500 uppercase tracking-widest block">Logged Attendance</span>
+                        <h5 className="font-extrabold text-slate-100 text-xs truncate">Ravi Verma</h5>
+                        <span className="text-[9px] font-mono text-slate-400 block">Roll: CS21009</span>
+                        <span className="text-[9px] font-mono text-slate-500 block">CSE • Semester 7</span>
+                      </div>
+                      
+                      <div className="border-t border-slate-900 my-1.5" />
+                      
+                      <div className="grid grid-cols-2 gap-1.5">
+                        <div>
+                          <span className="text-[7px] text-slate-500 uppercase block font-black">Confidence</span>
+                          <span className="text-[10px] font-bold text-cyan-400">99.8%</span>
+                        </div>
+                        <div>
+                          <span className="text-[7px] text-slate-500 uppercase block font-black">Status</span>
+                          <Badge className="bg-cyan-500/15 border-none text-[8px] text-cyan-400 py-0 px-1 font-bold h-4">Present</Badge>
+                        </div>
+                      </div>
                     </div>
                   </div>
+
+                  {/* Inner Row 2: Attendance rate stats & Interactive mini graph logs */}
+                  <div className="grid grid-cols-12 gap-3">
+                    <div className="col-span-4 p-2.5 rounded-xl bg-slate-950/50 border border-slate-900 flex flex-col justify-between">
+                      <span className="text-[7.5px] font-black text-slate-500 uppercase tracking-widest block">Class Attendance Rate</span>
+                      <div className="flex items-baseline gap-1 mt-1">
+                        <span className="text-sm font-mono font-black text-slate-200">94.5%</span>
+                        <span className="text-[8px] text-cyan-400 font-bold">✓ Target met</span>
+                      </div>
+                    </div>
+                    
+                    <div className="col-span-8 p-2.5 rounded-xl bg-slate-950/50 border border-slate-900 flex items-center justify-between gap-4">
+                      <div className="flex-1">
+                        <span className="text-[7.5px] font-black text-slate-500 uppercase tracking-widest block">Weekly Sessions Metrics</span>
+                        <span className="text-[9px] text-slate-400 block mt-0.5">Average threshold score: 92%</span>
+                      </div>
+                      
+                      {/* SVG Bar Chart logs */}
+                      <div className="h-7 flex items-end gap-1.5 shrink-0 px-1">
+                        <div className="w-2 bg-sky-500/15 rounded-sm h-[30%]" />
+                        <div className="w-2 bg-sky-500/20 rounded-sm h-[50%]" />
+                        <div className="w-2 bg-sky-500/20 rounded-sm h-[40%]" />
+                        <div className="w-2 bg-sky-500/30 rounded-sm h-[75%]" />
+                        <div className="w-2 bg-gradient-to-t from-sky-500 to-cyan-400 rounded-sm h-[95%] shadow-[0_0_10px_rgba(6,182,212,0.3)]" />
+                      </div>
+                    </div>
+                  </div>
+
                 </div>
-
-              </div>
-
-              {/* Bottom Section: Divider + Subject & Attendance Analytics Rate info */}
-              <div className="border-t border-slate-850 pt-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-                
-                {/* Subject Block */}
-                <div className="flex items-center gap-3 text-left w-full sm:w-auto">
-                  <div className="h-9 w-9 rounded-xl bg-sky-500/10 text-sky-400 flex items-center justify-center border border-sky-500/10 shrink-0">
-                    <Check className="h-4.5 w-4.5" />
-                  </div>
-                  <div>
-                    <span className="text-[8px] text-slate-500 uppercase tracking-widest font-black block">Subject</span>
-                    <span className="text-xs font-bold text-slate-200">Artificial Intelligence</span>
-                  </div>
-                </div>
-
-                {/* Vertical Divider */}
-                <div className="hidden sm:block h-8 w-px bg-slate-850" />
-
-                {/* Attendance Rate Metric Block */}
-                <div className="flex items-center justify-between sm:justify-start gap-4 text-left w-full sm:w-auto">
-                  <div>
-                    <span className="text-[8px] text-slate-500 uppercase tracking-widest font-black block">Attendance Rate</span>
-                    <div className="text-sm font-mono font-black text-slate-200">94.5%</div>
-                  </div>
-
-                  {/* Minimal SVG chart representation inside unified card */}
-                  <div className="h-[28px] flex items-end gap-1 shrink-0">
-                    <div className="w-1.5 bg-sky-500/20 rounded-sm h-[40%]" />
-                    <div className="w-1.5 bg-sky-500/20 rounded-sm h-[65%]" />
-                    <div className="w-1.5 bg-sky-500/20 rounded-sm h-[50%]" />
-                    <div className="w-1.5 bg-sky-500/20 rounded-sm h-[85%]" />
-                    <div className="w-1.5 bg-cyan-500 rounded-sm h-[95%] shadow-[0_0_10px_rgba(6,182,212,0.3)]" />
-                  </div>
-                </div>
-
               </div>
 
             </motion.div>
