@@ -143,31 +143,31 @@ function ShowcaseMockup({ highlight = false }: { highlight?: boolean }) {
     { 
       title: "Faculty Dashboard", 
       desc: "Complete control panel for professors to manage course codes, semester catalogs, departments, and register sessions.", 
-      color: "from-blue-600 to-indigo-700",
+      color: "from-blue-600 to-indigo-800",
       type: "faculty"
     },
     { 
       title: "Student Dashboard", 
       desc: "Personal portal for students to monitor attendance rates, check subject-wise details, and track threshold targets.", 
-      color: "from-emerald-600 to-teal-700",
+      color: "from-sky-600 to-blue-800",
       type: "student"
     },
     { 
       title: "Student Registration", 
       desc: "Allows new students to enroll by filling details and performing automated face captures.", 
-      color: "from-cyan-600 to-blue-700",
+      color: "from-cyan-600 to-sky-700",
       type: "register"
     },
     { 
       title: "Attendance Recognition", 
       desc: "Automatically detects student faces through the webcam feed and logs attendance instantly.", 
-      color: "from-purple-600 to-pink-700",
+      color: "from-indigo-600 to-slate-800",
       type: "attendance"
     },
     { 
       title: "Analytics Console", 
       desc: "Interactive chart metrics, exam eligibility checkers, and statistical rate sheets showing student engagement.", 
-      color: "from-amber-600 to-orange-700",
+      color: "from-blue-700 to-cyan-800",
       type: "analytics"
     },
   ];
@@ -227,13 +227,13 @@ function ShowcaseMockup({ highlight = false }: { highlight?: boolean }) {
           <div className="w-full h-full bg-slate-950/80 border border-slate-800 rounded-xl p-3 flex flex-col gap-2 font-sans text-xs">
             <div className="flex items-center justify-between border-b border-slate-800 pb-2">
               <span className="font-bold text-slate-200">Student Dashboard</span>
-              <Badge className="bg-emerald-500/20 text-emerald-400 border-none text-[9px] py-0">CS21001</Badge>
+              <Badge className="bg-sky-500/20 text-sky-400 border-none text-[9px] py-0">CS21001</Badge>
             </div>
             <div className="flex items-center gap-3 bg-slate-900 rounded-lg border border-slate-800 p-2.5">
-              <div className="h-10 w-10 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-black">92%</div>
+              <div className="h-10 w-10 rounded-full bg-sky-500/10 text-sky-400 flex items-center justify-center font-black">92%</div>
               <div className="text-left flex-1">
                 <h5 className="font-bold text-slate-200 text-[11px]">Overall Attendance</h5>
-                <span className="text-[9px] text-emerald-400 font-semibold uppercase">✓ Exam Eligible</span>
+                <span className="text-[9px] text-sky-400 font-semibold uppercase">✓ Exam Eligible</span>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-1.5 text-[9px] text-slate-400">
@@ -280,18 +280,18 @@ function ShowcaseMockup({ highlight = false }: { highlight?: boolean }) {
           <div className="w-full h-full bg-slate-950/80 border border-slate-800 rounded-xl p-3 flex flex-col gap-2 font-sans text-xs relative overflow-hidden">
             <div className="flex items-center justify-between border-b border-slate-800 pb-2">
               <span className="font-bold text-slate-200">Active Camera Sensor</span>
-              <span className="h-2 w-2 rounded-full bg-rose-500 animate-pulse" />
+              <span className="h-2 w-2 rounded-full bg-cyan-450 animate-pulse" />
             </div>
             <div className="flex-1 bg-slate-900 rounded-lg border border-slate-800 flex items-center justify-center relative overflow-hidden">
               <ScanFace className="h-10 w-10 text-slate-800" />
               {/* Bounding box mock overlay */}
-              <div className="absolute top-[20%] left-[30%] w-[60px] h-[60px] border border-dashed border-emerald-400 rounded-lg">
-                <span className="absolute top-[-14px] left-0 bg-emerald-400 text-[7px] text-slate-950 font-bold px-1 rounded">Ravi Verma</span>
+              <div className="absolute top-[20%] left-[30%] w-[60px] h-[60px] border border-dashed border-cyan-400 rounded-lg">
+                <span className="absolute top-[-14px] left-0 bg-cyan-400 text-[7px] text-slate-950 font-bold px-1 rounded">Ravi Verma</span>
               </div>
             </div>
             <div className="flex justify-between items-center text-[9px]">
               <span className="text-slate-400">Match score: 99.8%</span>
-              <span className="text-emerald-400 font-bold">✓ Logged successfully</span>
+              <span className="text-cyan-400 font-bold">✓ Logged successfully</span>
             </div>
           </div>
         );
@@ -300,15 +300,15 @@ function ShowcaseMockup({ highlight = false }: { highlight?: boolean }) {
           <div className="w-full h-full bg-slate-950/80 border border-slate-800 rounded-xl p-3 flex flex-col gap-2 font-sans text-xs">
             <div className="flex items-center justify-between border-b border-slate-800 pb-2">
               <span className="font-bold text-slate-200">Roster Analytics</span>
-              <Badge className="bg-amber-500/20 text-amber-400 border-none text-[9px] py-0">STATS</Badge>
+              <Badge className="bg-sky-500/20 text-sky-400 border-none text-[9px] py-0">STATS</Badge>
             </div>
             {/* Mock chart layout */}
             <div className="flex-1 flex items-end gap-2.5 px-2 pb-1">
-              <div className="w-full bg-amber-500/20 rounded h-[35%]" />
-              <div className="w-full bg-amber-500/20 rounded h-[65%]" />
-              <div className="w-full bg-amber-500/20 rounded h-[50%]" />
-              <div className="w-full bg-amber-500/20 rounded h-[80%]" />
-              <div className="w-full bg-amber-500 rounded h-[95%]" />
+              <div className="w-full bg-sky-500/20 rounded h-[35%]" />
+              <div className="w-full bg-sky-500/20 rounded h-[65%]" />
+              <div className="w-full bg-sky-500/20 rounded h-[50%]" />
+              <div className="w-full bg-sky-500/20 rounded h-[80%]" />
+              <div className="w-full bg-sky-500 rounded h-[95%]" />
             </div>
             <div className="flex justify-between items-center text-[8px] text-slate-500">
               <span>Mon</span>
@@ -545,9 +545,23 @@ function EdTechLandingPage() {
             opacity: 0.15;
           }
         }
+        @keyframes shimmer {
+          100% {
+            transform: translateX(100%);
+          }
+        }
       `}} />
 
       {/* 1. BACKGROUND DECORATIONS */}
+      {/* Fractal Noise Overlay */}
+      <div 
+        className="absolute inset-0 pointer-events-none opacity-[0.015] z-0 bg-[repeat:repeat]" 
+        style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}
+      />
+
+      {/* Radial Vignette Shadow Overlay */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_30%,rgba(2,6,23,0.85)_100%)] pointer-events-none z-0" />
+
       {/* Moving Grid Pattern */}
       <div 
         className="absolute inset-0 bg-[linear-gradient(to_right,#0284c705_1px,transparent_1px),linear-gradient(to_bottom,#0284c705_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none z-0"
@@ -564,7 +578,7 @@ function EdTechLandingPage() {
           style={{ animation: "auroraFloat 22s infinite alternate ease-in-out" }}
         />
         <div 
-          className="absolute bottom-0 right-[15%] w-[700px] h-[700px] rounded-full bg-gradient-to-tr from-emerald-500 via-teal-650 to-sky-650" 
+          className="absolute bottom-0 right-[15%] w-[700px] h-[700px] rounded-full bg-gradient-to-tr from-blue-600 via-cyan-700 to-sky-700" 
           style={{ animation: "auroraFloat 28s infinite alternate-reverse ease-in-out" }}
         />
       </motion.div>
@@ -624,8 +638,8 @@ function EdTechLandingPage() {
         transition={{ duration: 0.5, ease: "easeOut" }}
         className={`sticky top-0 z-50 border-b transition-all duration-300 ${
           scrolled 
-            ? "bg-slate-950/80 border-slate-900/60 py-3.5 backdrop-blur-lg shadow-lg" 
-            : "bg-transparent border-transparent py-5"
+            ? "bg-slate-950/80 border-slate-900/60 py-4 backdrop-blur-lg shadow-lg" 
+            : "bg-transparent border-transparent py-6.5"
         }`}
       >
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
@@ -639,54 +653,34 @@ function EdTechLandingPage() {
           </Link>
 
           {/* Nav items */}
-          <nav className="hidden lg:flex items-center gap-8 text-xs font-semibold text-slate-400">
+          <nav className="hidden lg:flex items-center gap-10 text-[10px] uppercase tracking-widest font-black text-slate-400">
             <a 
               href="#showcase" 
-              className={`relative py-1 transition-colors hover:text-slate-100 ${activeSection === "showcase" ? "text-sky-400 font-bold" : ""}`}
+              className={`relative py-2 transition-all duration-300 hover:text-slate-100 group ${activeSection === "showcase" ? "text-sky-400" : "text-slate-450"}`}
             >
               How It Works
-              {activeSection === "showcase" && (
-                <motion.span 
-                  layoutId="activeNavDot" 
-                  className="absolute bottom-[-4px] left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-sky-400 rounded-full shadow-[0_0_8px_rgba(14,165,233,0.8)]"
-                />
-              )}
+              <span className={`absolute bottom-[-2px] left-0 h-[2px] bg-gradient-to-r from-sky-400 to-blue-500 rounded-full transition-all duration-300 ${activeSection === "showcase" ? "w-full shadow-[0_0_8px_rgba(56,189,248,0.6)]" : "w-0 group-hover:w-full"}`} />
             </a>
             <a 
               href="#features" 
-              className={`relative py-1 transition-colors hover:text-slate-100 ${activeSection === "features" ? "text-sky-400 font-bold" : ""}`}
+              className={`relative py-2 transition-all duration-300 hover:text-slate-100 group ${activeSection === "features" ? "text-sky-400" : "text-slate-450"}`}
             >
               Features
-              {activeSection === "features" && (
-                <motion.span 
-                  layoutId="activeNavDot" 
-                  className="absolute bottom-[-4px] left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-sky-400 rounded-full shadow-[0_0_8px_rgba(14,165,233,0.8)]"
-                />
-              )}
+              <span className={`absolute bottom-[-2px] left-0 h-[2px] bg-gradient-to-r from-sky-400 to-blue-500 rounded-full transition-all duration-300 ${activeSection === "features" ? "w-full shadow-[0_0_8px_rgba(56,189,248,0.6)]" : "w-0 group-hover:w-full"}`} />
             </a>
             <a 
               href="#technology" 
-              className={`relative py-1 transition-colors hover:text-slate-100 ${activeSection === "technology" ? "text-sky-400 font-bold" : ""}`}
+              className={`relative py-2 transition-all duration-300 hover:text-slate-100 group ${activeSection === "technology" ? "text-sky-400" : "text-slate-450"}`}
             >
               Technology
-              {activeSection === "technology" && (
-                <motion.span 
-                  layoutId="activeNavDot" 
-                  className="absolute bottom-[-4px] left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-sky-400 rounded-full shadow-[0_0_8px_rgba(14,165,233,0.8)]"
-                />
-              )}
+              <span className={`absolute bottom-[-2px] left-0 h-[2px] bg-gradient-to-r from-sky-400 to-blue-500 rounded-full transition-all duration-300 ${activeSection === "technology" ? "w-full shadow-[0_0_8px_rgba(56,189,248,0.6)]" : "w-0 group-hover:w-full"}`} />
             </a>
             <a 
               href="#faq" 
-              className={`relative py-1 transition-colors hover:text-slate-100 ${activeSection === "faq" ? "text-sky-400 font-bold" : ""}`}
+              className={`relative py-2 transition-all duration-300 hover:text-slate-100 group ${activeSection === "faq" ? "text-sky-400" : "text-slate-450"}`}
             >
               FAQ
-              {activeSection === "faq" && (
-                <motion.span 
-                  layoutId="activeNavDot" 
-                  className="absolute bottom-[-4px] left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-sky-400 rounded-full shadow-[0_0_8px_rgba(14,165,233,0.8)]"
-                />
-              )}
+              <span className={`absolute bottom-[-2px] left-0 h-[2px] bg-gradient-to-r from-sky-400 to-blue-500 rounded-full transition-all duration-300 ${activeSection === "faq" ? "w-full shadow-[0_0_8px_rgba(56,189,248,0.6)]" : "w-0 group-hover:w-full"}`} />
             </a>
           </nav>
 
@@ -734,7 +728,7 @@ function EdTechLandingPage() {
           <div className="relative">
             {/* Spotlight effect behind the hero heading */}
             <div className="absolute -inset-10 bg-[radial-gradient(circle_at_center,rgba(14,165,233,0.18)_0%,transparent_60%)] blur-3xl pointer-events-none z-0" />
-            <h1 className="relative z-10 text-4xl md:text-6xl font-black tracking-tight leading-[1.1] bg-gradient-to-b from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">
+            <h1 className="relative z-10 text-5xl md:text-7xl font-black tracking-tight leading-[1.05] bg-gradient-to-b from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">
               <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-500">
                 AI
                 <span className="absolute -inset-1 bg-sky-500/25 rounded-lg blur-md -z-10 animate-pulse pointer-events-none" />
@@ -743,11 +737,11 @@ function EdTechLandingPage() {
             </h1>
           </div>
 
-          <p className="text-sm md:text-base font-semibold text-sky-400/90 leading-relaxed max-w-xl">
+          <p className="text-base md:text-lg font-semibold text-sky-400/90 leading-relaxed max-w-2xl">
             Transform classroom attendance with AI-powered face recognition, secure authentication, real-time analytics, and intelligent automation.
           </p>
 
-          <p className="text-xs md:text-sm text-slate-400 leading-relaxed max-w-xl">
+          <p className="text-sm md:text-base text-slate-400/95 leading-relaxed max-w-2xl">
             Eliminate manual attendance registers using computer vision and AI. Manage students, faculty, attendance records, reports, and analytics from one intelligent platform.
           </p>
 
@@ -756,20 +750,20 @@ function EdTechLandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 w-full max-w-[600px]"
+            className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 w-full max-w-[620px]"
           >
             <Link to="/auth" className="w-full">
-              <Button size="lg" className="w-full gradient-primary text-primary-foreground font-bold rounded-2xl h-12 px-4 shadow-xl shadow-primary/20 hover:scale-[1.03] hover:shadow-primary/30 transition-all duration-300 text-xs md:text-sm flex items-center justify-center gap-1.5">
+              <Button size="lg" className="w-full gradient-primary text-primary-foreground font-bold rounded-2xl h-[52px] px-4 shadow-xl shadow-primary/20 hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] transition-all duration-300 text-sm flex items-center justify-center gap-1.5">
                 Get Started <ArrowRight className="h-4 w-4 shrink-0" />
               </Button>
             </Link>
             <a href="#showcase" onClick={handleWatchDemo} className="w-full">
-              <Button size="lg" variant="outline" className="w-full text-slate-300 border-slate-800 hover:border-slate-700 hover:bg-slate-900 bg-slate-950/20 rounded-2xl h-12 px-4 text-xs md:text-sm font-bold hover:scale-[1.03] transition-all duration-300 flex items-center justify-center">
+              <Button size="lg" variant="outline" className="w-full text-slate-300 border-slate-800 hover:border-slate-700 hover:bg-slate-900 bg-slate-950/20 rounded-2xl h-[52px] px-4 text-sm font-bold hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(59,130,246,0.15)] transition-all duration-300 flex items-center justify-center">
                 Watch Demo
               </Button>
             </a>
             <a href="https://github.com/namratadakhole" target="_blank" rel="noreferrer" className="w-full">
-              <Button size="lg" variant="outline" className="w-full text-slate-400 border-slate-900 hover:border-slate-850 hover:text-white bg-slate-950/10 rounded-2xl h-12 px-4 text-xs md:text-sm font-semibold hover:scale-[1.03] transition-all duration-300 flex items-center justify-center gap-1">
+              <Button size="lg" variant="outline" className="w-full text-slate-400 border-slate-900 hover:border-slate-850 hover:text-white bg-slate-950/10 rounded-2xl h-[52px] px-4 text-sm font-semibold hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(59,130,246,0.15)] transition-all duration-300 flex items-center justify-center gap-1">
                 GitHub Repo
               </Button>
             </a>
@@ -785,7 +779,7 @@ function EdTechLandingPage() {
             <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block">Built with</span>
             <div className="flex flex-wrap gap-2">
               {["React", "TypeScript", "Flask", "Python", "OpenCV", "MediaPipe", "MongoDB", "Tailwind CSS"].map((tech) => (
-                <Badge key={tech} className="bg-slate-900/40 hover:bg-slate-900 border border-slate-800/80 hover:border-slate-700 text-slate-400 hover:text-sky-400 transition-all duration-200 text-[10px] font-semibold px-2.5 py-1 rounded-lg">
+                <Badge key={tech} className="bg-white/5 hover:bg-white/10 border border-white/10 hover:border-sky-500/40 text-slate-300 hover:text-sky-300 hover:shadow-[0_0_15px_rgba(56,189,248,0.15)] transition-all duration-300 rounded-lg px-2.5 py-1 text-[10px] font-semibold">
                   {tech}
                 </Badge>
               ))}
@@ -817,16 +811,22 @@ function EdTechLandingPage() {
           <div className="absolute -inset-4 bg-[radial-gradient(circle_at_center,rgba(56,189,248,0.2)_0%,transparent_70%)] rounded-full blur-3xl pointer-events-none" />
 
           {/* Unified Premium Glassmorphism Product Showcase Panel (20% Larger) */}
-          <div className="relative w-full max-w-[620px] z-20">
+          <div className="relative w-full max-w-[620px] z-20 group/panel">
+            {/* Soft blue glow backdrop with hover expansion */}
+            <div className="absolute -inset-1.5 bg-gradient-to-r from-sky-500/10 to-blue-500/10 rounded-3xl blur-2xl opacity-75 group-hover/panel:opacity-100 group-hover/panel:scale-[1.02] transition-all duration-500 pointer-events-none" />
+
             <motion.div
               animate={{ y: [0, -8, 0] }}
               transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-              className="w-full bg-slate-900/40 border border-slate-800/80 rounded-3xl p-5 md:p-6 backdrop-blur-xl shadow-2xl flex flex-col gap-5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.03)]"
+              className="w-full bg-slate-950/40 border border-white/10 rounded-3xl p-5 md:p-6 backdrop-blur-2xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.7)] flex flex-col gap-5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] hover:border-white/20 transition-all duration-300 relative overflow-hidden"
             >
+              {/* Subtle light sheen sweep animation overlay on hover */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover/panel:animate-[shimmer_1.5s_infinite] pointer-events-none" />
+
               {/* Header: Live Feed Label + Session Clock */}
               <div className="flex items-center justify-between pb-3 border-b border-slate-850">
                 <span className="text-[10px] uppercase font-bold text-sky-400 tracking-wider flex items-center gap-1.5">
-                  <span className="h-2 w-2 rounded-full bg-rose-500 animate-pulse" /> Live Camera Stream
+                  <span className="h-2 w-2 rounded-full bg-cyan-400 animate-pulse" /> Live Camera Stream
                 </span>
                 <div className="flex items-center gap-1.5 text-[9px] text-slate-400 font-mono">
                   <Clock className="h-3.5 w-3.5 text-slate-500" /> 10:15 AM
@@ -841,19 +841,19 @@ function EdTechLandingPage() {
                   <Video className="h-8 w-8 text-slate-800" />
                   
                   {/* Face Detection Bounding Box overlay */}
-                  <div className="absolute top-[20%] left-[23%] w-[95px] h-[95px] border-2 border-emerald-400 border-dashed rounded-xl shadow-[0_0_20px_rgba(52,211,153,0.15)] flex items-center justify-center">
-                    <div className="absolute top-[-22px] left-0 bg-emerald-400 text-[8px] text-slate-950 font-black px-1.5 py-0.5 rounded shadow">
+                  <div className="absolute top-[20%] left-[23%] w-[95px] h-[95px] border-2 border-cyan-400 border-dashed rounded-xl shadow-[0_0_20px_rgba(52,211,153,0.15)] flex items-center justify-center">
+                    <div className="absolute top-[-22px] left-0 bg-cyan-400 text-[8px] text-slate-950 font-black px-1.5 py-0.5 rounded shadow">
                       Ravi Verma
                     </div>
                     {/* Bounding markers */}
-                    <div className="absolute top-[-2px] left-[-2px] w-2.5 h-2.5 border-t-2 border-l-2 border-emerald-300" />
-                    <div className="absolute top-[-2px] right-[-2px] w-2.5 h-2.5 border-t-2 border-r-2 border-emerald-300" />
-                    <div className="absolute bottom-[-2px] left-[-2px] w-2.5 h-2.5 border-b-2 border-l-2 border-emerald-300" />
-                    <div className="absolute bottom-[-2px] right-[-2px] w-2.5 h-2.5 border-b-2 border-r-2 border-emerald-300" />
+                    <div className="absolute top-[-2px] left-[-2px] w-2.5 h-2.5 border-t-2 border-l-2 border-cyan-300" />
+                    <div className="absolute top-[-2px] right-[-2px] w-2.5 h-2.5 border-t-2 border-r-2 border-cyan-300" />
+                    <div className="absolute bottom-[-2px] left-[-2px] w-2.5 h-2.5 border-b-2 border-l-2 border-cyan-300" />
+                    <div className="absolute bottom-[-2px] right-[-2px] w-2.5 h-2.5 border-b-2 border-r-2 border-cyan-300" />
                   </div>
                   
                   {/* Face detection HUD status */}
-                  <div className="absolute bottom-2.5 left-3 text-[8px] font-mono text-emerald-400 bg-slate-950/80 px-2 py-0.5 rounded-full border border-emerald-500/10">
+                  <div className="absolute bottom-2.5 left-3 text-[8px] font-mono text-cyan-400 bg-slate-950/80 px-2 py-0.5 rounded-full border border-cyan-500/10">
                     SCANNING: ACTIVE
                   </div>
                 </div>
@@ -876,7 +876,7 @@ function EdTechLandingPage() {
                   <div className="space-y-1 text-left">
                     <span className="text-[8px] text-slate-500 uppercase tracking-widest font-black block">Confidence Match</span>
                     <div className="flex items-center gap-1.5">
-                      <span className="text-xs font-bold text-emerald-400">99.8%</span>
+                      <span className="text-xs font-bold text-cyan-400">99.8%</span>
                       <span className="text-[9px] text-slate-500 font-medium">high accuracy</span>
                     </div>
                   </div>
@@ -888,7 +888,7 @@ function EdTechLandingPage() {
                   <div className="space-y-1 text-left">
                     <span className="text-[8px] text-slate-500 uppercase tracking-widest font-black block">Status</span>
                     <div className="flex items-center gap-2">
-                      <Badge className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 py-0.5 px-2 rounded-lg text-[9px] font-semibold uppercase">
+                      <Badge className="bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 py-0.5 px-2 rounded-lg text-[9px] font-semibold uppercase">
                         Present
                       </Badge>
                     </div>
@@ -927,7 +927,7 @@ function EdTechLandingPage() {
                     <div className="w-1.5 bg-sky-500/20 rounded-sm h-[65%]" />
                     <div className="w-1.5 bg-sky-500/20 rounded-sm h-[50%]" />
                     <div className="w-1.5 bg-sky-500/20 rounded-sm h-[85%]" />
-                    <div className="w-1.5 bg-emerald-500 rounded-sm h-[95%] shadow-[0_0_10px_rgba(16,185,129,0.3)]" />
+                    <div className="w-1.5 bg-cyan-500 rounded-sm h-[95%] shadow-[0_0_10px_rgba(6,182,212,0.3)]" />
                   </div>
                 </div>
 
@@ -939,7 +939,7 @@ function EdTechLandingPage() {
       </section>
 
       {/* 5. PRODUCT CREDIBILITY SECTION */}
-      <section className="max-w-7xl mx-auto px-6 py-20 relative z-10 text-center">
+      <section className="max-w-7xl mx-auto px-6 py-28 relative z-10 text-center">
         <div className="max-w-3xl mx-auto mb-16 space-y-4">
           <Badge variant="secondary" className="bg-slate-900 border-slate-800 text-slate-400 font-semibold px-3 py-1">Architecture</Badge>
           <h2 className="text-2xl md:text-4xl font-extrabold bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
@@ -988,7 +988,7 @@ function EdTechLandingPage() {
       </section>
 
       {/* 7. FEATURES GRID (Highlights) */}
-      <section id="features" className="max-w-7xl mx-auto px-6 py-20 border-t border-slate-900/60 relative z-10">
+      <section id="features" className="max-w-7xl mx-auto px-6 py-28 border-t border-slate-900/60 relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
           <Badge variant="secondary" className="bg-slate-900 border-slate-800 text-slate-400 font-semibold px-3 py-1">Platform Highlights</Badge>
           <h2 className="text-2xl md:text-4xl font-extrabold bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
@@ -1016,7 +1016,7 @@ function EdTechLandingPage() {
           {/* Card 2: Auto Attendance */}
           <div className="p-6 md:p-8 rounded-3xl border border-slate-900 bg-slate-950 hover:border-slate-800/80 transition-all duration-300 group flex flex-col justify-between shadow-md hover:translate-y-[-2px]">
             <div>
-              <div className="h-10 w-10 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
+              <div className="h-10 w-10 rounded-2xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
                 <Activity className="h-5.5 w-5.5" />
               </div>
               <h3 className="font-bold text-slate-100 mb-1.5 text-sm md:text-base">Automatic Attendance</h3>
@@ -1029,7 +1029,7 @@ function EdTechLandingPage() {
           {/* Card 3: Subject-wise Attendance */}
           <div className="p-6 md:p-8 rounded-3xl border border-slate-900 bg-slate-950 hover:border-slate-800/80 transition-all duration-300 group flex flex-col justify-between shadow-md hover:translate-y-[-2px]">
             <div>
-              <div className="h-10 w-10 rounded-2xl bg-purple-500/10 text-purple-400 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
+              <div className="h-10 w-10 rounded-2xl bg-blue-500/10 text-blue-450 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
                 <BookMarked className="h-5.5 w-5.5" />
               </div>
               <h3 className="font-bold text-slate-100 mb-1.5 text-sm md:text-base">Subject-wise Attendance</h3>
@@ -1055,7 +1055,7 @@ function EdTechLandingPage() {
           {/* Card 5: Student Dashboard */}
           <div className="p-6 md:p-8 rounded-3xl border border-slate-900 bg-slate-950 hover:border-slate-800/80 transition-all duration-300 group flex flex-col justify-between shadow-md hover:translate-y-[-2px]">
             <div>
-              <div className="h-10 w-10 rounded-2xl bg-amber-500/10 text-amber-400 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
+              <div className="h-10 w-10 rounded-2xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
                 <GraduationCap className="h-5.5 w-5.5" />
               </div>
               <h3 className="font-bold text-slate-100 mb-1.5 text-sm md:text-base">Student Dashboard</h3>
@@ -1068,7 +1068,7 @@ function EdTechLandingPage() {
           {/* Card 6: Attendance Analytics */}
           <div className="p-6 md:p-8 rounded-3xl border border-slate-900 bg-slate-950 hover:border-slate-800/80 transition-all duration-300 group flex flex-col justify-between shadow-md hover:translate-y-[-2px]">
             <div>
-              <div className="h-10 w-10 rounded-2xl bg-pink-500/10 text-pink-400 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
+              <div className="h-10 w-10 rounded-2xl bg-blue-500/10 text-blue-400 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
                 <TrendingUp className="h-5.5 w-5.5" />
               </div>
               <h3 className="font-bold text-slate-100 mb-1.5 text-sm md:text-base">Attendance Analytics</h3>
@@ -1081,7 +1081,7 @@ function EdTechLandingPage() {
       </section>
 
       {/* 8. HOW IT WORKS (Modern Timeline Step guides) */}
-      <section className="max-w-7xl mx-auto px-6 py-20 border-t border-slate-900/60 relative z-10">
+      <section className="max-w-7xl mx-auto px-6 py-28 border-t border-slate-900/60 relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
           <Badge variant="secondary" className="bg-slate-900 border-slate-800 text-slate-400 font-semibold px-3 py-1">Process Flow</Badge>
           <h2 className="text-2xl md:text-4xl font-extrabold bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
@@ -1108,7 +1108,7 @@ function EdTechLandingPage() {
           {/* Step 2 */}
           <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between">
             <div className="hidden md:block md:w-5/12" />
-            <div className="absolute left-6 md:left-1/2 -translate-x-[11px] h-6 w-6 rounded-full bg-emerald-450 border-4 border-slate-950 flex items-center justify-center z-10 shadow-md" />
+            <div className="absolute left-6 md:left-1/2 -translate-x-[11px] h-6 w-6 rounded-full bg-cyan-500 border-4 border-slate-950 flex items-center justify-center z-10 shadow-md" />
             <div className="md:w-5/12 text-left pl-12 md:pl-12">
               <h4 className="font-extrabold text-slate-100 text-sm md:text-base">2. Face Capture</h4>
               <p className="text-xs text-slate-400 leading-relaxed mt-1">Open the camera stream to capture 20 facial samples to build facial vectors.</p>
@@ -1121,7 +1121,7 @@ function EdTechLandingPage() {
               <h4 className="font-extrabold text-slate-100 text-sm md:text-base">3. AI Model Training</h4>
               <p className="text-xs text-slate-400 leading-relaxed mt-1">Train the facial recognizer module to match embeddings to database files.</p>
             </div>
-            <div className="absolute left-6 md:left-1/2 -translate-x-[11px] h-6 w-6 rounded-full bg-purple-400 border-4 border-slate-950 flex items-center justify-center z-10 shadow-md" />
+            <div className="absolute left-6 md:left-1/2 -translate-x-[11px] h-6 w-6 rounded-full bg-blue-400 border-4 border-slate-950 flex items-center justify-center z-10 shadow-md" />
             <div className="hidden md:block md:w-5/12" />
           </div>
 
@@ -1139,7 +1139,7 @@ function EdTechLandingPage() {
           <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between">
             <div className="md:w-5/12 text-left md:text-right md:pr-12 pl-12 md:pl-0">
               <h4 className="font-extrabold text-slate-100 text-sm md:text-base">5. Attendance Stored</h4>
-              <p className="text-xs text-slate-400 leading-relaxed mt-1">Logs are automatically saved to SQLite database and referenced instantly.</p>
+              <p className="text-xs text-slate-400 leading-relaxed mt-1">Logs are automatically saved to MongoDB Atlas database and referenced instantly.</p>
             </div>
             <div className="absolute left-6 md:left-1/2 -translate-x-[11px] h-6 w-6 rounded-full bg-sky-400 border-4 border-slate-950 flex items-center justify-center z-10 shadow-md" />
             <div className="hidden md:block md:w-5/12" />
@@ -1148,7 +1148,7 @@ function EdTechLandingPage() {
           {/* Step 6 */}
           <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between">
             <div className="hidden md:block md:w-5/12" />
-            <div className="absolute left-6 md:left-1/2 -translate-x-[11px] h-6 w-6 rounded-full bg-amber-400 border-4 border-slate-950 flex items-center justify-center z-10 shadow-md" />
+            <div className="absolute left-6 md:left-1/2 -translate-x-[11px] h-6 w-6 rounded-full bg-cyan-400 border-4 border-slate-950 flex items-center justify-center z-10 shadow-md" />
             <div className="md:w-5/12 text-left pl-12 md:pl-12">
               <h4 className="font-extrabold text-slate-100 text-sm md:text-base">6. Analytics Generated</h4>
               <p className="text-xs text-slate-400 leading-relaxed mt-1">View overall rate performance and eligibility checklists in real time.</p>
@@ -1158,7 +1158,7 @@ function EdTechLandingPage() {
       </section>
 
       {/* 9. TECHNOLOGY SECTION */}
-      <section id="technology" className="max-w-7xl mx-auto px-6 py-20 border-t border-slate-900/60 relative z-10 text-center">
+      <section id="technology" className="max-w-7xl mx-auto px-6 py-28 border-t border-slate-900/60 relative z-10 text-center">
         <div className="max-w-3xl mx-auto mb-12 space-y-4">
           <Badge variant="secondary" className="bg-slate-900 border-slate-800 text-slate-400 font-semibold px-3 py-1">Built with Modern Technologies</Badge>
           <h2 className="text-2xl md:text-4xl font-extrabold bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
@@ -1168,21 +1168,21 @@ function EdTechLandingPage() {
 
         {/* Tech Badges grid (Hover scale animations) */}
         <div className="flex flex-wrap justify-center gap-2.5 max-w-3xl mx-auto">
-          <Badge className="bg-slate-900 border-slate-850 hover:bg-slate-900/80 text-slate-200 text-xs py-2.5 px-4.5 rounded-xl gap-2 font-mono hover:scale-105 transition-transform"><Cpu className="h-4 w-4 text-sky-400" /> React</Badge>
-          <Badge className="bg-slate-900 border-slate-850 hover:bg-slate-900/80 text-slate-200 text-xs py-2.5 px-4.5 rounded-xl gap-2 font-mono hover:scale-105 transition-transform"><Cpu className="h-4 w-4 text-blue-400" /> TypeScript</Badge>
-          <Badge className="bg-slate-900 border-slate-850 hover:bg-slate-900/80 text-slate-200 text-xs py-2.5 px-4.5 rounded-xl gap-2 font-mono hover:scale-105 transition-transform"><Brain className="h-4 w-4 text-emerald-400" /> Flask</Badge>
-          <Badge className="bg-slate-900 border-slate-850 hover:bg-slate-900/80 text-slate-200 text-xs py-2.5 px-4.5 rounded-xl gap-2 font-mono hover:scale-105 transition-transform"><Brain className="h-4 w-4 text-orange-400" /> Python</Badge>
-          <Badge className="bg-slate-900 border-slate-850 hover:bg-slate-900/80 text-slate-200 text-xs py-2.5 px-4.5 rounded-xl gap-2 font-mono hover:scale-105 transition-transform"><Brain className="h-4 w-4 text-blue-500" /> OpenCV</Badge>
-          <Badge className="bg-slate-900 border-slate-850 hover:bg-slate-900/80 text-slate-200 text-xs py-2.5 px-4.5 rounded-xl gap-2 font-mono hover:scale-105 transition-transform"><Layers className="h-4 w-4 text-indigo-400" /> MediaPipe</Badge>
-          <Badge className="bg-slate-900 border-slate-850 hover:bg-slate-900/80 text-slate-200 text-xs py-2.5 px-4.5 rounded-xl gap-2 font-mono hover:scale-105 transition-transform"><Database className="h-4 w-4 text-sky-500" /> SQLite</Badge>
-          <Badge className="bg-slate-900 border-slate-850 hover:bg-slate-900/80 text-slate-200 text-xs py-2.5 px-4.5 rounded-xl gap-2 font-mono hover:scale-105 transition-transform"><Cpu className="h-4 w-4 text-sky-400" /> Tailwind CSS</Badge>
-          <Badge className="bg-slate-900 border-slate-850 hover:bg-slate-900/80 text-slate-200 text-xs py-2.5 px-4.5 rounded-xl gap-2 font-mono hover:scale-105 transition-transform"><Cpu className="h-4 w-4 text-teal-400" /> Axios</Badge>
-          <Badge className="bg-slate-900 border-slate-850 hover:bg-slate-900/80 text-slate-200 text-xs py-2.5 px-4.5 rounded-xl gap-2 font-mono hover:scale-105 transition-transform"><Terminal className="h-4 w-4 text-yellow-500" /> TanStack Router</Badge>
+          <Badge className="bg-white/5 border border-white/10 hover:border-sky-500/40 text-slate-300 hover:text-sky-300 hover:shadow-[0_0_15px_rgba(56,189,248,0.15)] text-xs py-2.5 px-4.5 rounded-xl gap-2 font-mono hover:scale-105 transition-all duration-300"><Cpu className="h-4 w-4 text-sky-400" /> React</Badge>
+          <Badge className="bg-white/5 border border-white/10 hover:border-sky-500/40 text-slate-300 hover:text-sky-300 hover:shadow-[0_0_15px_rgba(56,189,248,0.15)] text-xs py-2.5 px-4.5 rounded-xl gap-2 font-mono hover:scale-105 transition-all duration-300"><Cpu className="h-4 w-4 text-blue-400" /> TypeScript</Badge>
+          <Badge className="bg-white/5 border border-white/10 hover:border-sky-500/40 text-slate-300 hover:text-sky-300 hover:shadow-[0_0_15px_rgba(56,189,248,0.15)] text-xs py-2.5 px-4.5 rounded-xl gap-2 font-mono hover:scale-105 transition-all duration-300"><Brain className="h-4 w-4 text-cyan-400" /> Flask</Badge>
+          <Badge className="bg-white/5 border border-white/10 hover:border-sky-500/40 text-slate-300 hover:text-sky-300 hover:shadow-[0_0_15px_rgba(56,189,248,0.15)] text-xs py-2.5 px-4.5 rounded-xl gap-2 font-mono hover:scale-105 transition-all duration-300"><Brain className="h-4 w-4 text-blue-500" /> Python</Badge>
+          <Badge className="bg-white/5 border border-white/10 hover:border-sky-500/40 text-slate-300 hover:text-sky-300 hover:shadow-[0_0_15px_rgba(56,189,248,0.15)] text-xs py-2.5 px-4.5 rounded-xl gap-2 font-mono hover:scale-105 transition-all duration-300"><Brain className="h-4 w-4 text-blue-500" /> OpenCV</Badge>
+          <Badge className="bg-white/5 border border-white/10 hover:border-sky-500/40 text-slate-300 hover:text-sky-300 hover:shadow-[0_0_15px_rgba(56,189,248,0.15)] text-xs py-2.5 px-4.5 rounded-xl gap-2 font-mono hover:scale-105 transition-all duration-300"><Layers className="h-4 w-4 text-indigo-400" /> MediaPipe</Badge>
+          <Badge className="bg-white/5 border border-white/10 hover:border-sky-500/40 text-slate-300 hover:text-sky-300 hover:shadow-[0_0_15px_rgba(56,189,248,0.15)] text-xs py-2.5 px-4.5 rounded-xl gap-2 font-mono hover:scale-105 transition-all duration-300"><Database className="h-4 w-4 text-sky-400" /> MongoDB Atlas</Badge>
+          <Badge className="bg-white/5 border border-white/10 hover:border-sky-500/40 text-slate-300 hover:text-sky-300 hover:shadow-[0_0_15px_rgba(56,189,248,0.15)] text-xs py-2.5 px-4.5 rounded-xl gap-2 font-mono hover:scale-105 transition-all duration-300"><Cpu className="h-4 w-4 text-sky-400" /> Tailwind CSS</Badge>
+          <Badge className="bg-white/5 border border-white/10 hover:border-sky-500/40 text-slate-300 hover:text-sky-300 hover:shadow-[0_0_15px_rgba(56,189,248,0.15)] text-xs py-2.5 px-4.5 rounded-xl gap-2 font-mono hover:scale-105 transition-all duration-300"><Cpu className="h-4 w-4 text-cyan-500" /> Axios</Badge>
+          <Badge className="bg-white/5 border border-white/10 hover:border-sky-500/40 text-slate-300 hover:text-sky-300 hover:shadow-[0_0_15px_rgba(56,189,248,0.15)] text-xs py-2.5 px-4.5 rounded-xl gap-2 font-mono hover:scale-105 transition-all duration-300"><Terminal className="h-4 w-4 text-blue-400" /> TanStack Router</Badge>
         </div>
       </section>
 
       {/* 10. WHY SMARTATTEND AI (Benefits section) */}
-      <section className="bg-slate-900/10 border-y border-slate-900/60 py-20 relative z-10">
+      <section className="bg-slate-900/10 border-y border-slate-900/60 py-28 relative z-10">
         <div className="max-w-7xl mx-auto px-6 text-center space-y-16">
           <div className="max-w-3xl mx-auto space-y-4">
             <Badge variant="secondary" className="bg-slate-900 border-slate-800 text-slate-400 font-semibold px-3 py-1">Benefits</Badge>
@@ -1217,7 +1217,7 @@ function EdTechLandingPage() {
       </section>
 
       {/* 11. FAQ ACCORDION */}
-      <section id="faq" className="max-w-3xl mx-auto px-6 py-20 border-t border-slate-900/60 relative z-10">
+      <section id="faq" className="max-w-3xl mx-auto px-6 py-28 border-t border-slate-900/60 relative z-10">
         <div className="text-center mb-12 space-y-3">
           <Badge variant="secondary" className="bg-slate-900 border-slate-800 text-slate-400 font-semibold px-3 py-1">FAQ</Badge>
           <h2 className="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
