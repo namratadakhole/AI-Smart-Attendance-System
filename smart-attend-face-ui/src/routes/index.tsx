@@ -803,21 +803,24 @@ function EdTechLandingPage() {
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.7, ease: "easeOut" }}
-          className="lg:col-span-6 flex items-center justify-center relative w-full"
+          className="lg:col-span-6 flex items-center justify-center relative w-full lg:-mt-16 lg:translate-y-[-16px]"
         >
-          {/* Intense premium blue lighting backdrop glow behind the glass container */}
-          <div className="absolute -inset-10 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.22)_0%,transparent_70%)] rounded-full blur-[100px] pointer-events-none" />
+          {/* Intense premium blue/cyan lighting backdrop glow behind the glass container */}
+          <div className="absolute -inset-20 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.38)_0%,rgba(6,182,212,0.15)_45%,transparent_75%)] rounded-full blur-[120px] pointer-events-none" />
 
           {/* Single premium glass container shell (Increased by 30% width/height limits) */}
           <div className="relative w-full max-w-[820px] z-20 group/panel">
             {/* Inner hover neon border glow */}
-            <div className="absolute -inset-1.5 bg-gradient-to-r from-sky-500/15 to-blue-500/15 rounded-3xl blur-2xl opacity-75 group-hover/panel:opacity-100 group-hover/panel:scale-[1.02] transition-all duration-500 pointer-events-none" />
+            <div className="absolute -inset-2 bg-gradient-to-r from-sky-500/25 to-blue-500/25 rounded-3xl blur-3xl opacity-85 group-hover/panel:opacity-100 group-hover/panel:scale-[1.03] transition-all duration-500 pointer-events-none" />
 
             <motion.div
               animate={{ y: [0, -8, 0] }}
               transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-              className="w-full bg-slate-950/40 border border-white/10 rounded-3xl p-5 md:p-6 backdrop-blur-2xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] hover:border-white/20 transition-all duration-300 relative overflow-hidden flex flex-col gap-4"
+              className="w-full bg-slate-950/40 border border-white/10 rounded-3xl p-5 md:p-6 backdrop-blur-2xl shadow-[0_35px_70px_-15px_rgba(0,0,0,0.9)] hover:border-white/25 transition-all duration-300 relative overflow-hidden flex flex-col gap-4"
             >
+              {/* Internal card glow highlight */}
+              <div className="absolute -inset-16 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.22)_0%,rgba(6,182,212,0.1)_45%,transparent_75%)] blur-3xl opacity-90 group-hover/panel:opacity-100 transition-opacity duration-500 pointer-events-none z-0" />
+
               {/* Subtle glass light sheen sweep animation overlay on hover */}
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover/panel:animate-[shimmer_1.5s_infinite] pointer-events-none" />
 
