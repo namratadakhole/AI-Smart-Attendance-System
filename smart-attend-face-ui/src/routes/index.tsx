@@ -714,14 +714,14 @@ function EdTechLandingPage() {
       </motion.header>
 
       {/* 3. HERO SECTION */}
-      <section className="max-w-7xl mx-auto px-6 pt-8 pb-16 md:pt-12 md:pb-24 grid gap-12 lg:grid-cols-12 items-center relative z-10">
+      <section className="max-w-7xl mx-auto px-6 pt-2 pb-16 md:pt-4 md:pb-24 grid gap-12 lg:grid-cols-12 items-center relative z-10">
         
         {/* Left Side Content */}
         <motion.div 
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="lg:col-span-5 space-y-6 text-left"
+          className="lg:col-span-5 flex flex-col gap-5 text-left"
         >
           {/* Badge */}
           <div className="inline-flex">
@@ -756,21 +756,21 @@ function EdTechLandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="flex flex-wrap gap-3.5 pt-2"
+            className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 w-full max-w-[600px]"
           >
-            <Link to="/auth">
-              <Button size="lg" className="gradient-primary text-primary-foreground font-bold rounded-2xl h-12 px-6 shadow-xl shadow-primary/20 hover:scale-[1.03] hover:shadow-primary/30 transition-all duration-300 text-sm flex items-center justify-center gap-1.5">
-                Get Started <ArrowRight className="ml-2 h-4 w-4" />
+            <Link to="/auth" className="w-full">
+              <Button size="lg" className="w-full gradient-primary text-primary-foreground font-bold rounded-2xl h-12 px-4 shadow-xl shadow-primary/20 hover:scale-[1.03] hover:shadow-primary/30 transition-all duration-300 text-xs md:text-sm flex items-center justify-center gap-1.5">
+                Get Started <ArrowRight className="h-4 w-4 shrink-0" />
               </Button>
             </Link>
-            <a href="#showcase" onClick={handleWatchDemo}>
-              <Button size="lg" variant="outline" className="text-slate-300 border-slate-800 hover:border-slate-700 hover:bg-slate-900 bg-slate-950/20 rounded-2xl h-12 px-6 text-sm font-bold hover:scale-[1.03] transition-all duration-300">
+            <a href="#showcase" onClick={handleWatchDemo} className="w-full">
+              <Button size="lg" variant="outline" className="w-full text-slate-300 border-slate-800 hover:border-slate-700 hover:bg-slate-900 bg-slate-950/20 rounded-2xl h-12 px-4 text-xs md:text-sm font-bold hover:scale-[1.03] transition-all duration-300 flex items-center justify-center">
                 Watch Demo
               </Button>
             </a>
-            <a href="https://github.com/namratadakhole" target="_blank" rel="noreferrer">
-              <Button size="lg" variant="outline" className="text-slate-400 border-slate-900 hover:border-slate-850 hover:text-white bg-slate-950/10 rounded-2xl h-12 px-5 text-sm font-semibold hover:scale-[1.03] transition-all duration-300 flex items-center gap-2">
-                GitHub Repository
+            <a href="https://github.com/namratadakhole" target="_blank" rel="noreferrer" className="w-full">
+              <Button size="lg" variant="outline" className="w-full text-slate-400 border-slate-900 hover:border-slate-850 hover:text-white bg-slate-950/10 rounded-2xl h-12 px-4 text-xs md:text-sm font-semibold hover:scale-[1.03] transition-all duration-300 flex items-center justify-center gap-1">
+                GitHub Repo
               </Button>
             </a>
           </motion.div>
@@ -780,11 +780,11 @@ function EdTechLandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="pt-6 border-t border-slate-900/60 max-w-xl space-y-3"
+            className="pt-4 border-t border-slate-900/60 max-w-xl flex flex-col gap-3"
           >
             <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block">Built with</span>
             <div className="flex flex-wrap gap-2">
-              {["React", "TypeScript", "Flask", "Python", "OpenCV", "MediaPipe", "SQLite", "Tailwind CSS"].map((tech) => (
+              {["React", "TypeScript", "Flask", "Python", "OpenCV", "MediaPipe", "MongoDB", "Tailwind CSS"].map((tech) => (
                 <Badge key={tech} className="bg-slate-900/40 hover:bg-slate-900 border border-slate-800/80 hover:border-slate-700 text-slate-400 hover:text-sky-400 transition-all duration-200 text-[10px] font-semibold px-2.5 py-1 rounded-lg">
                   {tech}
                 </Badge>
@@ -797,7 +797,7 @@ function EdTechLandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.6 }}
-            className="grid grid-cols-2 gap-x-8 gap-y-5 pt-6 border-t border-slate-900/60 max-w-md"
+            className="grid grid-cols-2 gap-x-8 gap-y-4 pt-4 border-t border-slate-900/60 max-w-md"
           >
             <AnimatedCounter value={99.8} label="Recognition Accuracy" suffix="%" />
             <AnimatedCounter value={1000} label="Attendance Records" suffix="+" />
@@ -811,106 +811,129 @@ function EdTechLandingPage() {
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.7, ease: "easeOut" }}
-          className="lg:col-span-7 flex items-center justify-center relative"
+          className="lg:col-span-7 flex items-center justify-center relative w-full"
         >
-          {/* Blue glow behind the dashboard preview */}
-          <div className="absolute -inset-12 bg-[radial-gradient(circle_at_center,rgba(56,189,248,0.18)_0%,transparent_70%)] rounded-full blur-3xl pointer-events-none" />
+          {/* Blue glow directly behind the unified product panel */}
+          <div className="absolute -inset-4 bg-[radial-gradient(circle_at_center,rgba(56,189,248,0.2)_0%,transparent_70%)] rounded-full blur-3xl pointer-events-none" />
 
-          <div className="relative w-full max-w-[570px] h-[400px] md:h-[480px]">
-            
-            {/* Live Camera Preview Widget */}
+          {/* Unified Premium Glassmorphism Product Showcase Panel (20% Larger) */}
+          <div className="relative w-full max-w-[620px] z-20">
             <motion.div
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute top-0 left-0 w-full max-w-[370px] bg-slate-900/60 border border-slate-800 rounded-3xl p-4.5 backdrop-blur-xl shadow-2xl flex flex-col gap-3 z-20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]"
+              animate={{ y: [0, -8, 0] }}
+              transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+              className="w-full bg-slate-900/40 border border-slate-800/80 rounded-3xl p-5 md:p-6 backdrop-blur-xl shadow-2xl flex flex-col gap-5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.03)]"
             >
-              <div className="flex items-center justify-between">
+              {/* Header: Live Feed Label + Session Clock */}
+              <div className="flex items-center justify-between pb-3 border-b border-slate-850">
                 <span className="text-[10px] uppercase font-bold text-sky-400 tracking-wider flex items-center gap-1.5">
-                  <span className="h-2 w-2 rounded-full bg-rose-500 animate-pulse" /> Live Camera Preview
+                  <span className="h-2 w-2 rounded-full bg-rose-500 animate-pulse" /> Live Camera Stream
                 </span>
                 <div className="flex items-center gap-1.5 text-[9px] text-slate-400 font-mono">
-                  <Clock className="h-3 w-3" /> 10:15 AM
+                  <Clock className="h-3.5 w-3.5 text-slate-500" /> 10:15 AM
                 </div>
               </div>
 
-              {/* Simulation Screen */}
-              <div className="h-[180px] rounded-2xl bg-slate-950 relative overflow-hidden flex items-center justify-center border border-slate-800/60">
-                <Video className="h-8 w-8 text-slate-800" />
+              {/* Main Panel Content: Inner grid layout */}
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-stretch">
                 
-                {/* Custom Face Detection Rectangle overlay */}
-                <div className="absolute top-[20%] left-[25%] w-[90px] h-[90px] border-2 border-emerald-400 border-dashed rounded-xl shadow-[0_0_15px_rgba(52,211,153,0.15)] flex items-center justify-center">
-                  <div className="absolute top-[-20px] left-0 bg-emerald-400 text-[8px] text-slate-950 font-black px-1.5 py-0.5 rounded shadow">
-                    Ravi Verma
+                {/* Left Inner Column: Live Camera Video with Bounding Box detection */}
+                <div className="md:col-span-7 h-[220px] rounded-2xl bg-slate-950/80 relative overflow-hidden flex items-center justify-center border border-slate-850">
+                  <Video className="h-8 w-8 text-slate-800" />
+                  
+                  {/* Face Detection Bounding Box overlay */}
+                  <div className="absolute top-[20%] left-[23%] w-[95px] h-[95px] border-2 border-emerald-400 border-dashed rounded-xl shadow-[0_0_20px_rgba(52,211,153,0.15)] flex items-center justify-center">
+                    <div className="absolute top-[-22px] left-0 bg-emerald-400 text-[8px] text-slate-950 font-black px-1.5 py-0.5 rounded shadow">
+                      Ravi Verma
+                    </div>
+                    {/* Bounding markers */}
+                    <div className="absolute top-[-2px] left-[-2px] w-2.5 h-2.5 border-t-2 border-l-2 border-emerald-300" />
+                    <div className="absolute top-[-2px] right-[-2px] w-2.5 h-2.5 border-t-2 border-r-2 border-emerald-300" />
+                    <div className="absolute bottom-[-2px] left-[-2px] w-2.5 h-2.5 border-b-2 border-l-2 border-emerald-300" />
+                    <div className="absolute bottom-[-2px] right-[-2px] w-2.5 h-2.5 border-b-2 border-r-2 border-emerald-300" />
                   </div>
-                  {/* Bounding markers */}
-                  <div className="absolute top-[-2px] left-[-2px] w-2.5 h-2.5 border-t-2 border-l-2 border-emerald-300" />
-                  <div className="absolute top-[-2px] right-[-2px] w-2.5 h-2.5 border-t-2 border-r-2 border-emerald-300" />
-                  <div className="absolute bottom-[-2px] left-[-2px] w-2.5 h-2.5 border-b-2 border-l-2 border-emerald-300" />
-                  <div className="absolute bottom-[-2px] right-[-2px] w-2.5 h-2.5 border-b-2 border-r-2 border-emerald-300" />
+                  
+                  {/* Face detection HUD status */}
+                  <div className="absolute bottom-2.5 left-3 text-[8px] font-mono text-emerald-400 bg-slate-950/80 px-2 py-0.5 rounded-full border border-emerald-500/10">
+                    SCANNING: ACTIVE
+                  </div>
                 </div>
+
+                {/* Right Inner Column: Metadata & Status details */}
+                <div className="md:col-span-5 flex flex-col justify-between gap-4 p-1">
+                  
+                  {/* Student Details */}
+                  <div className="space-y-1.5 text-left">
+                    <span className="text-[8px] text-slate-500 uppercase tracking-widest font-black block">Identified Student</span>
+                    <h4 className="text-sm font-extrabold text-slate-100">Ravi Verma</h4>
+                    <span className="text-[10px] text-slate-400 block font-mono">Roll: CS21009</span>
+                    <span className="text-[10px] text-slate-500 block font-mono">CSE Dept • Semester 7</span>
+                  </div>
+
+                  {/* Divider */}
+                  <div className="border-t border-slate-850/60 my-1" />
+
+                  {/* Matching Confidence Score */}
+                  <div className="space-y-1 text-left">
+                    <span className="text-[8px] text-slate-500 uppercase tracking-widest font-black block">Confidence Match</span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs font-bold text-emerald-400">99.8%</span>
+                      <span className="text-[9px] text-slate-500 font-medium">high accuracy</span>
+                    </div>
+                  </div>
+
+                  {/* Divider */}
+                  <div className="border-t border-slate-850/60 my-1" />
+
+                  {/* Attendance Logged status info */}
+                  <div className="space-y-1 text-left">
+                    <span className="text-[8px] text-slate-500 uppercase tracking-widest font-black block">Status</span>
+                    <div className="flex items-center gap-2">
+                      <Badge className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 py-0.5 px-2 rounded-lg text-[9px] font-semibold uppercase">
+                        Present
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
+
               </div>
 
-              {/* Student Metadata identified details */}
-              <div className="flex items-center justify-between border-t border-slate-800/80 pt-3">
-                <div className="text-left">
-                  <span className="text-[9px] text-slate-500 uppercase tracking-wider block font-bold">Identified Student</span>
-                  <span className="text-xs font-bold text-slate-100">Ravi Verma</span>
-                  <span className="text-[9px] text-slate-400 block font-mono">Roll: CS21009 • Sem 7</span>
+              {/* Bottom Section: Divider + Subject & Attendance Analytics Rate info */}
+              <div className="border-t border-slate-850 pt-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                
+                {/* Subject Block */}
+                <div className="flex items-center gap-3 text-left w-full sm:w-auto">
+                  <div className="h-9 w-9 rounded-xl bg-sky-500/10 text-sky-400 flex items-center justify-center border border-sky-500/10 shrink-0">
+                    <Check className="h-4.5 w-4.5" />
+                  </div>
+                  <div>
+                    <span className="text-[8px] text-slate-500 uppercase tracking-widest font-black block">Subject</span>
+                    <span className="text-xs font-bold text-slate-200">Artificial Intelligence</span>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <span className="text-[9px] text-slate-500 uppercase tracking-wider block font-bold">Confidence Score</span>
-                  <span className="text-xs font-bold text-emerald-400">99.8% match</span>
+
+                {/* Vertical Divider */}
+                <div className="hidden sm:block h-8 w-px bg-slate-850" />
+
+                {/* Attendance Rate Metric Block */}
+                <div className="flex items-center justify-between sm:justify-start gap-4 text-left w-full sm:w-auto">
+                  <div>
+                    <span className="text-[8px] text-slate-500 uppercase tracking-widest font-black block">Attendance Rate</span>
+                    <div className="text-sm font-mono font-black text-slate-200">94.5%</div>
+                  </div>
+
+                  {/* Minimal SVG chart representation inside unified card */}
+                  <div className="h-[28px] flex items-end gap-1 shrink-0">
+                    <div className="w-1.5 bg-sky-500/20 rounded-sm h-[40%]" />
+                    <div className="w-1.5 bg-sky-500/20 rounded-sm h-[65%]" />
+                    <div className="w-1.5 bg-sky-500/20 rounded-sm h-[50%]" />
+                    <div className="w-1.5 bg-sky-500/20 rounded-sm h-[85%]" />
+                    <div className="w-1.5 bg-emerald-500 rounded-sm h-[95%] shadow-[0_0_10px_rgba(16,185,129,0.3)]" />
+                  </div>
                 </div>
+
               </div>
+
             </motion.div>
-
-            {/* Attendance marked successfully banner popup */}
-            <motion.div
-              animate={{ y: [0, 8, 0], x: [0, 4, 0] }}
-              transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-              className="absolute bottom-20 right-0 w-[250px] bg-slate-900/70 border border-slate-800 rounded-2xl p-4.5 backdrop-blur-xl shadow-2xl flex flex-col gap-3.5 z-30 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]"
-            >
-              <div className="flex items-center gap-3">
-                <div className="h-8 w-8 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
-                  <Check className="h-4.5 w-4.5" />
-                </div>
-                <div className="text-left">
-                  <h4 className="text-xs font-bold text-slate-100">Attendance Logged</h4>
-                  <p className="text-[9px] text-emerald-400/95 font-semibold">Marked Successfully</p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2 border-t border-slate-800/80 pt-2.5 text-[9px] text-slate-400">
-                <div>
-                  <span className="text-slate-500 block uppercase font-bold text-[8px]">Subject</span>
-                  <span className="font-bold text-slate-200">Artificial Intelligence</span>
-                </div>
-                <div>
-                  <span className="text-slate-500 block uppercase font-bold text-[8px]">Status</span>
-                  <span className="font-bold text-emerald-400">PRESENT</span>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Attendance analytics mini chart widget */}
-            <motion.div
-              animate={{ y: [0, 6, 0], x: [0, -6, 0] }}
-              transition={{ duration: 6.5, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-              className="absolute bottom-4 left-6 w-[210px] bg-slate-900/75 border border-slate-800/80 rounded-2xl p-4 backdrop-blur-xl shadow-2xl z-10 text-left shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]"
-            >
-              <span className="text-[9px] uppercase font-bold text-slate-500 tracking-wider">Attendance Rate</span>
-              <div className="text-xl font-mono font-black text-slate-200 mt-1">94.5%</div>
-              
-              {/* Minimal SVG chart representation */}
-              <div className="h-[40px] mt-2 flex items-end gap-1.5">
-                <div className="w-full bg-sky-500/20 rounded h-[40%] hover:bg-sky-500 transition-colors" />
-                <div className="w-full bg-sky-500/20 rounded h-[65%] hover:bg-sky-500 transition-colors" />
-                <div className="w-full bg-sky-500/20 rounded h-[50%] hover:bg-sky-500 transition-colors" />
-                <div className="w-full bg-sky-500/20 rounded h-[85%] hover:bg-sky-500 transition-colors" />
-                <div className="w-full bg-emerald-500 rounded h-[95%] shadow-[0_0_10px_rgba(16,185,129,0.3)]" />
-              </div>
-            </motion.div>
-
           </div>
         </motion.div>
       </section>
