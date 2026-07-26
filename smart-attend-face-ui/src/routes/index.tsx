@@ -831,11 +831,11 @@ function EdTechLandingPage() {
                   <span className="h-2.5 w-2.5 rounded-full bg-slate-850" />
                   <span className="h-2.5 w-2.5 rounded-full bg-slate-900" />
                 </div>
-                <div className="flex items-center gap-2 text-[10px] text-slate-500 font-mono bg-slate-950/50 px-3 py-1 rounded-lg border border-slate-900">
+                <div className="flex items-center gap-2 text-xs text-slate-500 font-mono bg-slate-950/50 px-3 py-1 rounded-lg border border-slate-900">
                   <Globe className="h-3 w-3 text-sky-500/50" /> smartattend.ai/console
                 </div>
                 <div className="flex items-center gap-1">
-                  <Badge className="bg-sky-500/10 border border-sky-500/20 text-sky-400 text-[9px] font-mono">v1.2.0</Badge>
+                  <Badge className="bg-sky-500/10 border border-sky-500/20 text-sky-400 text-[10.5px] font-mono">v1.2.0</Badge>
                 </div>
               </div>
 
@@ -844,9 +844,9 @@ function EdTechLandingPage() {
                 {/* Sidebar Navigation */}
                 <div className="col-span-3 border-r border-slate-900 pr-3 flex flex-col gap-3 text-left">
                   <div className="flex items-center gap-2 py-1 px-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-sky-500/30 hover:shadow-[0_0_12px_rgba(56,189,248,0.15)] transition-all duration-300">
-                    <div className="h-5 w-5 rounded-md bg-gradient-to-br from-sky-400 to-blue-500 flex items-center justify-center text-[10px] font-black text-slate-950 font-mono">SA</div>
+                    <div className="h-5 w-5 rounded-md bg-gradient-to-br from-sky-400 to-blue-500 flex items-center justify-center text-[11px] font-black text-slate-950 font-mono">SA</div>
                     <div className="flex-1 min-w-0">
-                      <span className="block text-[10px] font-bold text-slate-200 truncate">IIT Kharagpur</span>
+                      <span className="block text-[11.5px] font-bold text-slate-200 truncate">IIT Kharagpur</span>
                     </div>
                   </div>
                   <div className="flex flex-col gap-1">
@@ -857,7 +857,7 @@ function EdTechLandingPage() {
                       { label: "Analytics", icon: TrendingUp },
                       { label: "Settings", icon: ShieldCheck }
                     ].map((item) => (
-                      <div key={item.label} className={`flex items-center gap-2 px-2 py-1.5 rounded-lg text-[10px] font-semibold transition-all ${item.active ? "bg-sky-500/10 text-sky-400 border border-sky-500/20 shadow-[0_0_15px_rgba(56,189,248,0.15)]" : "text-slate-500 hover:text-slate-350 hover:bg-white/5"}`}>
+                      <div key={item.label} className={`flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs font-semibold transition-all ${item.active ? "bg-sky-500/10 text-sky-400 border border-sky-500/20 shadow-[0_0_15px_rgba(56,189,248,0.15)]" : "text-slate-500 hover:text-slate-350 hover:bg-white/5"}`}>
                         <item.icon className="h-3.5 w-3.5" />
                         <span>{item.label}</span>
                       </div>
@@ -870,10 +870,10 @@ function EdTechLandingPage() {
                   {/* Inner Header */}
                   <div className="flex items-center justify-between">
                     <div>
-                      <h4 className="text-[11px] uppercase font-black text-slate-500 tracking-wider">Faculty Console</h4>
-                      <h3 className="text-sm font-bold text-slate-200">Artificial Intelligence Session</h3>
+                      <h4 className="text-xs uppercase font-black text-slate-500 tracking-wider">Faculty Console</h4>
+                      <h3 className="text-base font-bold text-slate-200">Artificial Intelligence Session</h3>
                     </div>
-                    <Badge className="bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[9px] font-mono py-0.5 px-2">
+                    <Badge className="bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[10.5px] font-mono py-0.5 px-2">
                       <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse mr-1 inline-block" /> ACTIVE SCANNER
                     </Badge>
                   </div>
@@ -889,7 +889,7 @@ function EdTechLandingPage() {
 
                       {/* Face recognition bounding boxes inside console */}
                       <div className="absolute top-[18%] left-[20%] w-[90px] h-[90px] border-2 border-cyan-400 border-dashed rounded-xl shadow-[0_0_25px_rgba(6,182,212,0.2)] flex items-center justify-center">
-                        <div className="absolute top-[-22px] left-0 bg-cyan-450 text-[8px] text-slate-950 font-black px-1.5 py-0.5 rounded shadow flex items-center gap-1 font-mono">
+                        <div className="absolute top-[-22px] left-0 bg-cyan-450 text-[10.5px] text-slate-950 font-black px-1.5 py-0.5 rounded shadow flex items-center gap-1 font-mono">
                           ✓ Ravi Verma
                         </div>
                         {/* Box corner markers */}
@@ -899,7 +899,7 @@ function EdTechLandingPage() {
                         <div className="absolute bottom-[-2px] right-[-2px] w-2.5 h-2.5 border-b-2 border-r-2 border-cyan-300" />
                       </div>
 
-                      <div className="absolute bottom-2 left-2 text-[8px] font-mono text-cyan-400 bg-slate-950/80 px-2 py-0.5 rounded-full border border-cyan-500/10">
+                      <div className="absolute bottom-2 left-2 text-[10.5px] font-mono text-cyan-400 bg-slate-950/80 px-2 py-0.5 rounded-full border border-cyan-500/10">
                         SCANNING IN PROGRESS
                       </div>
                     </div>
@@ -907,22 +907,22 @@ function EdTechLandingPage() {
                     {/* Meta stats details */}
                     <div className="col-span-5 flex flex-col justify-between p-2.5 rounded-xl bg-slate-950/50 border border-white/5 hover:border-sky-500/30 shadow-[0_0_15px_rgba(56,189,248,0.05)] hover:shadow-[0_0_20px_rgba(56,189,248,0.2)] transition-all duration-300 text-xs">
                       <div className="space-y-1">
-                        <span className="text-[7.5px] font-black text-slate-500 uppercase tracking-widest block">Logged Attendance</span>
-                        <h5 className="font-extrabold text-slate-100 text-xs truncate">Ravi Verma</h5>
-                        <span className="text-[9px] font-mono text-slate-400 block">Roll: CS21009</span>
-                        <span className="text-[9px] font-mono text-slate-500 block">CSE • Semester 7</span>
+                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Logged Attendance</span>
+                        <h5 className="font-extrabold text-slate-100 text-sm truncate">Ravi Verma</h5>
+                        <span className="text-[11px] font-mono text-slate-400 block">Roll: CS21009</span>
+                        <span className="text-[11px] font-mono text-slate-500 block">CSE • Semester 7</span>
                       </div>
                       
                       <div className="border-t border-slate-900 my-1.5" />
                       
                       <div className="grid grid-cols-2 gap-1.5">
                         <div>
-                          <span className="text-[7px] text-slate-500 uppercase block font-black">Confidence</span>
-                          <span className="text-[10px] font-bold text-cyan-400">99.8%</span>
+                          <span className="text-[10px] text-slate-500 uppercase block font-black">Confidence</span>
+                          <span className="text-xs font-bold text-cyan-400">99.8%</span>
                         </div>
                         <div>
-                          <span className="text-[7px] text-slate-500 uppercase block font-black">Status</span>
-                          <Badge className="bg-cyan-500/15 border-none text-[8px] text-cyan-400 py-0 px-1 font-bold h-4">Present</Badge>
+                          <span className="text-[10px] text-slate-500 uppercase block font-black">Status</span>
+                          <Badge className="bg-cyan-500/15 border-none text-[10px] text-cyan-400 py-0 px-1 font-bold h-4">Present</Badge>
                         </div>
                       </div>
                     </div>
@@ -931,17 +931,17 @@ function EdTechLandingPage() {
                   {/* Inner Row 2: Attendance rate stats & Interactive mini graph logs */}
                   <div className="grid grid-cols-12 gap-3">
                     <div className="col-span-4 p-2.5 rounded-xl bg-slate-950/50 border border-white/5 hover:border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.05)] hover:shadow-[0_0_20px_rgba(6,182,212,0.2)] transition-all duration-300 flex flex-col justify-between">
-                      <span className="text-[7.5px] font-black text-slate-500 uppercase tracking-widest block">Class Attendance Rate</span>
+                      <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Class Attendance Rate</span>
                       <div className="flex items-baseline gap-1 mt-1">
-                        <span className="text-sm font-mono font-black text-slate-200">94.5%</span>
-                        <span className="text-[8px] text-cyan-400 font-bold">✓ Target met</span>
+                        <span className="text-base font-mono font-black text-slate-200">94.5%</span>
+                        <span className="text-[10px] text-cyan-400 font-bold">✓ Target met</span>
                       </div>
                     </div>
                     
                     <div className="col-span-8 p-2.5 rounded-xl bg-slate-950/50 border border-white/5 hover:border-sky-500/30 shadow-[0_0_15px_rgba(56,189,248,0.05)] hover:shadow-[0_0_20px_rgba(56,189,248,0.2)] transition-all duration-300 flex items-center justify-between gap-4">
                       <div className="flex-1">
-                        <span className="text-[7.5px] font-black text-slate-500 uppercase tracking-widest block">Weekly Sessions Metrics</span>
-                        <span className="text-[9px] text-slate-400 block mt-0.5">Average threshold score: 92%</span>
+                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Weekly Sessions Metrics</span>
+                        <span className="text-[11.5px] text-slate-400 block mt-0.5">Average threshold score: 92%</span>
                       </div>
                       
                       {/* SVG Bar Chart logs */}
