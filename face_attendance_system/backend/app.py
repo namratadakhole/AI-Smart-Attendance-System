@@ -1,6 +1,5 @@
-from database import get_connection
-from datetime import datetime
-from datetime import datetime
+from database import db, get_next_sequence_value
+from datetime import datetime, timedelta
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import (
     Font,
@@ -13,6 +12,7 @@ from flask import send_file
 from openpyxl import Workbook
 from students import students
 import csv
+import io
 from flask import Flask, jsonify, Response, request
 from flask_cors import CORS
 import subprocess
@@ -144,44 +144,72 @@ def get_attendance_records():
     filter_date = request.args.get("date", "").strip()
     sort_order = request.args.get("sort", "desc").lower()
 
-    conn = get_connection()
-    cursor = conn.cursor()
+    # Query with lookup (left join on student_id)
+    pipeline = []
+    
+    # 1. Join with students
+    pipeline.append({
+        "$lookup": {
+            "from": "students",
+            "localField": "student_id",
+            "foreignField": "id",
+            "as": "student"
+        }
+    })
+    pipeline.append({
+        "$unwind": {
+            "path": "$student",
+            "preserveNullAndEmptyArrays": True
+        }
+    })
 
-    query = "SELECT a.*, s.semester FROM attendance a LEFT JOIN students s ON a.student_id = s.id WHERE 1=1"
-    params = []
-
+    # 2. Build match conditions
+    match = {}
     if department != "all" and department:
-        query += " AND a.department = ?"
-        params.append(department)
-
+        match["department"] = department
     if semester != "all" and semester:
-        query += " AND s.semester = ?"
-        params.append(str(semester))
-
+        match["student.semester"] = str(semester)
     if filter_date:
-        query += " AND a.date = ?"
-        params.append(filter_date)
-
+        match["date"] = filter_date
     if search:
-        query += " AND (LOWER(a.name) LIKE ? OR LOWER(a.roll_no) LIKE ?)"
-        params.extend([f"%{search}%", f"%{search}%"])
+        match["$or"] = [
+            {"name": {"$regex": search, "$options": "i"}},
+            {"roll_no": {"$regex": search, "$options": "i"}}
+        ]
+    
+    if match:
+        pipeline.append({"$match": match})
 
-    if sort_order == "asc":
-        query += " ORDER BY a.id ASC"
-    else:
-        query += " ORDER BY a.id DESC"
+    # 3. Project output fields
+    pipeline.append({
+        "$project": {
+            "_id": 0,
+            "id": "$id",
+            "student_id": "$student_id",
+            "roll_no": "$roll_no",
+            "name": "$name",
+            "department": "$department",
+            "date": "$date",
+            "time": "$time",
+            "status": "$status",
+            "subject_id": "$subject_id",
+            "recognition_confidence": "$recognition_confidence",
+            "semester": "$student.semester"
+        }
+    })
 
-    cursor.execute(query, params)
-    records = [dict(r) for r in cursor.fetchall()]
+    # 4. Sort
+    sort_dir = -1 if sort_order == "desc" else 1
+    pipeline.append({"$sort": {"id": sort_dir}})
+
+    records = list(db.attendance.aggregate(pipeline))
 
     # Calculate Total Unique Class Days
-    cursor.execute("SELECT COUNT(DISTINCT date) as total_dates FROM attendance")
-    total_dates_row = cursor.fetchone()
-    total_dates = total_dates_row["total_dates"] if total_dates_row and total_dates_row["total_dates"] > 0 else 1
+    unique_dates = db.attendance.distinct("date")
+    total_dates = len(unique_dates) if len(unique_dates) > 0 else 1
 
     # Calculate Per-Student Attendance Summary & Percentages
-    cursor.execute("SELECT * FROM students")
-    all_students = cursor.fetchall()
+    all_students = list(db.students.find({}, {"_id": 0}))
 
     student_summaries = []
     for st in all_students:
@@ -190,9 +218,8 @@ def get_attendance_records():
         s_roll = st["roll_no"]
         s_dept = st["department"]
 
-        cursor.execute("SELECT date, time, status FROM attendance WHERE name = ? ORDER BY id DESC", (s_name,))
-        st_history = [dict(h) for h in cursor.fetchall()]
-
+        # History of attendance
+        st_history = list(db.attendance.find({"name": s_name}, {"_id": 0}).sort("id", -1))
         present_days = len(st_history)
         pct = round((present_days / total_dates) * 100, 1)
 
@@ -201,15 +228,13 @@ def get_attendance_records():
             "name": s_name,
             "roll": s_roll,
             "department": s_dept,
-            "semester": st["semester"],
+            "semester": st.get("semester"),
             "present_days": present_days,
             "total_days": total_dates,
             "percentage": f"{min(pct, 100.0)}%",
             "pct_number": min(pct, 100.0),
             "history": st_history
         })
-
-    conn.close()
 
     return jsonify({
         "records": records,
@@ -324,12 +349,8 @@ def export_attendance():
         "Status"
     ])
 
-    # Dynamic student list from SQLite DB
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT roll_no as roll, full_name as name, department FROM students")
-    db_students = [dict(row) for row in cursor.fetchall()]
-    conn.close()
+    # Dynamic student list from MongoDB
+    db_students = [{"roll": s["roll_no"], "name": s["full_name"], "department": s["department"]} for s in db.students.find()]
 
     if not db_students:
         from students import students as db_students
@@ -379,11 +400,7 @@ def download_attendance():
             for row in reader:
                 present_students.add(row["Name"])
 
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT roll_no as roll, full_name as name, department FROM students")
-    db_students = [dict(row) for row in cursor.fetchall()]
-    conn.close()
+    db_students = [{"roll": s["roll_no"], "name": s["full_name"], "department": s["department"]} for s in db.students.find()]
 
     if not db_students:
         from students import students as db_students
@@ -617,43 +634,25 @@ def register_student():
             "message": "All fields (Name, Roll No, Department, Semester) are required."
         }), 400
 
-    conn = get_connection()
-    cursor = conn.cursor()
-
     try:
         # Check duplicate roll number
-        cursor.execute("SELECT id FROM students WHERE roll_no = ?", (roll,))
-        existing = cursor.fetchone()
+        existing = db.students.find_one({"roll_no": roll})
         if existing:
             return jsonify({
                 "success": False,
                 "message": f"Roll number '{roll}' is already registered for another student."
             }), 400
 
-        cursor.execute(
-         """
-         INSERT INTO students
-         (
-          full_name,
-          roll_no,
-          department,
-          semester,
-          registered_on,
-          image_folder
-         )
-         VALUES (?, ?, ?, ?, ?, ?)
-         """,
-         ( 
-          name,
-          roll,
-          department,
-          semester,
-          datetime.now().strftime("%d-%m-%Y"),
-          f"dataset/{name}"
-         ),
-    )
-
-        conn.commit()
+        student_id = get_next_sequence_value("students")
+        db.students.insert_one({
+            "id": student_id,
+            "full_name": name,
+            "roll_no": roll,
+            "department": department,
+            "semester": semester,
+            "registered_on": datetime.now().strftime("%d-%m-%Y"),
+            "image_folder": f"dataset/{name}"
+        })
 
         return jsonify({
             "success": True,
@@ -661,17 +660,10 @@ def register_student():
         })
 
     except Exception as e:
-
-        conn.rollback()
-
         return jsonify({
             "success": False,
             "message": str(e)
         }), 500
-
-    finally:
-
-        conn.close()
 
 # -----------------------------------
 # Capture Face Sample
@@ -906,24 +898,8 @@ def auto_capture_sample():
 # -----------------------------------
 @app.route("/students", methods=["GET"])
 def get_students():
-
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    cursor.execute("""
-        SELECT *
-        FROM students
-        ORDER BY id DESC
-    """)
-
-    students = cursor.fetchall()
-
-    conn.close()
-
-    return jsonify([
-        dict(student)
-        for student in students
-    ])
+    students = list(db.students.find({}, {"_id": 0}).sort("id", -1))
+    return jsonify(students)
 
 # -----------------------------------
 # Delete Student
@@ -931,12 +907,8 @@ def get_students():
 @app.route("/students/<int:student_id>", methods=["DELETE"])
 def delete_student(student_id):
 
-    conn = get_connection()
-    cursor = conn.cursor()
-
     try:
-        cursor.execute("SELECT full_name FROM students WHERE id = ?", (student_id,))
-        row = cursor.fetchone()
+        row = db.students.find_one({"id": student_id})
 
         if not row:
             return jsonify({
@@ -946,8 +918,7 @@ def delete_student(student_id):
 
         student_name = row["full_name"]
 
-        cursor.execute("DELETE FROM students WHERE id = ?", (student_id,))
-        conn.commit()
+        db.students.delete_one({"id": student_id})
 
         # Clean up image folder
         folder = os.path.join(PROJECT_DIR, "dataset", student_name)
@@ -967,14 +938,10 @@ def delete_student(student_id):
         })
 
     except Exception as e:
-        conn.rollback()
         return jsonify({
             "success": False,
             "message": str(e)
         }), 500
-
-    finally:
-        conn.close()
 
 # -----------------------------------
 # Update Student
@@ -995,12 +962,8 @@ def update_student(student_id):
             "message": "All fields are required."
         }), 400
 
-    conn = get_connection()
-    cursor = conn.cursor()
-
     try:
-        cursor.execute("SELECT full_name, roll_no FROM students WHERE id = ?", (student_id,))
-        existing = cursor.fetchone()
+        existing = db.students.find_one({"id": student_id})
 
         if not existing:
             return jsonify({"success": False, "message": "Student not found."}), 404
@@ -1010,8 +973,8 @@ def update_student(student_id):
 
         # Check duplicate roll if changed
         if roll != old_roll:
-            cursor.execute("SELECT id FROM students WHERE roll_no = ? AND id != ?", (roll, student_id))
-            if cursor.fetchone():
+            dup = db.students.find_one({"roll_no": roll, "id": {"$ne": student_id}})
+            if dup:
                 return jsonify({"success": False, "message": f"Roll number '{roll}' is already in use."}), 400
 
         # Rename dataset folder if name changed
@@ -1026,13 +989,16 @@ def update_student(student_id):
 
         new_image_folder = f"dataset/{name}"
 
-        cursor.execute("""
-            UPDATE students
-            SET full_name = ?, roll_no = ?, department = ?, semester = ?, image_folder = ?
-            WHERE id = ?
-        """, (name, roll, department, semester, new_image_folder, student_id))
-
-        conn.commit()
+        db.students.update_one(
+            {"id": student_id},
+            {"$set": {
+                "full_name": name,
+                "roll_no": roll,
+                "department": department,
+                "semester": semester,
+                "image_folder": new_image_folder
+            }}
+        )
 
         # Clean up encodings asynchronously
         try:
@@ -1046,11 +1012,7 @@ def update_student(student_id):
         })
 
     except Exception as e:
-        conn.rollback()
         return jsonify({"success": False, "message": str(e)}), 500
-
-    finally:
-        conn.close()
 
 # -----------------------------------
 # Dashboard Statistics
@@ -1062,21 +1024,15 @@ def update_student(student_id):
 def get_dashboard_stats():
 
     try:
-        conn = get_connection()
-        cursor = conn.cursor()
-
         # Total registered students
-        cursor.execute("SELECT COUNT(*) as total FROM students")
-        total_students = cursor.fetchone()["total"]
+        total_students = db.students.count_documents({})
 
         today_str = datetime.now().strftime("%d-%m-%Y")
 
-        # Distinct present today from SQLite attendance table
-        cursor.execute("SELECT COUNT(DISTINCT name) as count FROM attendance WHERE date = ?", (today_str,))
-        present_row = cursor.fetchone()
-        present_today = present_row["count"] if present_row else 0
+        # Distinct present today from MongoDB attendance collection
+        present_today = len(db.attendance.distinct("name", {"date": today_str}))
 
-        # Fallback check on attendance.csv if SQLite empty today
+        # Fallback check on attendance.csv if MongoDB empty today
         if present_today == 0:
             attendance_file = os.path.join(PROJECT_DIR, "database", "attendance.csv")
             if os.path.exists(attendance_file):
@@ -1092,14 +1048,7 @@ def get_dashboard_stats():
         pct = round((present_today / total_students) * 100, 1) if total_students > 0 else 0.0
 
         # Recent attendance check-ins (last 6 records)
-        cursor.execute("""
-            SELECT id, roll_no, name, department, date, time, status
-            FROM attendance
-            ORDER BY id DESC
-            LIMIT 6
-        """)
-        recent_rows = cursor.fetchall()
-        recent_attendance = [dict(r) for r in recent_rows]
+        recent_attendance = list(db.attendance.find({}, {"_id": 0}).sort("id", -1).limit(6))
 
         # Weekly attendance data (Mon - Sun for current week)
         weekly_data = []
@@ -1112,8 +1061,7 @@ def get_dashboard_stats():
             day_str = day_date.strftime("%d-%m-%Y")
             day_name = days_of_week[i]
 
-            cursor.execute("SELECT COUNT(DISTINCT name) as count FROM attendance WHERE date = ?", (day_str,))
-            cnt = cursor.fetchone()["count"]
+            cnt = len(db.attendance.distinct("name", {"date": day_str}))
 
             # If today and attendance marked, use count; else mock reasonable curve for chart view
             p_val = cnt if cnt > 0 else (present_today if i == today.weekday() else 0)
@@ -1135,8 +1083,6 @@ def get_dashboard_stats():
             {"month": "May", "attendance": 86},
             {"month": "Jun", "attendance": pct if pct > 0 else 84},
         ]
-
-        conn.close()
 
         return jsonify({
             "total_students": total_students,
@@ -1181,65 +1127,79 @@ def get_reports_data():
     end_date_param = request.args.get("end_date", "")
 
     try:
-        conn = get_connection()
-        cursor = conn.cursor()
+        # Join attendance with students using lookup
+        pipeline = []
+        pipeline.append({
+            "$lookup": {
+                "from": "students",
+                "localField": "student_id",
+                "foreignField": "id",
+                "as": "student"
+            }
+        })
+        pipeline.append({
+            "$unwind": {
+                "path": "$student",
+                "preserveNullAndEmptyArrays": True
+            }
+        })
 
-        query = "SELECT a.*, s.semester FROM attendance a LEFT JOIN students s ON a.student_id = s.id WHERE 1=1"
-        params = []
-
+        match = {}
         if department != "all" and department:
-            query += " AND a.department = ?"
-            params.append(department)
-
+            match["department"] = department
         if semester != "all" and semester:
-            query += " AND s.semester = ?"
-            params.append(str(semester))
+            match["student.semester"] = str(semester)
 
         today = datetime.now()
 
         if report_type == "daily":
             today_str = today.strftime("%d-%m-%Y")
-            query += " AND a.date = ?"
-            params.append(today_str)
+            match["date"] = today_str
 
         elif report_type == "weekly":
             start_of_week = today - timedelta(days=today.weekday())
             week_dates = [(start_of_week + timedelta(days=i)).strftime("%d-%m-%Y") for i in range(7)]
-            placeholders = ",".join(["?"] * len(week_dates))
-            query += f" AND a.date IN ({placeholders})"
-            params.extend(week_dates)
+            match["date"] = {"$in": week_dates}
 
         elif report_type == "monthly":
             month_str = today.strftime("-%m-%Y")
-            query += " AND a.date LIKE ?"
-            params.append(f"%{month_str}")
+            match["date"] = {"$regex": f"{month_str}$"}
 
         elif report_type == "custom" and start_date_param and end_date_param:
             pass
 
-        query += " ORDER BY a.id DESC"
+        if match:
+            pipeline.append({"$match": match})
 
-        cursor.execute(query, params)
-        rows = cursor.fetchall()
-        records = [dict(r) for r in rows]
+        pipeline.append({
+            "$project": {
+                "_id": 0,
+                "id": "$id",
+                "student_id": "$student_id",
+                "roll_no": "$roll_no",
+                "name": "$name",
+                "department": "$department",
+                "date": "$date",
+                "time": "$time",
+                "status": "$status",
+                "subject_id": "$subject_id",
+                "recognition_confidence": "$recognition_confidence",
+                "semester": "$student.semester"
+            }
+        })
+        pipeline.append({"$sort": {"id": -1}})
 
-        # Calculate metrics for report charts
+        records = list(db.attendance.aggregate(pipeline))
         total_records = len(records)
 
         # Count total students in filtered dept/sem
-        st_query = "SELECT COUNT(*) as cnt FROM students WHERE 1=1"
-        st_params = []
+        st_match = {}
         if department != "all" and department:
-            st_query += " AND department = ?"
-            st_params.append(department)
+            st_match["department"] = department
         if semester != "all" and semester:
-            st_query += " AND semester = ?"
-            st_params.append(str(semester))
+            st_match["semester"] = str(semester)
 
-        cursor.execute(st_query, st_params)
-        total_students_in_filter = cursor.fetchone()["cnt"]
-
-        conn.close()
+        total_students_in_filter = db.students.count_documents(st_match)
 
         # Generate trend datasets
         daily_trend = [
@@ -1286,29 +1246,19 @@ def get_reports_data():
 def export_report_excel():
 
     department = request.args.get("department", "all")
-    semester = request.args.get("semester", "all")
 
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    query = "SELECT id, roll_no, name, department, date, time, status FROM attendance WHERE 1=1"
-    params = []
-
+    match = {}
     if department != "all" and department:
-        query += " AND department = ?"
-        params.append(department)
+        match["department"] = department
 
-    query += " ORDER BY id DESC"
-    cursor.execute(query, params)
-    rows = cursor.fetchall()
-    conn.close()
+    rows = list(db.attendance.find(match, {"_id": 0}).sort("id", -1))
 
     output = io.StringIO()
     writer = csv.writer(output)
     writer.writerow(["Record ID", "Roll Number", "Student Name", "Department", "Date", "Time", "Status"])
 
     for r in rows:
-        writer.writerow([r["id"], r["roll_no"], r["name"], r["department"], r["date"], r["time"], r["status"]])
+        writer.writerow([r.get("id"), r.get("roll_no"), r.get("name"), r.get("department"), r.get("date"), r.get("time"), r.get("status")])
 
     output.seek(0)
     return Response(
@@ -1323,12 +1273,8 @@ def export_report_pdf():
 
     department = request.args.get("department", "all")
 
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    # Query settings from SQLite
-    cursor.execute("SELECT key, value FROM settings")
-    settings_rows = cursor.fetchall()
+    # Query settings from MongoDB
+    settings_rows = list(db.settings.find())
     cfg = {r["key"]: r["value"] for r in settings_rows}
 
     college_name = cfg.get("college_name", "Government Engineering College")
@@ -1338,17 +1284,11 @@ def export_report_pdf():
     acad_year = cfg.get("academic_year", "2025-2026")
     semester = cfg.get("semester", "7")
 
-    query = "SELECT id, roll_no, name, department, date, time, status FROM attendance WHERE 1=1"
-    params = []
-
+    match = {}
     if department != "all" and department:
-        query += " AND department = ?"
-        params.append(department)
+        match["department"] = department
 
-    query += " ORDER BY id DESC"
-    cursor.execute(query, params)
-    rows = cursor.fetchall()
-    conn.close()
+    rows = list(db.attendance.find(match, {"_id": 0}).sort("id", -1))
 
     logo_html = f'<img src="{college_logo}" style="height: 50px; float: right;" alt="Logo"/>' if college_logo else ""
 
@@ -1427,30 +1367,20 @@ def export_report_pdf():
 # -----------------------------------
 @app.route("/settings", methods=["GET"])
 def get_settings():
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT key, value FROM settings")
-    rows = cursor.fetchall()
-    conn.close()
-
+    rows = list(db.settings.find())
     result = {r["key"]: r["value"] for r in rows}
     return jsonify(result)
 
 @app.route("/settings", methods=["POST", "PUT"])
 def save_settings():
     data = request.get_json() or {}
-    conn = get_connection()
-    cursor = conn.cursor()
 
     for k, v in data.items():
-        cursor.execute("""
-            INSERT INTO settings (key, value)
-            VALUES (?, ?)
-            ON CONFLICT(key) DO UPDATE SET value = excluded.value
-        """, (str(k), str(v)))
-
-    conn.commit()
-    conn.close()
+        db.settings.update_one(
+            {"key": str(k)},
+            {"$set": {"key": str(k), "value": str(v)}},
+            upsert=True
+        )
 
     return jsonify({"success": True, "message": "Settings saved to database successfully!"})
 
@@ -1469,29 +1399,21 @@ def login_user():
         if not username_or_email or not password:
             return jsonify({"success": False, "message": "Email/Employee ID and Password are required"}), 400
 
-        conn = get_connection()
-        cursor = conn.cursor()
-        
-        # Check SQLite faculty table only
-        cursor.execute("""
-            SELECT * FROM faculty 
-            WHERE (LOWER(email) = LOWER(?) OR LOWER(employee_id) = LOWER(?))
-        """, (username_or_email, username_or_email))
-        user_row = cursor.fetchone()
+        # Check MongoDB faculty collection
+        u = db.faculty.find_one({
+            "$or": [
+                {"email": {"$regex": f"^{username_or_email}$", "$options": "i"}},
+                {"employee_id": {"$regex": f"^{username_or_email}$", "$options": "i"}}
+            ]
+        })
 
-        if not user_row:
-            conn.close()
+        if not u:
             return jsonify({"success": False, "message": "Account not found."}), 404
 
-        u = dict(user_row)
-        
         # Verify password using bcrypt
         if not bcrypt.checkpw(password.encode('utf-8'), u["password"].encode('utf-8')):
-            conn.close()
             return jsonify({"success": False, "message": "Incorrect password."}), 401
 
-        conn.close()
-        
         token = generate_token(u["id"], "professor", u["email"])
         return jsonify({
             "success": True,
@@ -1514,29 +1436,21 @@ def login_user():
         if not roll_or_email or not password:
             return jsonify({"success": False, "message": "Email/Roll Number and Password are required"}), 400
 
-        conn = get_connection()
-        cursor = conn.cursor()
+        # Check students collection only
+        u = db.students.find_one({
+            "$or": [
+                {"roll_no": {"$regex": f"^{roll_or_email}$", "$options": "i"}},
+                {"email": {"$regex": f"^{roll_or_email}$", "$options": "i"}}
+            ]
+        })
 
-        # Check students table only
-        cursor.execute("""
-            SELECT * FROM students 
-            WHERE (LOWER(roll_no) = LOWER(?) OR LOWER(email) = LOWER(?))
-        """, (roll_or_email, roll_or_email))
-        user_row = cursor.fetchone()
-
-        if not user_row:
-            conn.close()
+        if not u:
             return jsonify({"success": False, "message": "Account not found."}), 404
-
-        u = dict(user_row)
         
         # Verify password using bcrypt
         if not u.get("password") or not bcrypt.checkpw(password.encode('utf-8'), u["password"].encode('utf-8')):
-            conn.close()
             return jsonify({"success": False, "message": "Incorrect password."}), 401
 
-        conn.close()
-        
         token = generate_token(u["id"], "student", u["email"])
         return jsonify({
             "success": True,
@@ -1547,7 +1461,7 @@ def login_user():
                 "name": u["full_name"],
                 "roll": u["roll_no"],
                 "department": u["department"],
-                "semester": u["semester"],
+                "semester": u.get("semester"),
                 "email": u["email"],
                 "role": "student"
             }
@@ -1574,47 +1488,35 @@ def register_user():
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
     reg_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    conn = get_connection()
-    cursor = conn.cursor()
-
     if role in ["professor", "faculty"]:
         employee_id = data.get("employee_id", "").strip()
         if not employee_id:
-            conn.close()
             return jsonify({"success": False, "message": "Employee ID is required for Professor registration"}), 400
 
-        # Uniqueness checks against faculty table
-        cursor.execute("SELECT id FROM faculty WHERE LOWER(email) = LOWER(?)", (email,))
-        if cursor.fetchone():
-            conn.close()
+        # Uniqueness checks against faculty collection
+        if db.faculty.find_one({"email": {"$regex": f"^{email}$", "$options": "i"}}):
             return jsonify({"success": False, "message": f"Email '{email}' is already registered"}), 400
 
-        cursor.execute("SELECT id FROM faculty WHERE LOWER(employee_id) = LOWER(?)", (employee_id,))
-        if cursor.fetchone():
-            conn.close()
+        if db.faculty.find_one({"employee_id": {"$regex": f"^{employee_id}$", "$options": "i"}}):
             return jsonify({"success": False, "message": f"Employee ID '{employee_id}' is already registered"}), 400
 
         try:
-            cursor.execute("""
-                INSERT INTO faculty (full_name, employee_id, department, email, password, registered_on)
-                VALUES (?, ?, ?, ?, ?, ?)
-            """, (full_name, employee_id, department, email, hashed_password, reg_date))
-            
-            # Also keep entry in users for backward compatibility
-            cursor.execute("""
-                INSERT INTO users (full_name, role, employee_id, roll_no, department, semester, email, password, registered_on)
-                VALUES (?, 'professor', ?, NULL, ?, NULL, ?, ?, ?)
-            """, (full_name, employee_id, department, email, hashed_password, reg_date))
-            
-            conn.commit()
-            conn.close()
+            faculty_id = get_next_sequence_value("faculty")
+            db.faculty.insert_one({
+                "id": faculty_id,
+                "full_name": full_name,
+                "employee_id": employee_id,
+                "department": department,
+                "email": email,
+                "password": hashed_password,
+                "registered_on": reg_date
+            })
 
             return jsonify({
                 "success": True,
                 "message": f"Professor {full_name} registered successfully! No face samples required."
             })
         except Exception as e:
-            conn.close()
             return jsonify({"success": False, "message": str(e)}), 500
 
     elif role == "student":
@@ -1622,18 +1524,13 @@ def register_user():
         semester = data.get("semester", "").strip()
 
         if not roll_no or not semester:
-            conn.close()
             return jsonify({"success": False, "message": "Roll Number and Semester are required for Student registration"}), 400
 
-        # Uniqueness checks against students table
-        cursor.execute("SELECT id FROM students WHERE LOWER(email) = LOWER(?)", (email,))
-        if cursor.fetchone():
-            conn.close()
+        # Uniqueness checks against students collection
+        if db.students.find_one({"email": {"$regex": f"^{email}$", "$options": "i"}}):
             return jsonify({"success": False, "message": f"Email '{email}' is already registered"}), 400
 
-        cursor.execute("SELECT id FROM students WHERE LOWER(roll_no) = LOWER(?)", (roll_no,))
-        if cursor.fetchone():
-            conn.close()
+        if db.students.find_one({"roll_no": {"$regex": f"^{roll_no}$", "$options": "i"}}):
             return jsonify({"success": False, "message": f"Roll Number '{roll_no}' is already registered"}), 400
 
         # Check face dataset count
@@ -1676,30 +1573,27 @@ def register_user():
                 captured_count = 20
 
         try:
-            # Create student record in students table
-            cursor.execute("""
-                INSERT INTO students (full_name, roll_no, department, semester, email, password, registered_on, image_folder)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """, (full_name, roll_no, department, semester, email, hashed_password, reg_date, student_dir))
-
-            # Also keep entry in users for backward compatibility
-            cursor.execute("""
-                INSERT INTO users (full_name, role, employee_id, roll_no, department, semester, email, password, registered_on)
-                VALUES (?, 'student', NULL, ?, ?, ?, ?, ?, ?)
-            """, (full_name, roll_no, department, semester, email, hashed_password, reg_date))
-
-            conn.commit()
-            conn.close()
+            # Create student record in students collection
+            student_id = get_next_sequence_value("students")
+            db.students.insert_one({
+                "id": student_id,
+                "full_name": full_name,
+                "roll_no": roll_no,
+                "department": department,
+                "semester": semester,
+                "email": email,
+                "password": hashed_password,
+                "registered_on": reg_date,
+                "image_folder": student_dir
+            })
 
             return jsonify({
                 "success": True,
                 "message": f"Student {full_name} ({roll_no}) registered successfully with {captured_count} face samples!"
             })
         except Exception as e:
-            conn.close()
             return jsonify({"success": False, "message": f"Database error during registration: {str(e)}"}), 500
 
-    conn.close()
     return jsonify({"success": False, "message": "Invalid role requested"}), 400
 
 # -----------------------------------
@@ -1708,37 +1602,15 @@ def register_user():
 # -----------------------------------
 @app.route("/student/dashboard-data/<roll_no>", methods=["GET"])
 def get_student_dashboard_data(roll_no):
-    conn = get_connection()
-    cursor = conn.cursor()
 
-    # 1. Fetch Student Profile & User details from SQLite
-    cursor.execute("SELECT * FROM students WHERE LOWER(roll_no) = LOWER(?)", (roll_no,))
-    student = cursor.fetchone()
+    # 1. Fetch Student Profile & User details from MongoDB
+    student = db.students.find_one({"roll_no": {"$regex": f"^{roll_no}$", "$options": "i"}})
 
     if not student:
-        # Fallback to users table
-        cursor.execute("SELECT * FROM users WHERE LOWER(roll_no) = LOWER(?) AND role = 'student'", (roll_no,))
-        user_row = cursor.fetchone()
-        if user_row:
-            st = {
-                "id": user_row["id"],
-                "full_name": user_row["full_name"],
-                "roll_no": user_row["roll_no"],
-                "department": user_row["department"],
-                "semester": user_row["semester"] or "7",
-                "registered_on": user_row["registered_on"],
-                "image_folder": f"dataset/{user_row['full_name']}"
-            }
-        else:
-            conn.close()
-            return jsonify({"success": False, "message": f"Student '{roll_no}' not found"}), 404
-    else:
-        st = dict(student)
+        return jsonify({"success": False, "message": f"Student '{roll_no}' not found"}), 404
 
-    # Fetch email from users table
-    cursor.execute("SELECT email FROM users WHERE LOWER(roll_no) = LOWER(?) OR LOWER(full_name) = LOWER(?)", (roll_no, st["full_name"]))
-    user_email_row = cursor.fetchone()
-    email = user_email_row["email"] if user_email_row else f"{st['roll_no'].lower()}@university.edu"
+    st = student
+    email = st.get("email") or f"{st['roll_no'].lower()}@university.edu"
 
     # Count dataset face images
     dataset_dir = os.path.join(PROJECT_DIR, "dataset", st["full_name"])
@@ -1746,13 +1618,13 @@ def get_student_dashboard_data(roll_no):
     if os.path.exists(dataset_dir):
         face_count = len([f for f in os.listdir(dataset_dir) if f.lower().endswith((".jpg", ".png", ".jpeg"))])
 
-    # 2. Fetch Student Attendance Records from SQLite
-    cursor.execute("""
-        SELECT * FROM attendance
-        WHERE LOWER(roll_no) = LOWER(?) OR LOWER(name) = LOWER(?)
-        ORDER BY id DESC
-    """, (roll_no, st["full_name"]))
-    history_raw = [dict(r) for r in cursor.fetchall()]
+    # 2. Fetch Student Attendance Records from MongoDB
+    history_raw = list(db.attendance.find({
+        "$or": [
+            {"roll_no": {"$regex": f"^{roll_no}$", "$options": "i"}},
+            {"name": {"$regex": f"^{st['full_name']}$", "$options": "i"}}
+        ]
+    }).sort("id", -1))
 
     subject_names = [
         "Data Structures & Algorithms",
@@ -1777,11 +1649,9 @@ def get_student_dashboard_data(roll_no):
         })
 
     # 3. Calculate Attendance Stats
-    cursor.execute("SELECT COUNT(DISTINCT date) as total_dates FROM attendance")
-    total_dates_row = cursor.fetchone()
-    total_classes = max(total_dates_row["total_dates"] if total_dates_row and total_dates_row["total_dates"] > 0 else 20, 20)
-
-    conn.close()
+    unique_dates = db.attendance.distinct("date")
+    total_dates = len(unique_dates)
+    total_classes = max(total_dates if total_dates > 0 else 20, 20)
 
     classes_attended = max(len(history_rows), 15) if history_rows else 15
     classes_missed = max(total_classes - classes_attended, 0)
@@ -1850,7 +1720,7 @@ def get_student_dashboard_data(roll_no):
             "name": st["full_name"],
             "roll": st["roll_no"],
             "department": st["department"],
-            "semester": st["semester"],
+            "semester": st.get("semester", "7"),
             "email": email,
             "registered_on": st.get("registered_on") or "2025-08-15",
             "face_dataset_count": max(face_count, 20),
@@ -1886,26 +1756,13 @@ def get_subjects():
     department = request.args.get("department", "").strip()
     semester = request.args.get("semester", "").strip()
 
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    query = "SELECT * FROM subjects WHERE 1=1"
-    params = []
-
+    match = {}
     if department and department != "all":
-        query += " AND LOWER(department) = LOWER(?)"
-        params.append(department)
-
+        match["department"] = {"$regex": f"^{department}$", "$options": "i"}
     if semester and semester != "all":
-        query += " AND semester = ?"
-        params.append(str(semester))
+        match["semester"] = str(semester)
 
-    query += " ORDER BY id DESC"
-
-    cursor.execute(query, params)
-    subjects = [dict(row) for row in cursor.fetchall()]
-    conn.close()
-
+    subjects = list(db.subjects.find(match, {"_id": 0}).sort("id", -1))
     return jsonify({"success": True, "subjects": subjects})
 
 
@@ -1916,31 +1773,28 @@ def create_subject():
     name = data.get("subject_name", "").strip()
     semester = str(data.get("semester", "")).strip()
     department = data.get("department", "").strip()
-    faculty_id = data.get("faculty_id", 1)
+    faculty_id = int(data.get("faculty_id", 1))
 
     if not code or not name or not semester or not department:
         return jsonify({"success": False, "message": "All fields (Code, Name, Semester, Department) are required"}), 400
 
-    conn = get_connection()
-    cursor = conn.cursor()
-
     try:
-        cursor.execute("SELECT id FROM subjects WHERE LOWER(subject_code) = LOWER(?)", (code,))
-        if cursor.fetchone():
-            conn.close()
+        existing = db.subjects.find_one({"subject_code": {"$regex": f"^{code}$", "$options": "i"}})
+        if existing:
             return jsonify({"success": False, "message": f"Subject code '{code}' already exists"}), 400
 
-        cursor.execute("""
-            INSERT INTO subjects (subject_code, subject_name, semester, department, faculty_id)
-            VALUES (?, ?, ?, ?, ?)
-        """, (code, name, semester, department, faculty_id))
-
-        conn.commit()
-        conn.close()
+        sub_id = get_next_sequence_value("subjects")
+        db.subjects.insert_one({
+            "id": sub_id,
+            "subject_code": code,
+            "subject_name": name,
+            "semester": semester,
+            "department": department,
+            "faculty_id": faculty_id
+        })
 
         return jsonify({"success": True, "message": f"Subject '{name}' ({code}) added successfully!"})
     except Exception as e:
-        conn.close()
         return jsonify({"success": False, "message": str(e)}), 500
 
 
@@ -1952,89 +1806,81 @@ def update_subject(sub_id):
     semester = str(data.get("semester", "")).strip()
     department = data.get("department", "").strip()
 
-    conn = get_connection()
-    cursor = conn.cursor()
-
     try:
-        cursor.execute("""
-            UPDATE subjects
-            SET subject_code = ?, subject_name = ?, semester = ?, department = ?
-            WHERE id = ?
-        """, (code, name, semester, department, sub_id))
-
-        conn.commit()
-        conn.close()
+        db.subjects.update_one(
+            {"id": sub_id},
+            {"$set": {
+                "subject_code": code,
+                "subject_name": name,
+                "semester": semester,
+                "department": department
+            }}
+        )
 
         return jsonify({"success": True, "message": f"Subject '{name}' updated successfully!"})
     except Exception as e:
-        conn.close()
         return jsonify({"success": False, "message": str(e)}), 500
 
 
 @app.route("/subjects/<int:sub_id>", methods=["DELETE"])
 def delete_subject(sub_id):
-    conn = get_connection()
-    cursor = conn.cursor()
-
     try:
-        cursor.execute("DELETE FROM subjects WHERE id = ?", (sub_id,))
-        conn.commit()
-        conn.close()
-
+        db.subjects.delete_one({"id": sub_id})
         return jsonify({"success": True, "message": "Subject deleted successfully!"})
     except Exception as e:
-        conn.close()
         return jsonify({"success": False, "message": str(e)}), 500
 
 
 @app.route("/faculty/subjects", methods=["GET"])
 def get_faculty_subjects():
-    faculty_id = request.args.get("faculty_id", 1)
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM subjects WHERE faculty_id = ? ORDER BY id DESC", (faculty_id,))
-    subjects = [dict(row) for row in cursor.fetchall()]
-    conn.close()
+    faculty_id = int(request.args.get("faculty_id", 1))
+    subjects = list(db.subjects.find({"faculty_id": faculty_id}, {"_id": 0}).sort("id", -1))
     return jsonify({"success": True, "subjects": subjects})
 
 
 @app.route("/student/<student_id_or_roll>/subjects", methods=["GET"])
 def get_student_enrolled_subjects(student_id_or_roll):
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT * FROM students WHERE LOWER(roll_no) = LOWER(?) OR id = ?", (student_id_or_roll, student_id_or_roll))
-    student = cursor.fetchone()
+    # Try parsing student_id_or_roll to integer if possible
+    try:
+        query_val = int(student_id_or_roll)
+        student = db.students.find_one({"id": query_val})
+    except ValueError:
+        student = db.students.find_one({"roll_no": {"$regex": f"^{student_id_or_roll}$", "$options": "i"}})
 
     sem = student["semester"] if student else "7"
     dept = student["department"] if student else "Computer Science & Engineering"
 
-    cursor.execute("SELECT * FROM subjects WHERE semester = ? OR LOWER(department) = LOWER(?)", (sem, dept))
-    subjects = [dict(row) for row in cursor.fetchall()]
-    conn.close()
+    subjects = list(db.subjects.find({
+        "$or": [
+            {"semester": sem},
+            {"department": {"$regex": f"^{dept}$", "$options": "i"}}
+        ]
+    }, {"_id": 0}))
 
     return jsonify({"success": True, "subjects": subjects})
 
 
 @app.route("/student/<student_id_or_roll>/subject-attendance", methods=["GET"])
 def get_student_subject_attendance(student_id_or_roll):
-    conn = get_connection()
-    cursor = conn.cursor()
 
-    cursor.execute("SELECT * FROM students WHERE LOWER(roll_no) = LOWER(?) OR id = ?", (student_id_or_roll, student_id_or_roll))
-    student = cursor.fetchone()
+    try:
+        query_val = int(student_id_or_roll)
+        student = db.students.find_one({"id": query_val})
+    except ValueError:
+        student = db.students.find_one({"roll_no": {"$regex": f"^{student_id_or_roll}$", "$options": "i"}})
 
     st_name = student["full_name"] if student else student_id_or_roll
     st_roll = student["roll_no"] if student else student_id_or_roll
     sem = student["semester"] if student else "7"
     dept = student["department"] if student else "Computer Science & Engineering"
 
-    cursor.execute("SELECT * FROM subjects WHERE semester = ? AND LOWER(department) = LOWER(?)", (sem, dept))
-    subjects_raw = [dict(row) for row in cursor.fetchall()]
+    subjects_raw = list(db.subjects.find({
+        "semester": sem,
+        "department": {"$regex": f"^{dept}$", "$options": "i"}
+    }, {"_id": 0}))
 
     if not subjects_raw:
-        cursor.execute("SELECT * FROM subjects LIMIT 6")
-        subjects_raw = [dict(row) for row in cursor.fetchall()]
+        subjects_raw = list(db.subjects.find({}, {"_id": 0}).limit(6))
 
     subject_results = []
     lowest_sub = None
@@ -2048,13 +1894,23 @@ def get_student_subject_attendance(student_id_or_roll):
         sub_name = sub["subject_name"]
         sub_code = sub["subject_code"]
 
-        cursor.execute("""
-            SELECT COUNT(*) FROM attendance
-            WHERE (LOWER(roll_no) = LOWER(?) OR LOWER(name) = LOWER(?))
-            AND (subject_id = ? OR LOWER(department) = LOWER(?))
-        """, (st_roll, st_name, sub_id, dept))
+        present_cnt = db.attendance.count_documents({
+            "$and": [
+                {
+                    "$or": [
+                        {"roll_no": {"$regex": f"^{st_roll}$", "$options": "i"}},
+                        {"name": {"$regex": f"^{st_name}$", "$options": "i"}}
+                    ]
+                },
+                {
+                    "$or": [
+                        {"subject_id": sub_id},
+                        {"department": {"$regex": f"^{dept}$", "$options": "i"}}
+                    ]
+                }
+            ]
+        })
 
-        present_cnt = cursor.fetchone()[0]
         present_cnt = max(present_cnt, 15)
         total_cnt = 20
 
@@ -2085,8 +1941,6 @@ def get_student_subject_attendance(student_id_or_roll):
             "status": status_text,
             "status_color": status_color
         })
-
-    conn.close()
 
     ai_insights_list = []
     if classes_needed_alerts:
@@ -2139,27 +1993,25 @@ def update_student_profile():
     if not roll_no:
         return jsonify({"success": False, "message": "Roll number is required"}), 400
 
-    conn = get_connection()
-    cursor = conn.cursor()
-
     try:
+        update_fields = {}
         if email:
-            cursor.execute("UPDATE students SET email = ? WHERE LOWER(roll_no) = LOWER(?)", (email, roll_no))
-            cursor.execute("UPDATE users SET email = ? WHERE LOWER(roll_no) = LOWER(?)", (email, roll_no))
+            update_fields["email"] = email
         if new_password:
             hashed_pwd = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-            cursor.execute("UPDATE students SET password = ? WHERE LOWER(roll_no) = LOWER(?)", (hashed_pwd, roll_no))
-            cursor.execute("UPDATE users SET password = ? WHERE LOWER(roll_no) = LOWER(?)", (hashed_pwd, roll_no))
+            update_fields["password"] = hashed_pwd
 
-        conn.commit()
-        conn.close()
+        if update_fields:
+            db.students.update_one(
+                {"roll_no": {"$regex": f"^{roll_no}$", "$options": "i"}},
+                {"$set": update_fields}
+            )
 
         return jsonify({
             "success": True,
-            "message": "Student profile updated successfully in SQLite database!"
+            "message": "Student profile updated successfully in MongoDB database!"
         })
     except Exception as e:
-        conn.close()
         return jsonify({"success": False, "message": str(e)}), 500
 
 # -----------------------------------

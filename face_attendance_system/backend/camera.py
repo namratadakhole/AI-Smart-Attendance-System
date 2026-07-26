@@ -5,7 +5,7 @@ import csv
 import os
 import numpy as np
 from datetime import datetime
-from database import get_connection
+from database import db, get_next_sequence_value
 
 # ===========================
 # Paths
@@ -195,47 +195,36 @@ class Camera:
                 time_str = now.strftime("%I:%M:%S %p")
 
                 if name not in marked_attendance:
-                    # Check SQLite database for duplicate today
-                    conn = get_connection()
-                    cursor = conn.cursor()
-
-                    cursor.execute(
-                        "SELECT id FROM attendance WHERE name = ? AND date = ?",
-                        (name, today_date)
-                    )
-                    existing_db = cursor.fetchone()
+                    # Check MongoDB database for duplicate today
+                    existing_db = db.attendance.find_one({"name": name, "date": today_date})
 
                     # Query student metadata from DB
-                    cursor.execute(
-                        "SELECT id, roll_no, department FROM students WHERE full_name = ?",
-                        (name,)
-                    )
-                    student_info = cursor.fetchone()
+                    student_info = db.students.find_one({"full_name": name})
 
                     student_id = student_info["id"] if student_info else None
                     roll_no = student_info["roll_no"] if student_info else "N/A"
                     department = student_info["department"] if student_info else "General"
 
                     if not existing_db:
-                        # Insert into SQLite attendance table
-                        cursor.execute(
-                            """
-                            INSERT INTO attendance
-                            (student_id, roll_no, name, department, date, time, status)
-                            VALUES (?, ?, ?, ?, ?, ?, ?)
-                            """,
-                            (student_id, roll_no, name, department, today_date, time_str, "Present")
-                        )
-                        conn.commit()
+                        # Insert into MongoDB attendance collection
+                        attendance_id = get_next_sequence_value("attendance")
+                        db.attendance.insert_one({
+                            "id": attendance_id,
+                            "student_id": student_id,
+                            "roll_no": roll_no,
+                            "name": name,
+                            "department": department,
+                            "date": today_date,
+                            "time": time_str,
+                            "status": "Present"
+                        })
 
                         # Append to attendance.csv for report compatibility
                         with open(ATTENDANCE_FILE, "a", newline="") as f:
                             writer = csv.writer(f)
                             writer.writerow([name, today_date, time_str])
 
-                        print(f"✅ Attendance marked in SQLite & CSV for {name}")
-
-                    conn.close()
+                        print(f"✅ Attendance marked in MongoDB & CSV for {name}")
 
                     marked_attendance.add(name)
 
