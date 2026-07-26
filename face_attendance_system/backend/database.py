@@ -7,10 +7,16 @@ PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 dotenv_path = os.path.join(PROJECT_DIR, ".env")
 load_dotenv(dotenv_path)
 
-MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017/smart_attendance")
+MONGO_URI = os.getenv("MONGODB_URI") or os.getenv("MONGO_URI") or "mongodb://localhost:27017/smart_attendance"
 
-# Connect to MongoDB
-client = MongoClient(MONGO_URI)
+# Connect to MongoDB with certifi CA bundle for secure SSL/TLS validation
+try:
+    import certifi
+    tls_ca = certifi.where()
+except ImportError:
+    tls_ca = None
+
+client = MongoClient(MONGO_URI, tlsCAFile=tls_ca)
 db = client.get_database()
 
 def get_next_sequence_value(sequence_name):
@@ -84,4 +90,12 @@ def init_db():
         db.counters.update_one({"_id": "faculty"}, {"$set": {"sequence_value": 1}}, upsert=True)
 
 # Run initialization
-init_db()
+try:
+    # Trigger connection to confirm credentials work
+    client.server_info()
+    print(f"[SUCCESS] MongoDB Atlas Connected! Database: '{db.name}'")
+    init_db()
+    print(f"[INFO] Seeding completed. Active collections: {db.list_collection_names()}")
+except Exception as conn_err:
+    print(f"[ERROR] Database connection failed: {conn_err}")
+    raise conn_err
