@@ -968,8 +968,8 @@ function EdTechLandingPage() {
       </section>
 
       {/* 5. PRODUCT CREDIBILITY SECTION */}
-      <section className="max-w-7xl mx-auto px-6 py-28 relative z-10 text-center">
-        <div className="max-w-3xl mx-auto mb-16 space-y-4">
+      <section className="max-w-7xl mx-auto px-6 pt-2 pb-24 relative z-10 text-center -mt-6">
+        <div className="max-w-3xl mx-auto mb-12 space-y-4">
           <Badge variant="secondary" className="bg-slate-900 border-slate-800 text-slate-400 font-semibold px-3 py-1">Architecture</Badge>
           <h2 className="text-2xl md:text-4xl font-extrabold bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
             Built for Academic Integrity
@@ -977,26 +977,44 @@ function EdTechLandingPage() {
         </div>
 
         {/* Project Credibility Cards */}
-        <div className="grid gap-6 md:grid-cols-5 text-left">
-          <div className="p-6 rounded-3xl border border-slate-900 bg-slate-950/60 shadow-md">
-            <h4 className="font-bold text-slate-200 text-xs mb-1">Designed for Education</h4>
-            <p className="text-[10px] text-slate-400 leading-relaxed">Tailored specifically to match departments, roll sheets, and university semester systems.</p>
-          </div>
-          <div className="p-6 rounded-3xl border border-slate-900 bg-slate-950/60 shadow-md">
-            <h4 className="font-bold text-slate-200 text-xs mb-1">Artificial Intelligence</h4>
-            <p className="text-[10px] text-slate-400 leading-relaxed">Compiles user images into serialized encoding libraries for fast lookups.</p>
-          </div>
-          <div className="p-6 rounded-3xl border border-slate-900 bg-slate-950/60 shadow-md">
-            <h4 className="font-bold text-slate-200 text-xs mb-1">Computer Vision</h4>
-            <p className="text-[10px] text-slate-400 leading-relaxed">Utilizes OpenCV filters to capture and parse high-resolution facial frames.</p>
-          </div>
-          <div className="p-6 rounded-3xl border border-slate-900 bg-slate-950/60 shadow-md">
-            <h4 className="font-bold text-slate-200 text-xs mb-1">Modern Web App</h4>
-            <p className="text-[10px] text-slate-400 leading-relaxed">Built with React 19, Vite, Tailwind CSS, and TanStack Router endpoints.</p>
-          </div>
-          <div className="p-6 rounded-3xl border border-slate-900 bg-slate-950/60 shadow-md">
-            <h4 className="font-bold text-slate-200 text-xs mb-1">Secure & Scalable</h4>
-            <p className="text-[10px] text-slate-400 leading-relaxed">Bcrypt password hashing and separate tables prevent unauthorized account logins.</p>
+        <div className="relative mt-8">
+          {/* Soft global ambient light behind the card row */}
+          <div className="absolute -inset-24 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.12)_0%,rgba(6,182,212,0.04)_50%,transparent_80%)] rounded-full blur-[100px] pointer-events-none z-0" />
+          
+          <div className="relative z-10 grid gap-6 md:grid-cols-5 text-left">
+            {[
+              {
+                title: "Designed for Education",
+                desc: "Tailored specifically to match departments, roll sheets, and university semester systems."
+              },
+              {
+                title: "Artificial Intelligence",
+                desc: "Compiles user images into serialized encoding libraries for fast lookups."
+              },
+              {
+                title: "Computer Vision",
+                desc: "Utilizes OpenCV filters to capture and parse high-resolution facial frames."
+              },
+              {
+                title: "Modern Web App",
+                desc: "Built with React 19, Vite, Tailwind CSS, and TanStack Router endpoints."
+              },
+              {
+                title: "Secure & Scalable",
+                desc: "Bcrypt password hashing and separate tables prevent unauthorized account logins."
+              }
+            ].map((card, idx) => (
+              <div 
+                key={idx} 
+                className="p-6 rounded-3xl border border-white/10 bg-slate-950/40 backdrop-blur-md shadow-lg hover:border-sky-500/30 hover:shadow-[0_0_25px_rgba(56,189,248,0.15)] hover:scale-[1.03] transition-all duration-300 relative overflow-hidden group"
+              >
+                {/* Backlight glow behind the individual card on hover */}
+                <div className="absolute -inset-10 bg-[radial-gradient(circle_at_center,rgba(56,189,248,0.15)_0%,transparent_60%)] rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-0" />
+                
+                <h4 className="font-extrabold text-slate-100 text-sm sm:text-base mb-2 z-10 relative">{card.title}</h4>
+                <p className="text-xs sm:text-sm text-slate-400 leading-relaxed z-10 relative">{card.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
