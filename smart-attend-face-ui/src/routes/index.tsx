@@ -708,71 +708,239 @@ function EdTechLandingPage() {
         </div>
       </motion.header>
 
-      {/* 3. HERO SECTION (Redesigned SaaS Layout) */}
-      <section className="max-w-7xl mx-auto px-6 pt-4 pb-20 md:pt-6 md:pb-28 grid gap-12 grid-cols-1 lg:grid-cols-10 items-center relative z-10">
+      <section className="max-w-7xl mx-auto px-6 pt-4 pb-20 md:pt-6 md:pb-28 relative z-10 flex flex-col gap-12 lg:gap-16">
         
-        {/* Left Side Content (40% Column Width) */}
-        <motion.div 
-          initial={{ opacity: 0, x: -50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="lg:col-span-4 flex flex-col gap-6 text-left"
-        >
-          {/* Badge */}
-          <div className="inline-flex">
-            <Badge className="bg-sky-500/10 border border-sky-400/20 text-sky-400 py-1.5 px-3.5 rounded-full text-xs font-semibold uppercase tracking-wider gap-1.5 backdrop-blur-md animate-pulse shadow-[0_0_15px_rgba(14,165,233,0.15)]">
-              <Sparkles className="h-3.5 w-3.5" /> AI-Powered Face Recognition Attendance
-            </Badge>
-          </div>
-
-          {/* Heading */}
-          <div className="relative">
-            {/* Spotlight effect behind the hero heading */}
-            <div className="absolute -inset-10 bg-[radial-gradient(circle_at_center,rgba(14,165,233,0.18)_0%,transparent_60%)] blur-3xl pointer-events-none z-0" />
-            <h1 className="relative z-10 text-5xl sm:text-7xl lg:text-[76px] font-black tracking-tight leading-[0.95] bg-gradient-to-b from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">
-              AI Smart Attendance <br className="hidden lg:inline" />
-              System
-            </h1>
-          </div>
-
-          <p className="text-base md:text-lg font-semibold text-sky-400/90 leading-relaxed max-w-2xl">
-            Transform classroom attendance with AI-powered face recognition, secure authentication, real-time analytics, and intelligent automation.
-          </p>
-
-          <p className="text-sm md:text-base text-slate-400/95 leading-relaxed max-w-2xl">
-            Eliminate manual attendance registers using computer vision and AI. Manage students, faculty, attendance records, reports, and analytics from one intelligent platform.
-          </p>
-
-          {/* Action buttons */}
+        <div className="grid gap-12 grid-cols-1 lg:grid-cols-10 items-center w-full">
+          {/* Left Side Content (40% Column Width) */}
           <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 w-full max-w-[620px]"
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="lg:col-span-4 flex flex-col gap-6 text-left"
           >
-            <Link to="/auth" className="w-full">
-              <Button size="lg" className="w-full gradient-primary text-primary-foreground font-black rounded-2xl h-[56px] px-6 shadow-xl shadow-primary/20 hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] transition-all duration-300 text-sm md:text-base flex items-center justify-center gap-2">
-                Get Started <ArrowRight className="h-4 w-4 shrink-0" />
-              </Button>
-            </Link>
-            <a href="#showcase" onClick={handleWatchDemo} className="w-full">
-              <Button size="lg" variant="outline" className="w-full text-slate-350 border-slate-800 hover:border-slate-700 hover:bg-slate-900 bg-slate-950/20 rounded-2xl h-[56px] px-6 text-sm md:text-base font-black hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(59,130,246,0.15)] transition-all duration-300 flex items-center justify-center">
-                Watch Demo
-              </Button>
-            </a>
-            <a href="https://github.com/namratadakhole" target="_blank" rel="noreferrer" className="w-full">
-              <Button size="lg" variant="outline" className="w-full text-slate-400 border-slate-900 hover:border-slate-850 hover:text-white bg-slate-950/10 rounded-2xl h-[56px] px-6 text-sm md:text-base font-semibold hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(59,130,246,0.15)] transition-all duration-300 flex items-center justify-center gap-1">
-                GitHub Repo
-              </Button>
-            </a>
+            {/* Badge */}
+            <div className="inline-flex">
+              <Badge className="bg-sky-500/10 border border-sky-400/20 text-sky-400 py-1.5 px-3.5 rounded-full text-xs font-semibold uppercase tracking-wider gap-1.5 backdrop-blur-md animate-pulse shadow-[0_0_15px_rgba(14,165,233,0.15)]">
+                <Sparkles className="h-3.5 w-3.5" /> AI-Powered Face Recognition Attendance
+              </Badge>
+            </div>
+
+            {/* Heading */}
+            <div className="relative">
+              {/* Spotlight effect behind the hero heading */}
+              <div className="absolute -inset-10 bg-[radial-gradient(circle_at_center,rgba(14,165,233,0.18)_0%,transparent_60%)] blur-3xl pointer-events-none z-0" />
+              <h1 className="relative z-10 text-5xl sm:text-7xl lg:text-[76px] font-black tracking-tight leading-[0.95] bg-gradient-to-b from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">
+                AI Smart Attendance <br className="hidden lg:inline" />
+                System
+              </h1>
+            </div>
+
+            <p className="text-base md:text-lg font-semibold text-sky-400/90 leading-relaxed max-w-2xl">
+              Transform classroom attendance with AI-powered face recognition, secure authentication, real-time analytics, and intelligent automation.
+            </p>
+
+            <p className="text-sm md:text-base text-slate-400/95 leading-relaxed max-w-2xl">
+              Eliminate manual attendance registers using computer vision and AI. Manage students, faculty, attendance records, reports, and analytics from one intelligent platform.
+            </p>
+
+            {/* Action buttons */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 w-full max-w-[620px]"
+            >
+              <Link to="/auth" className="w-full">
+                <Button size="lg" className="w-full gradient-primary text-primary-foreground font-black rounded-2xl h-[56px] px-6 shadow-xl shadow-primary/20 hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] transition-all duration-300 text-sm md:text-base flex items-center justify-center gap-2">
+                  Get Started <ArrowRight className="h-4 w-4 shrink-0" />
+                </Button>
+              </Link>
+              <a href="#showcase" onClick={handleWatchDemo} className="w-full">
+                <Button size="lg" variant="outline" className="w-full text-slate-350 border-slate-800 hover:border-slate-700 hover:bg-slate-900 bg-slate-950/20 rounded-2xl h-[56px] px-6 text-sm md:text-base font-black hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(59,130,246,0.15)] transition-all duration-300 flex items-center justify-center">
+                  Watch Demo
+                </Button>
+              </a>
+              <a href="https://github.com/namratadakhole" target="_blank" rel="noreferrer" className="w-full">
+                <Button size="lg" variant="outline" className="w-full text-slate-400 border-slate-900 hover:border-slate-850 hover:text-white bg-slate-950/10 rounded-2xl h-[56px] px-6 text-sm md:text-base font-semibold hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(59,130,246,0.15)] transition-all duration-300 flex items-center justify-center gap-1">
+                  GitHub Repo
+                </Button>
+              </a>
+            </motion.div>
           </motion.div>
 
+          {/* Right Side Content - Visual Focus SaaS Mockup Dashboard (60% Column Width) */}
+          <motion.div 
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
+            className="lg:col-span-6 flex items-center justify-center relative w-full lg:-mt-28 lg:translate-y-[-32px]"
+          >
+            {/* Intense premium blue/cyan lighting backdrop glow behind the glass container */}
+            <div className="absolute -inset-24 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.48)_0%,rgba(6,182,212,0.22)_45%,transparent_75%)] rounded-full blur-[130px] pointer-events-none" />
+
+            {/* Single premium glass container shell (Increased by 30% width/height limits) */}
+            <div className="relative w-full max-w-[820px] z-20 group/panel">
+              {/* Inner hover neon border glow */}
+              <div className="absolute -inset-2 bg-gradient-to-r from-sky-500/25 to-blue-500/25 rounded-3xl blur-3xl opacity-85 group-hover/panel:opacity-100 group-hover/panel:scale-[1.03] transition-all duration-500 pointer-events-none" />
+
+              <motion.div
+                animate={{ y: [0, -8, 0] }}
+                transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+                className="w-full bg-slate-950/40 border border-white/10 rounded-3xl p-5 md:p-6 backdrop-blur-2xl shadow-[0_35px_70px_-15px_rgba(0,0,0,0.9)] hover:border-white/25 transition-all duration-300 relative overflow-hidden flex flex-col gap-4"
+              >
+                {/* Internal card glow highlight */}
+                <div className="absolute -inset-20 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.32)_0%,rgba(6,182,212,0.15)_45%,transparent_75%)] blur-3xl opacity-90 group-hover/panel:opacity-100 transition-opacity duration-500 pointer-events-none z-0" />
+
+                {/* Subtle glass light sheen sweep animation overlay on hover */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover/panel:animate-[shimmer_1.5s_infinite] pointer-events-none" />
+
+                {/* Top Window Control Bar Chrome */}
+                <div className="flex items-center justify-between pb-3 border-b border-slate-900">
+                  <div className="flex items-center gap-1.5">
+                    <span className="h-2.5 w-2.5 rounded-full bg-slate-800" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-slate-850" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-slate-900" />
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-slate-500 font-mono bg-slate-950/50 px-3 py-1 rounded-lg border border-slate-900">
+                    <Globe className="h-3 w-3 text-sky-500/50" /> smartattend.ai/console
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Badge className="bg-sky-500/10 border border-sky-500/20 text-sky-400 text-[10.5px] font-mono">v1.2.0</Badge>
+                  </div>
+                </div>
+
+                {/* Dashboard Grid - Sidebar + Content */}
+                <div className="grid grid-cols-12 gap-4 flex-1">
+                  {/* Sidebar Navigation */}
+                  <div className="col-span-3 border-r border-slate-900 pr-3 flex flex-col gap-3 text-left">
+                    <div className="flex items-center gap-2 py-1 px-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-sky-500/30 hover:shadow-[0_0_12px_rgba(56,189,248,0.15)] transition-all duration-300">
+                      <div className="h-5 w-5 rounded-md bg-gradient-to-br from-sky-400 to-blue-500 flex items-center justify-center text-[11px] font-black text-slate-950 font-mono">SA</div>
+                      <div className="flex-1 min-w-0">
+                        <span className="block text-[11.5px] font-bold text-slate-200 truncate">IIT Kharagpur</span>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      {[
+                        { label: "Overview", icon: Cpu, active: true },
+                        { label: "Students", icon: GraduationCap },
+                        { label: "Attendance", icon: ScanFace },
+                        { label: "Analytics", icon: TrendingUp },
+                        { label: "Settings", icon: ShieldCheck }
+                      ].map((item) => (
+                        <div key={item.label} className={`flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs font-semibold transition-all ${item.active ? "bg-sky-500/10 text-sky-400 border border-sky-500/20 shadow-[0_0_15px_rgba(56,189,248,0.15)]" : "text-slate-500 hover:text-slate-350 hover:bg-white/5"}`}>
+                          <item.icon className="h-3.5 w-3.5" />
+                          <span>{item.label}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Main Content Dashboard panel */}
+                  <div className="col-span-9 flex flex-col gap-4 text-left pl-1">
+                    {/* Inner Header */}
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="text-xs uppercase font-black text-slate-500 tracking-wider">Faculty Console</h4>
+                        <h3 className="text-base font-bold text-slate-200">Artificial Intelligence Session</h3>
+                      </div>
+                      <Badge className="bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[10.5px] font-mono py-0.5 px-2">
+                        <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse mr-1 inline-block" /> ACTIVE SCANNER
+                      </Badge>
+                    </div>
+
+                    {/* Inner Row 1: Camera Scan + Identified profile details */}
+                    <div className="grid grid-cols-12 gap-3">
+                      {/* Live Camera (30% larger viewport representation) */}
+                      <div className="col-span-7 h-[175px] rounded-xl bg-slate-950/90 relative overflow-hidden flex items-center justify-center border border-white/5 hover:border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.05)] hover:shadow-[0_0_20px_rgba(6,182,212,0.2)] transition-all duration-300 group/feed">
+                        <Video className="h-8 w-8 text-slate-800 group-hover/feed:text-slate-700 transition-colors" />
+                        
+                        {/* Scanning HUD Grid overlay */}
+                        <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_45%,#06b6d415_50%,transparent_55%)] bg-[size:100%_20px] animate-[pulse_2s_infinite] pointer-events-none" />
+
+                        {/* Face recognition bounding boxes inside console */}
+                        <div className="absolute top-[18%] left-[20%] w-[90px] h-[90px] border-2 border-cyan-400 border-dashed rounded-xl shadow-[0_0_25px_rgba(6,182,212,0.2)] flex items-center justify-center">
+                          <div className="absolute top-[-22px] left-0 bg-cyan-450 text-[10.5px] text-slate-950 font-black px-1.5 py-0.5 rounded shadow flex items-center gap-1 font-mono">
+                            ✓ Ravi Verma
+                          </div>
+                          {/* Box corner markers */}
+                          <div className="absolute top-[-2px] left-[-2px] w-2.5 h-2.5 border-t-2 border-l-2 border-cyan-300" />
+                          <div className="absolute top-[-2px] right-[-2px] w-2.5 h-2.5 border-t-2 border-r-2 border-cyan-300" />
+                          <div className="absolute bottom-[-2px] left-[-2px] w-2.5 h-2.5 border-b-2 border-l-2 border-cyan-300" />
+                          <div className="absolute bottom-[-2px] right-[-2px] w-2.5 h-2.5 border-b-2 border-r-2 border-cyan-300" />
+                        </div>
+
+                        <div className="absolute bottom-2 left-2 text-[10.5px] font-mono text-cyan-400 bg-slate-950/80 px-2 py-0.5 rounded-full border border-cyan-500/10">
+                          SCANNING IN PROGRESS
+                        </div>
+                      </div>
+
+                      {/* Meta stats details */}
+                      <div className="col-span-5 flex flex-col justify-between p-2.5 rounded-xl bg-slate-950/50 border border-white/5 hover:border-sky-500/30 shadow-[0_0_15px_rgba(56,189,248,0.05)] hover:shadow-[0_0_20px_rgba(56,189,248,0.2)] transition-all duration-300 text-xs">
+                        <div className="space-y-1">
+                          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Logged Attendance</span>
+                          <h5 className="font-extrabold text-slate-100 text-sm truncate">Ravi Verma</h5>
+                          <span className="text-[11px] font-mono text-slate-400 block">Roll: CS21009</span>
+                          <span className="text-[11px] font-mono text-slate-500 block">CSE • Semester 7</span>
+                        </div>
+                        
+                        <div className="border-t border-slate-900 my-1.5" />
+                        
+                        <div className="grid grid-cols-2 gap-1.5">
+                          <div>
+                            <span className="text-[10px] text-slate-500 uppercase block font-black">Confidence</span>
+                            <span className="text-xs font-bold text-cyan-400">99.8%</span>
+                          </div>
+                          <div>
+                            <span className="text-[10px] text-slate-500 uppercase block font-black">Status</span>
+                            <Badge className="bg-cyan-500/15 border-none text-[10px] text-cyan-400 py-0 px-1 font-bold h-4">Present</Badge>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Inner Row 2: Attendance rate stats & Interactive mini graph logs */}
+                    <div className="grid grid-cols-12 gap-3">
+                      <div className="col-span-4 p-2.5 rounded-xl bg-slate-950/50 border border-white/5 hover:border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.05)] hover:shadow-[0_0_20px_rgba(6,182,212,0.2)] transition-all duration-300 flex flex-col justify-between">
+                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Class Attendance Rate</span>
+                        <div className="flex items-baseline gap-1 mt-1">
+                          <span className="text-base font-mono font-black text-slate-200">94.5%</span>
+                          <span className="text-[10px] text-cyan-400 font-bold">✓ Target met</span>
+                        </div>
+                      </div>
+                      
+                      <div className="col-span-8 p-2.5 rounded-xl bg-slate-950/50 border border-white/5 hover:border-sky-500/30 shadow-[0_0_15px_rgba(56,189,248,0.05)] hover:shadow-[0_0_20px_rgba(56,189,248,0.2)] transition-all duration-300 flex items-center justify-between gap-4">
+                        <div className="flex-1">
+                          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Weekly Sessions Metrics</span>
+                          <span className="text-[11.5px] text-slate-400 block mt-0.5">Average threshold score: 92%</span>
+                        </div>
+                        
+                        {/* SVG Bar Chart logs */}
+                        <div className="h-7 flex items-end gap-1.5 shrink-0 px-1">
+                          <div className="w-2 bg-sky-500/15 rounded-sm h-[30%]" />
+                          <div className="w-2 bg-sky-500/20 rounded-sm h-[50%]" />
+                          <div className="w-2 bg-sky-500/20 rounded-sm h-[40%]" />
+                          <div className="w-2 bg-sky-500/30 rounded-sm h-[75%]" />
+                          <div className="w-2 bg-gradient-to-t from-sky-500 to-cyan-400 rounded-sm h-[95%] shadow-[0_0_10px_rgba(6,182,212,0.3)]" />
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+              </motion.div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Bottom Horizontal Stats & Tech Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-10 border-t border-slate-900/60 w-full items-start">
           {/* Trust Section */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="pt-4 border-t border-slate-900/60 max-w-xl flex flex-col gap-3"
+            className="lg:col-span-5 flex flex-col gap-3 text-left"
           >
             <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block">Built with</span>
             <div className="flex flex-wrap gap-2">
@@ -789,178 +957,14 @@ function EdTechLandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.6 }}
-            className="grid grid-cols-2 gap-x-8 gap-y-4 pt-4 border-t border-slate-900/60 max-w-md"
+            className="lg:col-span-7 grid grid-cols-2 sm:grid-cols-4 gap-6 pt-2 lg:pt-0"
           >
             <AnimatedCounter value={99.8} label="Recognition Accuracy" suffix="%" />
             <AnimatedCounter value={1000} label="Attendance Records" suffix="+" />
             <AnimatedCounter value={500} label="Registered Students" suffix="+" />
             <AnimatedCounter value={20} label="Faculty Members" suffix="+" />
           </motion.div>
-        </motion.div>
-
-        {/* Right Side Content - Visual Focus SaaS Mockup Dashboard (60% Column Width) */}
-        <motion.div 
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
-          className="lg:col-span-6 flex items-center justify-center relative w-full lg:-mt-28 lg:translate-y-[-32px]"
-        >
-          {/* Intense premium blue/cyan lighting backdrop glow behind the glass container */}
-          <div className="absolute -inset-24 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.48)_0%,rgba(6,182,212,0.22)_45%,transparent_75%)] rounded-full blur-[130px] pointer-events-none" />
-
-          {/* Single premium glass container shell (Increased by 30% width/height limits) */}
-          <div className="relative w-full max-w-[820px] z-20 group/panel">
-            {/* Inner hover neon border glow */}
-            <div className="absolute -inset-2 bg-gradient-to-r from-sky-500/25 to-blue-500/25 rounded-3xl blur-3xl opacity-85 group-hover/panel:opacity-100 group-hover/panel:scale-[1.03] transition-all duration-500 pointer-events-none" />
-
-            <motion.div
-              animate={{ y: [0, -8, 0] }}
-              transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-              className="w-full bg-slate-950/40 border border-white/10 rounded-3xl p-5 md:p-6 backdrop-blur-2xl shadow-[0_35px_70px_-15px_rgba(0,0,0,0.9)] hover:border-white/25 transition-all duration-300 relative overflow-hidden flex flex-col gap-4"
-            >
-              {/* Internal card glow highlight */}
-              <div className="absolute -inset-20 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.32)_0%,rgba(6,182,212,0.15)_45%,transparent_75%)] blur-3xl opacity-90 group-hover/panel:opacity-100 transition-opacity duration-500 pointer-events-none z-0" />
-
-              {/* Subtle glass light sheen sweep animation overlay on hover */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover/panel:animate-[shimmer_1.5s_infinite] pointer-events-none" />
-
-              {/* Top Window Control Bar Chrome */}
-              <div className="flex items-center justify-between pb-3 border-b border-slate-900">
-                <div className="flex items-center gap-1.5">
-                  <span className="h-2.5 w-2.5 rounded-full bg-slate-800" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-slate-850" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-slate-900" />
-                </div>
-                <div className="flex items-center gap-2 text-xs text-slate-500 font-mono bg-slate-950/50 px-3 py-1 rounded-lg border border-slate-900">
-                  <Globe className="h-3 w-3 text-sky-500/50" /> smartattend.ai/console
-                </div>
-                <div className="flex items-center gap-1">
-                  <Badge className="bg-sky-500/10 border border-sky-500/20 text-sky-400 text-[10.5px] font-mono">v1.2.0</Badge>
-                </div>
-              </div>
-
-              {/* Dashboard Grid - Sidebar + Content */}
-              <div className="grid grid-cols-12 gap-4 flex-1">
-                {/* Sidebar Navigation */}
-                <div className="col-span-3 border-r border-slate-900 pr-3 flex flex-col gap-3 text-left">
-                  <div className="flex items-center gap-2 py-1 px-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-sky-500/30 hover:shadow-[0_0_12px_rgba(56,189,248,0.15)] transition-all duration-300">
-                    <div className="h-5 w-5 rounded-md bg-gradient-to-br from-sky-400 to-blue-500 flex items-center justify-center text-[11px] font-black text-slate-950 font-mono">SA</div>
-                    <div className="flex-1 min-w-0">
-                      <span className="block text-[11.5px] font-bold text-slate-200 truncate">IIT Kharagpur</span>
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    {[
-                      { label: "Overview", icon: Cpu, active: true },
-                      { label: "Students", icon: GraduationCap },
-                      { label: "Attendance", icon: ScanFace },
-                      { label: "Analytics", icon: TrendingUp },
-                      { label: "Settings", icon: ShieldCheck }
-                    ].map((item) => (
-                      <div key={item.label} className={`flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs font-semibold transition-all ${item.active ? "bg-sky-500/10 text-sky-400 border border-sky-500/20 shadow-[0_0_15px_rgba(56,189,248,0.15)]" : "text-slate-500 hover:text-slate-350 hover:bg-white/5"}`}>
-                        <item.icon className="h-3.5 w-3.5" />
-                        <span>{item.label}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Main Content Dashboard panel */}
-                <div className="col-span-9 flex flex-col gap-4 text-left pl-1">
-                  {/* Inner Header */}
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="text-xs uppercase font-black text-slate-500 tracking-wider">Faculty Console</h4>
-                      <h3 className="text-base font-bold text-slate-200">Artificial Intelligence Session</h3>
-                    </div>
-                    <Badge className="bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[10.5px] font-mono py-0.5 px-2">
-                      <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse mr-1 inline-block" /> ACTIVE SCANNER
-                    </Badge>
-                  </div>
-
-                  {/* Inner Row 1: Camera Scan + Identified profile details */}
-                  <div className="grid grid-cols-12 gap-3">
-                    {/* Live Camera (30% larger viewport representation) */}
-                    <div className="col-span-7 h-[175px] rounded-xl bg-slate-950/90 relative overflow-hidden flex items-center justify-center border border-white/5 hover:border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.05)] hover:shadow-[0_0_20px_rgba(6,182,212,0.2)] transition-all duration-300 group/feed">
-                      <Video className="h-8 w-8 text-slate-800 group-hover/feed:text-slate-700 transition-colors" />
-                      
-                      {/* Scanning HUD Grid overlay */}
-                      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_45%,#06b6d415_50%,transparent_55%)] bg-[size:100%_20px] animate-[pulse_2s_infinite] pointer-events-none" />
-
-                      {/* Face recognition bounding boxes inside console */}
-                      <div className="absolute top-[18%] left-[20%] w-[90px] h-[90px] border-2 border-cyan-400 border-dashed rounded-xl shadow-[0_0_25px_rgba(6,182,212,0.2)] flex items-center justify-center">
-                        <div className="absolute top-[-22px] left-0 bg-cyan-450 text-[10.5px] text-slate-950 font-black px-1.5 py-0.5 rounded shadow flex items-center gap-1 font-mono">
-                          ✓ Ravi Verma
-                        </div>
-                        {/* Box corner markers */}
-                        <div className="absolute top-[-2px] left-[-2px] w-2.5 h-2.5 border-t-2 border-l-2 border-cyan-300" />
-                        <div className="absolute top-[-2px] right-[-2px] w-2.5 h-2.5 border-t-2 border-r-2 border-cyan-300" />
-                        <div className="absolute bottom-[-2px] left-[-2px] w-2.5 h-2.5 border-b-2 border-l-2 border-cyan-300" />
-                        <div className="absolute bottom-[-2px] right-[-2px] w-2.5 h-2.5 border-b-2 border-r-2 border-cyan-300" />
-                      </div>
-
-                      <div className="absolute bottom-2 left-2 text-[10.5px] font-mono text-cyan-400 bg-slate-950/80 px-2 py-0.5 rounded-full border border-cyan-500/10">
-                        SCANNING IN PROGRESS
-                      </div>
-                    </div>
-
-                    {/* Meta stats details */}
-                    <div className="col-span-5 flex flex-col justify-between p-2.5 rounded-xl bg-slate-950/50 border border-white/5 hover:border-sky-500/30 shadow-[0_0_15px_rgba(56,189,248,0.05)] hover:shadow-[0_0_20px_rgba(56,189,248,0.2)] transition-all duration-300 text-xs">
-                      <div className="space-y-1">
-                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Logged Attendance</span>
-                        <h5 className="font-extrabold text-slate-100 text-sm truncate">Ravi Verma</h5>
-                        <span className="text-[11px] font-mono text-slate-400 block">Roll: CS21009</span>
-                        <span className="text-[11px] font-mono text-slate-500 block">CSE • Semester 7</span>
-                      </div>
-                      
-                      <div className="border-t border-slate-900 my-1.5" />
-                      
-                      <div className="grid grid-cols-2 gap-1.5">
-                        <div>
-                          <span className="text-[10px] text-slate-500 uppercase block font-black">Confidence</span>
-                          <span className="text-xs font-bold text-cyan-400">99.8%</span>
-                        </div>
-                        <div>
-                          <span className="text-[10px] text-slate-500 uppercase block font-black">Status</span>
-                          <Badge className="bg-cyan-500/15 border-none text-[10px] text-cyan-400 py-0 px-1 font-bold h-4">Present</Badge>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Inner Row 2: Attendance rate stats & Interactive mini graph logs */}
-                  <div className="grid grid-cols-12 gap-3">
-                    <div className="col-span-4 p-2.5 rounded-xl bg-slate-950/50 border border-white/5 hover:border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.05)] hover:shadow-[0_0_20px_rgba(6,182,212,0.2)] transition-all duration-300 flex flex-col justify-between">
-                      <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Class Attendance Rate</span>
-                      <div className="flex items-baseline gap-1 mt-1">
-                        <span className="text-base font-mono font-black text-slate-200">94.5%</span>
-                        <span className="text-[10px] text-cyan-400 font-bold">✓ Target met</span>
-                      </div>
-                    </div>
-                    
-                    <div className="col-span-8 p-2.5 rounded-xl bg-slate-950/50 border border-white/5 hover:border-sky-500/30 shadow-[0_0_15px_rgba(56,189,248,0.05)] hover:shadow-[0_0_20px_rgba(56,189,248,0.2)] transition-all duration-300 flex items-center justify-between gap-4">
-                      <div className="flex-1">
-                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Weekly Sessions Metrics</span>
-                        <span className="text-[11.5px] text-slate-400 block mt-0.5">Average threshold score: 92%</span>
-                      </div>
-                      
-                      {/* SVG Bar Chart logs */}
-                      <div className="h-7 flex items-end gap-1.5 shrink-0 px-1">
-                        <div className="w-2 bg-sky-500/15 rounded-sm h-[30%]" />
-                        <div className="w-2 bg-sky-500/20 rounded-sm h-[50%]" />
-                        <div className="w-2 bg-sky-500/20 rounded-sm h-[40%]" />
-                        <div className="w-2 bg-sky-500/30 rounded-sm h-[75%]" />
-                        <div className="w-2 bg-gradient-to-t from-sky-500 to-cyan-400 rounded-sm h-[95%] shadow-[0_0_10px_rgba(6,182,212,0.3)]" />
-                      </div>
-                    </div>
-                  </div>
-
-                </div>
-              </div>
-
-            </motion.div>
-          </div>
-        </motion.div>
+        </div>
       </section>
 
       {/* 5. PRODUCT CREDIBILITY SECTION */}
