@@ -140,7 +140,7 @@ function StudentDashboardPage() {
       });
 
       if (res && res.success) {
-        showSuccess("Profile Updated Successfully!", "Your updated contact and credentials have been saved to SQLite.");
+        showSuccess("Profile Updated Successfully!", "Your updated contact and credentials have been saved to MongoDB.");
         setNewPassword("");
         setConfirmNewPassword("");
         loadStudentData(currentRoll);
@@ -259,7 +259,7 @@ function StudentDashboardPage() {
 
       {loading ? (
         <div className="flex items-center justify-center py-20 text-muted-foreground gap-2">
-          <Loader2 className="h-6 w-6 animate-spin" /> Loading personal subject attendance metrics from SQLite...
+          <Loader2 className="h-6 w-6 animate-spin" /> Loading personal subject attendance metrics from MongoDB...
         </div>
       ) : (
         <>

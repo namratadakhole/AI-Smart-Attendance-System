@@ -65,7 +65,7 @@ function SettingsPage() {
           setSubjectsList(subsData.subjects);
         }
       } catch (err) {
-        console.error("Error loading SQLite settings/subjects:", err);
+        console.error("Error loading MongoDB settings/subjects:", err);
       } finally {
         setLoading(false);
       }
@@ -99,7 +99,7 @@ function SettingsPage() {
       });
 
       if (res && res.success) {
-        showSuccess("Settings Saved", "Institutional Settings saved successfully to SQLite!");
+        showSuccess("Settings Saved", "Institutional Settings saved successfully to MongoDB!");
       } else {
         showError("Save Failed", "Failed to save settings.");
       }

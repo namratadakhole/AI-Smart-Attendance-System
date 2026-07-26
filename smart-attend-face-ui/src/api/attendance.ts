@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API = "http://127.0.0.1:5000";
+export const API = import.meta.env.VITE_API_URL || "http://127.0.0.1:5000";
 
 export const startAttendance = async () => {
     const response = await axios.post(`${API}/start-attendance`);
@@ -128,5 +128,5 @@ export const startAttendanceSession = async (data: { subject_id?: number; depart
 };
 
 export const downloadAttendance = () => {
-    window.open("http://127.0.0.1:5000/download-attendance", "_blank");
+    window.open(`${API}/download-attendance`, "_blank");
 };

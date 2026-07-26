@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { startAttendance, stopAttendance, registerUser } from "@/api/attendance";
+import { startAttendance, stopAttendance, registerUser, API } from "@/api/attendance";
 import { showSuccess, showError, showWarning, showInfo } from "@/lib/notifications";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -68,7 +68,7 @@ export function RegisterPageComponent({ initialRole = "student" }: RegisterPageP
         }
 
         try {
-          const res = await axios.post("http://127.0.0.1:5000/auto-capture-sample", {
+          const res = await axios.post(`${API}/auto-capture-sample`, {
             name: fullName.trim(),
           });
 
@@ -436,7 +436,7 @@ export function RegisterPageComponent({ initialRole = "student" }: RegisterPageP
                   {cameraActive ? (
                     <>
                       <img
-                        src="http://127.0.0.1:5000/video_feed"
+                        src={`${API}/video_feed`}
                         alt="Live Registration Stream"
                         className="h-full w-full object-cover"
                       />

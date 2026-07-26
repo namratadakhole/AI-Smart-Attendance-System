@@ -78,7 +78,7 @@ function Dashboard() {
 
   return (
     <div className="space-y-6 max-w-[1600px] mx-auto">
-      {/* Hero Header bound to SQLite Settings */}
+      {/* Hero Header bound to MongoDB Settings */}
       <div className="relative overflow-hidden rounded-3xl gradient-primary text-primary-foreground p-6 sm:p-8 shadow-elevated">
         <div className="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-white/10 blur-2xl" />
         <div className="absolute -right-8 bottom-0 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
@@ -119,7 +119,7 @@ function Dashboard() {
 
       {/* Dynamic Stats Cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="Total Registered Students" value={stats.total_students} icon={Users} tone="blue" trend="SQLite Database" />
+        <StatCard label="Total Registered Students" value={stats.total_students} icon={Users} tone="blue" trend="MongoDB Database" />
         <StatCard label="Present Today" value={stats.present_today} icon={UserCheck} tone="green" trend="Live Recognized" />
         <StatCard label="Absent Today" value={stats.absent_today} icon={UserX} tone="red" trend="Calculated Today" />
         <StatCard label="Attendance Percentage" value={stats.attendance_percentage} icon={TrendingUp} tone="purple" trend="Overall Rate" />
@@ -164,7 +164,7 @@ function Dashboard() {
                 System Status
               </h2>
               <p className="text-sm text-muted-foreground">
-                SQLite Data Source · Live Synchronized
+                MongoDB Data Source · Live Synchronized
               </p>
             </div>
             <Badge className="bg-success/15 text-success border-0">
@@ -179,7 +179,7 @@ function Dashboard() {
                 <div className="h-3 w-3 rounded-full bg-emerald-500 animate-ping" />
                 <span className="font-semibold text-sm">Attendance Monitoring Active</span>
               </div>
-              <Badge className="bg-white/20 text-white border-0">SQLite Connected</Badge>
+              <Badge className="bg-white/20 text-white border-0">MongoDB Connected</Badge>
             </div>
 
             <div className="relative z-10 grid grid-cols-3 gap-4 text-center my-auto">

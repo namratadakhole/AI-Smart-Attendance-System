@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import axios from "axios";
 import { Download, Play, Square, Wifi, Activity, ScanFace, CircleCheckBig, BookOpen, Building2, GraduationCap, Loader2 } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
-import { downloadAttendance, stopAttendance, getStudents, getSubjects, startAttendanceSession } from "@/api/attendance";
+import { downloadAttendance, stopAttendance, getStudents, getSubjects, startAttendanceSession, API } from "@/api/attendance";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -78,7 +78,7 @@ function AttendancePage() {
 
     const interval = setInterval(async () => {
       try {
-        const res = await axios.get("http://127.0.0.1:5000/detected_students");
+        const res = await axios.get(`${API}/detected_students`);
         const names: string[] = res.data.students || [];
         const records: any[] = res.data.records || [];
 
@@ -303,7 +303,7 @@ function AttendancePage() {
           <div className="relative aspect-video rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 flex items-center justify-center">
             {running ? (
               <img
-                src="http://127.0.0.1:5000/video_feed"
+                src={`${API}/video_feed`}
                 alt="Webcam Feed"
                 className="w-full h-full object-cover"
               />

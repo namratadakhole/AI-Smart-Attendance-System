@@ -171,7 +171,7 @@ function StudentsPage() {
       {/* Student Cards Grid */}
       {loading ? (
         <div className="flex items-center justify-center py-16 text-muted-foreground gap-2">
-          <Loader2 className="h-5 w-5 animate-spin" /> Fetching SQLite database records...
+          <Loader2 className="h-5 w-5 animate-spin" /> Fetching MongoDB database records...
         </div>
       ) : filteredStudents.length === 0 ? (
         <Card className="p-12 text-center border shadow-soft">

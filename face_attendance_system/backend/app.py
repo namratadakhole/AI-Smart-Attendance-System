@@ -41,7 +41,15 @@ def generate_token(user_id, role, email):
     return jwt.encode(payload, JWT_SECRET, algorithm="HS256")
 
 app = Flask(__name__)
-CORS(app)
+
+# Dynamic CORS Setup for Production
+FRONTEND_URL = os.getenv("FRONTEND_URL", "*")
+if FRONTEND_URL != "*":
+    # Support specified production origin along with local developer clients
+    allowed_origins = [FRONTEND_URL, "http://localhost:5173", "http://localhost:3000", "http://127.0.0.1:5173", "http://127.0.0.1:3000"]
+    CORS(app, resources={r"/*": {"origins": allowed_origins, "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]}})
+else:
+    CORS(app)
 
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -2022,7 +2030,7 @@ if __name__ == "__main__":
 
     app.run(
         host="0.0.0.0",
-        port=5000,
+        port=int(os.getenv("PORT", 5000)),
         threaded=True,
         debug=False
     )

@@ -53,13 +53,13 @@ function AnalyticsPage() {
         <h1 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "Sora, Inter, sans-serif" }}>
           Analytics & Insights
         </h1>
-        <p className="text-sm text-muted-foreground">Understand classroom attendance patterns from SQLite database logs.</p>
+        <p className="text-sm text-muted-foreground">Understand classroom attendance patterns from MongoDB database logs.</p>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
         <Card className="p-5 border shadow-soft">
           <h3 className="font-semibold">Present vs Absent</h3>
-          <p className="text-xs text-muted-foreground mb-2">Today's SQLite distribution</p>
+          <p className="text-xs text-muted-foreground mb-2">Today's MongoDB distribution</p>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>

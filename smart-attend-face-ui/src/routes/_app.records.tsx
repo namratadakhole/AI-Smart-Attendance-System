@@ -155,7 +155,7 @@ function ReportsPage() {
             Attendance History & Reports
           </h1>
           <p className="text-sm text-muted-foreground">
-            Complete SQLite database history logs, student metrics, and exports
+            Complete MongoDB database history logs, student metrics, and exports
           </p>
         </div>
 
@@ -254,7 +254,7 @@ function ReportsPage() {
           <Card className="border shadow-soft overflow-hidden">
             {historyLoading ? (
               <div className="flex items-center justify-center py-16 text-muted-foreground gap-2">
-                <Loader2 className="h-5 w-5 animate-spin" /> Fetching SQLite attendance logs...
+                <Loader2 className="h-5 w-5 animate-spin" /> Fetching MongoDB attendance logs...
               </div>
             ) : paginatedHistory.length === 0 ? (
               <div className="text-center py-16 text-muted-foreground text-sm">
@@ -529,7 +529,7 @@ function ReportsPage() {
                 </div>
               </DialogTitle>
               <DialogDescription className="pt-2">
-                Detailed attendance check-in history log from SQLite database.
+                Detailed attendance check-in history log from MongoDB database.
               </DialogDescription>
             </DialogHeader>
 
