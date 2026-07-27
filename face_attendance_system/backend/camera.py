@@ -7,15 +7,10 @@ import numpy as np
 from datetime import datetime
 from database import db, get_next_sequence_value
 
-# ===========================
-# Paths
-# ===========================
+from config import Config
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-PROJECT_DIR = os.path.dirname(BASE_DIR)
-
-ENCODINGS_FILE = os.path.join(PROJECT_DIR, "models", "encodings.pickle")
-ATTENDANCE_FILE = os.path.join(PROJECT_DIR, "database", "attendance.csv")
+ENCODINGS_FILE = Config.ENCODINGS_FILE
+ATTENDANCE_FILE = Config.ATTENDANCE_FILE
 
 # ===========================
 # Load Encodings

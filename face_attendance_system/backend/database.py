@@ -1,13 +1,5 @@
 from pymongo import MongoClient, ReturnDocument
-import os
-from dotenv import load_dotenv
-
-# Load env variables from .env file
-PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
-dotenv_path = os.path.join(PROJECT_DIR, ".env")
-load_dotenv(dotenv_path)
-
-MONGO_URI = os.getenv("MONGODB_URI") or os.getenv("MONGO_URI") or "mongodb://localhost:27017/smart_attendance"
+from config import Config
 
 # Connect to MongoDB with certifi CA bundle for secure SSL/TLS validation
 try:
@@ -16,7 +8,7 @@ try:
 except ImportError:
     tls_ca = None
 
-client = MongoClient(MONGO_URI, tlsCAFile=tls_ca)
+client = MongoClient(Config.MONGO_URI, tlsCAFile=tls_ca)
 db = client.get_database()
 
 def get_next_sequence_value(sequence_name):
