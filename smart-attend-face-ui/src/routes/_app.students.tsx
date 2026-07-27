@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Pencil, Trash2, Plus, Search, Loader2, X, Save, UserCheck } from "lucide-react";
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,6 +32,22 @@ export interface StudentRecord {
 
 const getAvatar = (name: string) =>
   `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(name)}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`;
+
+// Motion Variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.05
+    }
+  }
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 12 },
+  show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100, damping: 15 } }
+};
 
 function StudentsPage() {
   const [students, setStudents] = useState<StudentRecord[]>([]);
@@ -148,7 +165,7 @@ function StudentsPage() {
             {students.length} registered student{students.length === 1 ? "" : "s"} in database
           </p>
         </div>
-        <Button asChild className="gradient-primary text-primary-foreground shrink-0 font-semibold">
+        <Button asChild className="gradient-primary text-primary-foreground shrink-0 font-semibold shadow-md">
           <Link to="/register">
             <Plus className="h-4 w-4 mr-1" /> Register Student
           </Link>
@@ -156,26 +173,26 @@ function StudentsPage() {
       </div>
 
       {/* Search Filter Card */}
-      <Card className="p-4 border shadow-soft">
+      <Card className="p-4 border shadow-soft bg-card/70 backdrop-blur-sm">
         <div className="relative max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by name, roll number, or department…"
-            className="pl-9 bg-muted/50 border-0"
+            className="pl-9 bg-muted/50 border-0 focus-visible:ring-1 focus-visible:ring-primary"
           />
         </div>
       </Card>
 
       {/* Student Cards Grid */}
       {loading ? (
-        <div className="flex items-center justify-center py-16 text-muted-foreground gap-2">
-          <Loader2 className="h-5 w-5 animate-spin" /> Fetching MongoDB database records...
+        <div className="flex items-center justify-center py-20 text-muted-foreground gap-2">
+          <Loader2 className="h-5 w-5 animate-spin text-primary" /> Fetching MongoDB database records...
         </div>
       ) : filteredStudents.length === 0 ? (
-        <Card className="p-12 text-center border shadow-soft">
-          <UserCheck className="h-12 w-12 text-muted-foreground/40 mx-auto mb-3" />
+        <Card className="p-16 text-center border shadow-soft bg-card/60 backdrop-blur-sm">
+          <UserCheck className="h-12 w-12 text-muted-foreground/45 mx-auto mb-3" />
           <p className="font-semibold text-lg">No students found</p>
           <p className="text-sm text-muted-foreground mt-1 max-w-md mx-auto">
             {searchQuery
@@ -184,7 +201,12 @@ function StudentsPage() {
           </p>
         </Card>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+          className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+        >
           {filteredStudents.map((s) => {
             const displayName = s.full_name || s.name || "Unknown";
             const displayRoll = s.roll_no || s.roll || "N/A";
@@ -192,60 +214,67 @@ function StudentsPage() {
             const photoUrl = s.photo || getAvatar(displayName);
 
             return (
-              <Card key={s.id} className="p-5 border shadow-soft hover:shadow-elevated transition-all bg-card flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center gap-3">
-                    <img
-                      src={photoUrl}
-                      alt={displayName}
-                      className="h-14 w-14 rounded-2xl bg-muted ring-2 ring-primary/20 object-cover"
-                    />
-                    <div className="min-w-0">
-                      <p className="font-semibold truncate text-base">{displayName}</p>
-                      <p className="text-xs text-muted-foreground truncate font-mono mt-0.5">{displayRoll}</p>
-                    </div>
-                  </div>
-
-                  <div className="mt-4 space-y-2 text-sm border-t pt-3 border-border/60">
-                    <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground text-xs">Department</span>
-                      <Badge variant="secondary" className="font-normal text-xs">{s.department}</Badge>
-                    </div>
-                    {s.semester && (
-                      <div className="flex justify-between items-center">
-                        <span className="text-muted-foreground text-xs">Semester</span>
-                        <span className="font-medium text-xs">Sem {s.semester}</span>
+              <motion.div
+                key={s.id}
+                variants={cardVariants}
+                className="h-full"
+              >
+                <Card className="p-5 border shadow-soft hover:shadow-elevated hover:-translate-y-0.5 transition-all bg-card/65 backdrop-blur-sm flex flex-col justify-between h-full relative overflow-hidden group">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                  <div>
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={photoUrl}
+                        alt={displayName}
+                        className="h-14 w-14 rounded-2xl bg-muted ring-2 ring-primary/20 object-cover"
+                      />
+                      <div className="min-w-0">
+                        <p className="font-semibold truncate text-base text-foreground">{displayName}</p>
+                        <p className="text-xs text-muted-foreground truncate font-mono mt-0.5">{displayRoll}</p>
                       </div>
-                    )}
-                    <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground text-xs">Registered</span>
-                      <span className="font-medium text-xs">{displayDate}</span>
+                    </div>
+
+                    <div className="mt-4 space-y-2 text-sm border-t pt-3 border-border/60">
+                      <div className="flex justify-between items-center">
+                        <span className="text-muted-foreground text-xs">Department</span>
+                        <Badge variant="secondary" className="font-normal text-[10px] bg-muted/80">{s.department}</Badge>
+                      </div>
+                      {s.semester && (
+                        <div className="flex justify-between items-center">
+                          <span className="text-muted-foreground text-xs">Semester</span>
+                          <span className="font-medium text-xs">Sem {s.semester}</span>
+                        </div>
+                      )}
+                      <div className="flex justify-between items-center">
+                        <span className="text-muted-foreground text-xs">Registered</span>
+                        <span className="font-medium text-xs text-slate-500">{displayDate}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="mt-5 grid grid-cols-2 gap-2 border-t pt-3 border-border/40">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => openEditDialog(s)}
-                    className="w-full"
-                  >
-                    <Pencil className="h-3.5 w-3.5 mr-1" /> Edit
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleDelete(s.id, displayName)}
-                    className="w-full text-destructive hover:text-destructive hover:bg-destructive/5"
-                  >
-                    <Trash2 className="h-3.5 w-3.5 mr-1" /> Delete
-                  </Button>
-                </div>
-              </Card>
+                  <div className="mt-5 grid grid-cols-2 gap-2 border-t pt-3 border-border/40">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => openEditDialog(s)}
+                      className="w-full text-xs font-semibold h-8"
+                    >
+                      <Pencil className="h-3.5 w-3.5 mr-1" /> Edit
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleDelete(s.id, displayName)}
+                      className="w-full text-xs font-semibold text-destructive hover:text-destructive hover:bg-destructive/5 h-8 border-destructive/20 hover:border-destructive"
+                    >
+                      <Trash2 className="h-3.5 w-3.5 mr-1" /> Delete
+                    </Button>
+                  </div>
+                </Card>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       )}
 
       {/* Edit Student Dialog Modal */}
@@ -286,10 +315,10 @@ function StudentsPage() {
                     <SelectValue placeholder="Select Department" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Computer Science">Computer Science</SelectItem>
-                    <SelectItem value="Electronics">Electronics</SelectItem>
-                    <SelectItem value="Mechanical">Mechanical</SelectItem>
-                    <SelectItem value="Civil">Civil</SelectItem>
+                    <SelectItem value="Computer Science & Engineering">Computer Science & Engineering</SelectItem>
+                    <SelectItem value="Electronics & Communication">Electronics & Communication</SelectItem>
+                    <SelectItem value="Mechanical Engineering">Mechanical Engineering</SelectItem>
+                    <SelectItem value="Civil Engineering">Civil Engineering</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
