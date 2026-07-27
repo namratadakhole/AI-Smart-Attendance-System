@@ -454,3 +454,102 @@ def start_attendance_session():
             "semester": semester
         }
     })
+
+@attendance_bp.route("/recognize-upload", methods=["POST"])
+@token_required
+def recognize_upload():
+    if "image" not in request.files:
+        return standard_response(False, "No image file uploaded")
+
+    file = request.files["image"]
+    subject_id = request.form.get("subject_id")
+    department = request.form.get("department", "Computer Science & Engineering")
+    semester = request.form.get("semester", "7")
+
+    try:
+        # Decode image
+        file_bytes = np.frombuffer(file.read(), np.uint8)
+        frame = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
+        if frame is None:
+            return standard_response(False, "Failed to decode uploaded image")
+
+        rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        import face_recognition
+        face_locations = face_recognition.face_locations(rgb)
+        face_encodings = face_recognition.face_encodings(rgb, face_locations)
+
+        if len(face_encodings) == 0:
+            return standard_response(False, "No faces detected in the uploaded photo.")
+
+        camera.reload_encodings()
+
+        results = []
+        for face_encoding in face_encodings:
+            name = "Unknown"
+            confidence_pct = 0.0
+
+            if len(camera.known_face_encodings) > 0:
+                matches = face_recognition.compare_faces(camera.known_face_encodings, face_encoding, tolerance=0.5)
+                distances = face_recognition.face_distance(camera.known_face_encodings, face_encoding)
+
+                if len(distances) > 0:
+                    best_match = np.argmin(distances)
+                    if matches[best_match]:
+                        name = camera.known_face_names[best_match]
+                        dist = distances[best_match]
+                        confidence_pct = round(max(0, (1.0 - dist)) * 100, 1)
+
+            if name != "Unknown":
+                now = datetime.now()
+                today_date = now.strftime("%d-%m-%Y")
+                time_str = now.strftime("%I:%M:%S %p")
+
+                # Check duplicate
+                existing_db = db.attendance.find_one({"name": name, "date": today_date})
+                student_info = db.students.find_one({"full_name": name})
+
+                student_id = student_info["id"] if student_info else None
+                roll_no = student_info["roll_no"] if student_info else "N/A"
+                dept = student_info["department"] if student_info else department
+
+                if not existing_db:
+                    from database import get_next_sequence_value
+                    attendance_id = get_next_sequence_value("attendance")
+                    db.attendance.insert_one({
+                        "id": attendance_id,
+                        "student_id": student_id,
+                        "roll_no": roll_no,
+                        "name": name,
+                        "department": dept,
+                        "date": today_date,
+                        "time": time_str,
+                        "status": "Present",
+                        "recognition_confidence": confidence_pct
+                    })
+
+                results.append({
+                    "name": name,
+                    "roll": roll_no,
+                    "department": dept,
+                    "time": time_str,
+                    "confidence": confidence_pct,
+                    "status": "Present",
+                    "duplicate": existing_db is not None
+                })
+            else:
+                results.append({
+                    "name": "Unknown",
+                    "roll": "N/A",
+                    "confidence": 0.0,
+                    "status": "Unknown",
+                    "duplicate": False
+                })
+
+        return jsonify({
+            "status": "success",
+            "message": f"Processed {len(face_encodings)} face(s) in uploaded photo.",
+            "results": results
+        })
+    except Exception as e:
+        print("Error processing upload recognition:", e)
+        return standard_response(False, f"Face recognition error: {str(e)}")

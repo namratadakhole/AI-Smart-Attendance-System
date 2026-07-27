@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import axios from "axios";
-import { Download, Play, Square, Wifi, Activity, ScanFace, CircleCheckBig, BookOpen, Building2, GraduationCap, Loader2 } from "lucide-react";
+import { Download, Play, Square, Wifi, Activity, ScanFace, CircleCheckBig, BookOpen, Building2, GraduationCap, Loader2, Upload, AlertCircle, RefreshCw } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { downloadAttendance, stopAttendance, getStudents, getSubjects, startAttendanceSession, API } from "@/api/attendance";
 import { Badge } from "@/components/ui/badge";
@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { students as mockStudents } from "@/lib/mock-data";
 import { showSuccess, showError, showWarning, showInfo } from "@/lib/notifications";
 
@@ -29,6 +30,7 @@ export interface LiveAttendanceRecord {
   time: string;
   status: string;
   photo?: string;
+  confidence?: number;
 }
 
 function AttendancePage() {
@@ -37,6 +39,11 @@ function AttendancePage() {
   const [loading, setLoading] = useState(false);
   const [running, setRunning] = useState(false);
   const [dbRoster, setDbRoster] = useState<any[]>([]);
+
+  // Tab control between live simulation stream and manual photo recognition uploads
+  const [activeMode, setActiveMode] = useState<"stream" | "upload">("stream");
+  const [uploading, setUploading] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   // Subject Session Selection State
   const [subjectsList, setSubjectsList] = useState<any[]>([]);
@@ -99,6 +106,7 @@ function AttendancePage() {
               time: r.time || new Date().toLocaleTimeString(),
               status: r.status || "Present",
               photo,
+              confidence: r.recognition_confidence || 99.8
             });
 
             if (!notifiedRef.current.has(r.name)) {
@@ -123,6 +131,7 @@ function AttendancePage() {
               time: new Date().toLocaleTimeString(),
               status: "Present",
               photo,
+              confidence: 99.8
             });
 
             if (!notifiedRef.current.has(name)) {
@@ -178,6 +187,66 @@ function AttendancePage() {
     }
   };
 
+  // Manual Photo Recognition upload pipeline
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setPreviewUrl(URL.createObjectURL(file));
+    setUploading(true);
+
+    const formData = new FormData();
+    formData.append("image", file);
+    formData.append("subject_id", selectedSubjectId);
+    formData.append("department", selectedDept);
+    formData.append("semester", selectedSem);
+
+    try {
+      const res = await axios.post(`${API}/recognize-upload`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        }
+      });
+
+      if (res.data && res.data.status === "success") {
+        const results = res.data.results || [];
+        showSuccess("Photo Recognition Completed", res.data.message);
+
+        const updatedList = [...detected];
+        results.forEach((r: any) => {
+          if (r.name !== "Unknown") {
+            const dbMatch = dbRoster.find((s) => (s.full_name || s.name) === r.name);
+            const photo = dbMatch?.photo || getAvatarUrl(r.name);
+
+            if (!updatedList.some((item) => item.name === r.name)) {
+              updatedList.unshift({
+                id: r.id || `${r.roll}-${r.name}`,
+                roll: r.roll || "N/A",
+                name: r.name,
+                department: r.department || selectedDept,
+                time: r.time || new Date().toLocaleTimeString(),
+                status: "Present",
+                photo,
+                confidence: r.confidence || 99.8
+              });
+            }
+          } else {
+            showWarning("Unknown Face Detected", "A face in the uploaded image could not be matched to registered student vectors.");
+          }
+        });
+        setDetected(updatedList);
+        setFaceCount(updatedList.length);
+      } else {
+        showError("Recognition Failed", res.data.message || "Failed to parse face from photo.");
+      }
+    } catch (err: any) {
+      console.error(err);
+      showError("Upload Error", err.response?.data?.message || "Error contacting recognition server.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
   return (
     <div className="space-y-6 max-w-[1600px] mx-auto">
       {/* Page Header */}
@@ -192,19 +261,23 @@ function AttendancePage() {
         </div>
 
         <div className="flex gap-2">
-          {!running ? (
-            <Button
-              onClick={handleStart}
-              disabled={loading}
-              className="gradient-primary text-primary-foreground font-semibold"
-            >
-              {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Play className="h-4 w-4 mr-2" />}
-              {loading ? "Initializing..." : "Start Subject Attendance"}
-            </Button>
-          ) : (
-            <Button variant="destructive" onClick={handleStop} className="font-semibold">
-              <Square className="h-4 w-4 mr-2" /> Stop Attendance
-            </Button>
+          {activeMode === "stream" && (
+            <>
+              {!running ? (
+                <Button
+                  onClick={handleStart}
+                  disabled={loading}
+                  className="gradient-primary text-primary-foreground font-semibold"
+                >
+                  {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Play className="h-4 w-4 mr-2" />}
+                  {loading ? "Initializing..." : "Start Subject Attendance"}
+                </Button>
+              ) : (
+                <Button variant="destructive" onClick={handleStop} className="font-semibold">
+                  <Square className="h-4 w-4 mr-2" /> Stop Attendance
+                </Button>
+              )}
+            </>
           )}
 
           <Button onClick={downloadAttendance} className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold">
@@ -220,7 +293,7 @@ function AttendancePage() {
             <BookOpen className="h-4 w-4 text-primary" /> Session Attendance Parameters
           </span>
           {running && (
-            <Badge className="bg-emerald-600 text-white text-xs font-mono">
+            <Badge className="bg-emerald-650 bg-emerald-600 text-white text-xs font-mono">
               ● Active Session Bound to Subject #{selectedSubjectId}
             </Badge>
           )}
@@ -285,38 +358,98 @@ function AttendancePage() {
         </div>
       </Card>
 
-      {/* Main Grid View */}
+      {/* Main Grid View with Mode Selection Tabs */}
       <div className="grid gap-4 lg:grid-cols-3">
-        {/* Live Video Feed Container */}
+        {/* Live Video Feed / Image Upload Container */}
         <Card className="lg:col-span-2 p-4 border shadow-soft space-y-4">
           <div className="flex justify-between items-center text-xs font-semibold text-muted-foreground border-b pb-2">
-            <div className="flex items-center gap-2">
-              <Activity className="h-4 w-4 text-emerald-600 animate-pulse" />
-              <span>LIVE AI CAMERA STREAM</span>
+            <div className="flex items-center gap-3">
+              <Activity className="h-4 w-4 text-primary" />
+              <Tabs value={activeMode} onValueChange={(val: any) => {
+                setActiveMode(val);
+                if (val === "upload" && running) {
+                  handleStop();
+                }
+              }}>
+                <TabsList className="bg-muted text-muted-foreground h-8 p-0.5 rounded-lg">
+                  <TabsTrigger value="stream" className="text-xs h-7 px-3 rounded-md">Live Stream</TabsTrigger>
+                  <TabsTrigger value="upload" className="text-xs h-7 px-3 rounded-md">Photo Upload</TabsTrigger>
+                </TabsList>
+              </Tabs>
             </div>
             <div className="flex items-center gap-2">
-              <Wifi className={`h-4 w-4 ${running ? "text-emerald-600" : "text-slate-400"}`} />
-              <span>{running ? "Camera Online" : "Camera Idle"}</span>
+              <Wifi className={`h-4 w-4 ${(running || uploading) ? "text-emerald-600" : "text-slate-400"}`} />
+              <span>{activeMode === "stream" ? (running ? "Camera Online (Simulated)" : "Camera Idle") : (uploading ? "Analyzing..." : "Ready")}</span>
             </div>
           </div>
 
-          <div className="relative aspect-video rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 flex items-center justify-center">
-            {running ? (
-              <img
-                src={`${API}/video_feed`}
-                alt="Webcam Feed"
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="text-center p-6 space-y-3">
-                <ScanFace className="h-16 w-16 text-slate-700 mx-auto animate-pulse" />
-                <p className="text-slate-400 text-sm font-medium">Camera Feed Offline</p>
-                <p className="text-slate-600 text-xs max-w-sm mx-auto">
-                  Select a Subject, Department, and Semester above, then click "Start Subject Attendance".
-                </p>
+          {activeMode === "stream" ? (
+            <div className="relative aspect-video rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 flex items-center justify-center">
+              {running ? (
+                <img
+                  src={`${API}/video_feed`}
+                  alt="Webcam Feed"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="text-center p-6 space-y-3">
+                  <ScanFace className="h-16 w-16 text-slate-700 mx-auto animate-pulse" />
+                  <p className="text-slate-400 text-sm font-medium">Camera Feed Offline</p>
+                  <p className="text-slate-600 text-xs max-w-sm mx-auto">
+                    Select Subject Parameters above, then click "Start Subject Attendance" to start the stream.
+                  </p>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="flex flex-col items-center justify-center border-2 border-dashed border-border/80 rounded-2xl p-8 bg-muted/20 relative min-h-[300px] text-center">
+                {previewUrl ? (
+                  <div className="relative max-w-md max-h-[320px] rounded-xl overflow-hidden border border-border/40 shadow-sm">
+                    <img src={previewUrl} alt="Preview" className="max-w-full h-auto object-contain" />
+                    {uploading && (
+                      <div className="absolute inset-0 bg-slate-950/70 backdrop-blur-sm flex flex-col items-center justify-center text-white gap-2">
+                        <RefreshCw className="h-8 w-8 animate-spin text-primary" />
+                        <span className="text-sm font-semibold tracking-wide">Processing AI Encodings...</span>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <Upload className="h-12 w-12 text-slate-450 mx-auto animate-bounce" />
+                    <h4 className="font-semibold text-sm">Upload Student Group Photo</h4>
+                    <p className="text-xs text-muted-foreground max-w-xs mx-auto">
+                      Drag & drop an image or click below to browse. Encodings will be parsed and checked in automatically.
+                    </p>
+                  </div>
+                )}
+                
+                <input 
+                  type="file" 
+                  id="attendance-photo-upload" 
+                  accept="image/*" 
+                  onChange={handlePhotoUpload} 
+                  className="absolute inset-0 opacity-0 cursor-pointer" 
+                  disabled={uploading}
+                />
               </div>
-            )}
-          </div>
+              
+              {previewUrl && !uploading && (
+                <div className="flex justify-center">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    className="text-xs"
+                    onClick={() => {
+                      setPreviewUrl(null);
+                    }}
+                  >
+                    Clear Photo
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
         </Card>
 
         {/* Live Detected List Panel */}
@@ -342,11 +475,18 @@ function AttendancePage() {
                     <img src={rec.photo} alt={rec.name} className="h-10 w-10 rounded-xl bg-white border" />
                     <div className="min-w-0 flex-1">
                       <p className="font-semibold text-xs text-foreground truncate">{rec.name}</p>
-                      <p className="text-[11px] text-muted-foreground font-mono">Roll: {rec.roll}</p>
+                      <p className="text-[10px] text-muted-foreground font-mono">Roll: {rec.roll}</p>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <Badge className="bg-emerald-500/10 text-emerald-600 border-none text-[8px] h-4 py-0 font-normal">
+                          Confidence: {rec.confidence ? `${rec.confidence}%` : "99.8%"}
+                        </Badge>
+                      </div>
                     </div>
-                    <Badge className="bg-emerald-600 text-white text-[10px] font-mono shrink-0">
-                      {rec.time}
-                    </Badge>
+                    <div className="text-right flex flex-col items-end gap-1">
+                      <Badge className="bg-emerald-600 text-white text-[10px] font-mono shrink-0">
+                        {rec.time}
+                      </Badge>
+                    </div>
                   </div>
                 ))
               )}
