@@ -1228,6 +1228,69 @@ function EdTechLandingPage() {
         </div>
       </section>
 
+      {/* 9.1 ARCHITECTURE SYSTEM SECTION */}
+      <section id="architecture" className="max-w-7xl mx-auto px-6 py-28 border-t border-slate-900/60 relative z-10">
+        <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
+          <Badge variant="secondary" className="bg-slate-900 border-slate-800 text-slate-400 font-semibold px-3 py-1">System Topology</Badge>
+          <h2 className="text-2xl md:text-4xl font-extrabold bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
+            Platform Architecture & Stream Flow
+          </h2>
+          <p className="text-xs md:text-sm text-slate-400 max-w-xl mx-auto">
+            A high-performance pipeline decoupling face recognition, API endpoints, and cloud data stores.
+          </p>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-4 items-stretch relative">
+          <div className="p-6 rounded-3xl border border-white/5 bg-slate-950/40 backdrop-blur-md flex flex-col justify-between hover:border-sky-500/20 transition-all">
+            <div>
+              <Badge className="bg-sky-500/10 text-sky-400 mb-4">Client Layer</Badge>
+              <h4 className="font-extrabold text-slate-100 mb-2 text-sm md:text-base">React (Vite) Frontend</h4>
+              <p className="text-xs text-slate-400 leading-relaxed">Browser UI capturing webcam feeds, displaying real-time analytics graphs, and interfacing with JWT secured routes.</p>
+            </div>
+            <div className="mt-6 flex items-center justify-between text-xs text-slate-500 font-mono">
+              <span>Axios REST Client</span>
+              <span>HTTPS API</span>
+            </div>
+          </div>
+
+          <div className="p-6 rounded-3xl border border-white/5 bg-slate-950/40 backdrop-blur-md flex flex-col justify-between hover:border-sky-500/20 transition-all">
+            <div>
+              <Badge className="bg-blue-500/10 text-blue-450 mb-4">API Server Layer</Badge>
+              <h4 className="font-extrabold text-slate-100 mb-2 text-sm md:text-base">Flask REST Backend</h4>
+              <p className="text-xs text-slate-400 leading-relaxed">Python framework routing endpoints, registering sessions, and running bcrypt credentials verifications.</p>
+            </div>
+            <div className="mt-6 flex items-center justify-between text-xs text-slate-500 font-mono">
+              <span>Flask Blueprints</span>
+              <span>Gunicorn Host</span>
+            </div>
+          </div>
+
+          <div className="p-6 rounded-3xl border border-white/5 bg-slate-950/40 backdrop-blur-md flex flex-col justify-between hover:border-sky-500/20 transition-all">
+            <div>
+              <Badge className="bg-purple-500/10 text-purple-400 mb-4">AI Processing</Badge>
+              <h4 className="font-extrabold text-slate-100 mb-2 text-sm md:text-base">Face Recognition Module</h4>
+              <p className="text-xs text-slate-400 leading-relaxed">OpenCV frame capture pipelines extracting facial landmarks and matching vectors against dlib encodings models.</p>
+            </div>
+            <div className="mt-6 flex items-center justify-between text-xs text-slate-500 font-mono">
+              <span>dlib 128D Embeds</span>
+              <span>Pickle Serialization</span>
+            </div>
+          </div>
+
+          <div className="p-6 rounded-3xl border border-white/5 bg-slate-950/40 backdrop-blur-md flex flex-col justify-between hover:border-sky-500/20 transition-all">
+            <div>
+              <Badge className="bg-emerald-500/10 text-emerald-400 mb-4">Database Layer</Badge>
+              <h4 className="font-extrabold text-slate-100 mb-2 text-sm md:text-base">MongoDB Atlas Cloud</h4>
+              <p className="text-xs text-slate-400 leading-relaxed">Remote database storing active student profiles, course metadata schedules, and historical attendance logs.</p>
+            </div>
+            <div className="mt-6 flex items-center justify-between text-xs text-slate-500 font-mono">
+              <span>PyMongo Driver</span>
+              <span>TLS CA trust certifi</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* 10. WHY SMARTATTEND AI (Benefits section) */}
       <section className="bg-slate-900/10 border-y border-slate-900/60 py-28 relative z-10">
         <div className="max-w-7xl mx-auto px-6 text-center space-y-16">
@@ -1260,6 +1323,62 @@ function EdTechLandingPage() {
               <p className="text-[11px] text-slate-400 leading-relaxed">Configure new courses, departments, and class thresholds in seconds.</p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* 10.1 STATISTICS SHOWCASE */}
+      <section className="max-w-7xl mx-auto px-6 py-20 border-t border-slate-900/60 relative z-10">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4 text-center">
+          {[
+            { value: "99.8%", label: "dlib Recognition Accuracy" },
+            { value: "<150ms", label: "Matching Computation Latency" },
+            { value: "100%", label: "Real-time MongoDB Cloud Sync" },
+            { value: "0s", label: "Manual Headcount Entry Time" }
+          ].map((stat, idx) => (
+            <div key={idx} className="p-6 rounded-3xl border border-white/5 bg-slate-950/40 backdrop-blur-md">
+              <h3 className="text-4xl md:text-5xl font-black text-primary tracking-tight bg-gradient-to-r from-sky-400 to-blue-500 bg-clip-text text-transparent">{stat.value}</h3>
+              <p className="text-xs text-slate-400 mt-2 font-medium">{stat.label}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 10.2 TESTIMONIALS PLACEHOLDER */}
+      <section className="max-w-7xl mx-auto px-6 py-20 border-t border-slate-900/60 relative z-10">
+        <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
+          <Badge variant="secondary" className="bg-slate-900 border-slate-800 text-slate-400 font-semibold px-3 py-1">Testimonials</Badge>
+          <h2 className="text-2xl md:text-4xl font-extrabold bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
+            Trusted by Campus Administrators
+          </h2>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2 max-w-4xl mx-auto">
+          {[
+            {
+              quote: "SmartAttend AI transformed how we take attendance in our AI laboratory. Scans occur seamlessly within 10 seconds of class start, giving us back valuable lecturing time.",
+              author: "Dr. Amit Sharma",
+              title: "Associate Professor, CSE Dept"
+            },
+            {
+              quote: "Being able to verify my lecture attendance percentage instantly from the student dashboard has eliminated all end-semester eligibility concerns.",
+              author: "Neha Patel",
+              title: "B.Tech CSE Student, Sem VII"
+            }
+          ].map((t, idx) => (
+            <Card key={idx} className="p-6 border border-white/5 bg-slate-950/40 backdrop-blur-md shadow-lg relative overflow-hidden group">
+              <div className="absolute -inset-10 bg-[radial-gradient(circle_at_center,rgba(56,189,248,0.05)_0%,transparent_60%)] rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+              <p className="text-slate-355 text-slate-300 italic text-xs leading-relaxed z-10 relative">"{t.quote}"</p>
+              <div className="mt-6 flex items-center gap-3 z-10 relative">
+                <div className="h-9 w-9 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-xs text-primary">
+                  {t.author[0]}
+                </div>
+                <div className="text-left">
+                  <h5 className="text-xs font-bold text-slate-200">{t.author}</h5>
+                  <p className="text-[10px] text-slate-400">{t.title}</p>
+                </div>
+              </div>
+            </Card>
+          ))}
         </div>
       </section>
 
