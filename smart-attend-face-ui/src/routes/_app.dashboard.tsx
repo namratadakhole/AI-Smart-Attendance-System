@@ -24,6 +24,7 @@ import { StatCard } from "@/components/stat-card";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { getDashboardStats, getSettings } from "@/api/attendance";
 import {
   ResponsiveContainer,
@@ -96,6 +97,8 @@ function Dashboard() {
     }
   }, []);
 
+  const [loading, setLoading] = useState(true);
+
   const loadStats = async () => {
     try {
       const data = await getDashboardStats();
@@ -104,6 +107,8 @@ function Dashboard() {
       }
     } catch (err) {
       console.error("Could not load database dashboard stats:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -126,6 +131,47 @@ function Dashboard() {
   const recentList = stats.recent_attendance || [];
   const weeklyTrendData = stats.weekly_attendance || [];
   const monthlyTrendData = stats.monthly_attendance || [];
+
+  if (loading) {
+    return (
+      <div className="space-y-6 max-w-[1600px] mx-auto pb-12 animate-pulse">
+        {/* Banner Skeleton */}
+        <Card className="p-8 bg-card border border-border/80 h-[180px] flex flex-col justify-between">
+          <div className="space-y-3">
+            <Skeleton className="h-4 w-32 bg-muted-foreground/10" />
+            <Skeleton className="h-8 w-64 bg-muted-foreground/10" />
+          </div>
+          <Skeleton className="h-4 w-96 bg-muted-foreground/10" />
+        </Card>
+
+        {/* Stats Grid Skeleton */}
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[...Array(4)].map((_, i) => (
+            <Card key={i} className="p-5 border border-border/80 flex flex-col justify-between h-[120px] bg-card">
+              <Skeleton className="h-4 w-28 bg-muted-foreground/10" />
+              <Skeleton className="h-6 w-16 bg-muted-foreground/10" />
+            </Card>
+          ))}
+        </div>
+
+        {/* Charts & Actions Skeleton */}
+        <div className="grid gap-6 lg:grid-cols-3">
+          <Card className="lg:col-span-2 p-5 border border-border/80 h-[400px] bg-card flex flex-col justify-between">
+            <Skeleton className="h-5 w-40 bg-muted-foreground/10" />
+            <Skeleton className="h-[300px] w-full bg-muted-foreground/10" />
+          </Card>
+          <Card className="p-5 border border-border/80 h-[400px] bg-card flex flex-col justify-between">
+            <Skeleton className="h-5 w-32 bg-muted-foreground/10" />
+            <div className="space-y-3">
+              {[...Array(5)].map((_, idx) => (
+                <Skeleton key={idx} className="h-8 w-full bg-muted-foreground/10" />
+              ))}
+            </div>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <motion.div

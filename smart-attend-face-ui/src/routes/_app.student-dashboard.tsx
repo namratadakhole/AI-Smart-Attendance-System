@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
@@ -258,8 +259,44 @@ function StudentDashboardPage() {
       </Card>
 
       {loading ? (
-        <div className="flex items-center justify-center py-20 text-muted-foreground gap-2">
-          <Loader2 className="h-6 w-6 animate-spin" /> Loading personal subject attendance metrics from MongoDB...
+        <div className="space-y-6 animate-pulse">
+          {/* Skeleton stat cards grid */}
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {[...Array(4)].map((_, i) => (
+              <Card key={i} className="p-5 border border-border/80 flex flex-col justify-between h-[140px] bg-card">
+                <div className="space-y-3">
+                  <Skeleton className="h-4 w-28 bg-muted-foreground/10" />
+                  <Skeleton className="h-8 w-20 bg-muted-foreground/10" />
+                </div>
+                <Skeleton className="h-2 w-full mt-3 bg-muted-foreground/10" />
+              </Card>
+            ))}
+          </div>
+
+          {/* Skeleton layout matching main dashboard grids */}
+          <div className="grid gap-6 lg:grid-cols-3">
+            <Card className="lg:col-span-2 p-5 border border-border/80 h-[400px] bg-card flex flex-col justify-between">
+              <div className="space-y-2">
+                <Skeleton className="h-5 w-40 bg-muted-foreground/10" />
+                <Skeleton className="h-3 w-64 bg-muted-foreground/10" />
+              </div>
+              <Skeleton className="h-[280px] w-full bg-muted-foreground/10" />
+            </Card>
+            <Card className="p-5 border border-border/80 h-[400px] bg-card flex flex-col justify-between">
+              <div className="space-y-2">
+                <Skeleton className="h-5 w-32 bg-muted-foreground/10" />
+                <Skeleton className="h-3 w-48 bg-muted-foreground/10" />
+              </div>
+              <div className="space-y-3">
+                {[...Array(5)].map((_, idx) => (
+                  <div key={idx} className="flex justify-between items-center">
+                    <Skeleton className="h-4 w-24 bg-muted-foreground/10" />
+                    <Skeleton className="h-4 w-12 bg-muted-foreground/10" />
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
         </div>
       ) : (
         <>

@@ -55,15 +55,19 @@ export function LoginPageComponent({ initialRole = null, initialAction = null }:
           roll_no: rollNo,
           password,
         });
-      } catch (netErr) {
-        console.warn("Backend API port 5000 unreachable, using client auth fallback:", netErr);
-        res = {
-          success: true,
-          role: selectedRole,
-          user: selectedRole === "professor"
-            ? { username, name: "Professor Sharma", department: "Computer Science & Engineering", role: "professor" }
-            : { roll: rollNo.toUpperCase(), name: `Student (${rollNo.toUpperCase()})`, department: "Computer Science & Engineering", semester: "7", role: "student" }
-        };
+      } catch (netErr: any) {
+        if (netErr.response?.data) {
+          res = netErr.response.data;
+        } else {
+          console.warn("Backend API port 5000 unreachable, using client auth fallback:", netErr);
+          res = {
+            success: true,
+            role: selectedRole,
+            user: selectedRole === "professor"
+              ? { username, name: "Professor Sharma", department: "Computer Science & Engineering", role: "professor" }
+              : { roll: rollNo.toUpperCase(), name: `Student (${rollNo.toUpperCase()})`, department: "Computer Science & Engineering", semester: "7", role: "student" }
+          };
+        }
       }
 
       if (res && res.success) {
@@ -116,8 +120,13 @@ export function LoginPageComponent({ initialRole = null, initialAction = null }:
           email: email.trim(),
           password,
         });
-      } catch (err) {
-        res = { success: true, message: "Professor registered successfully!" };
+      } catch (err: any) {
+        if (err.response?.data) {
+          res = err.response.data;
+        } else {
+          console.warn("Backend API unreachable, using client auth fallback", err);
+          res = { success: true, message: "Professor registered successfully! (Mock Fallback)" };
+        }
       }
 
       if (res && res.success) {

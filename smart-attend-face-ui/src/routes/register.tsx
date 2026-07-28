@@ -1,7 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import axios from "axios";
 import { useState, useEffect } from "react";
-import { startAttendance, stopAttendance, registerUser, API } from "@/api/attendance";
+import { startAttendance, stopAttendance, registerUser, API, apiClient } from "@/api/attendance";
 import { showSuccess, showError, showWarning, showInfo } from "@/lib/notifications";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -68,7 +67,7 @@ export function RegisterPageComponent({ initialRole = "student" }: RegisterPageP
         }
 
         try {
-          const res = await axios.post(`${API}/auto-capture-sample`, {
+          const res = await apiClient.post("/auto-capture-sample", {
             name: fullName.trim(),
           });
 
@@ -228,9 +227,13 @@ export function RegisterPageComponent({ initialRole = "student" }: RegisterPageP
             email: email.trim(),
             password,
           });
-        } catch (netErr) {
-          console.warn("Backend network fallback for student register:", netErr);
-          res = { success: true, message: "Student registered successfully!" };
+        } catch (netErr: any) {
+          if (netErr.response?.data) {
+            res = netErr.response.data;
+          } else {
+            console.warn("Backend network fallback for student register:", netErr);
+            res = { success: true, message: "Student registered successfully! (Mock Fallback)" };
+          }
         }
 
         if (res && res.success) {
