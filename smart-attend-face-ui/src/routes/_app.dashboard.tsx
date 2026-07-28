@@ -81,6 +81,21 @@ function Dashboard() {
     semester: "7",
   });
 
+  const [currentFacultyName, setCurrentFacultyName] = useState("Professor");
+
+  useEffect(() => {
+    try {
+      const storedUser = localStorage.getItem("userData");
+      if (storedUser) {
+        const userObj = JSON.parse(storedUser);
+        if (userObj.name) setCurrentFacultyName(userObj.name);
+        else if (userObj.full_name) setCurrentFacultyName(userObj.full_name);
+      }
+    } catch (e) {
+      console.error("Error reading userData for Dashboard welcome:", e);
+    }
+  }, []);
+
   const loadStats = async () => {
     try {
       const data = await getDashboardStats();
@@ -140,7 +155,7 @@ function Dashboard() {
                 className="mt-4 text-2xl sm:text-4xl font-bold tracking-tight text-white"
                 style={{ fontFamily: "Sora, Inter, sans-serif" }}
               >
-                Good morning, {settings.faculty_name || "Professor"}
+                Good morning, {currentFacultyName}
               </h1>
               <p className="mt-2 text-white/85 max-w-2xl text-sm sm:text-base leading-relaxed">
                 {settings.subject || "Subject Course"} · Semester {settings.semester || "7"} · Real-time computer vision recognition active and feeding MongoDB Atlas.
