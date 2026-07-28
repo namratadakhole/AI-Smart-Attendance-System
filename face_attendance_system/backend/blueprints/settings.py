@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 import csv
 import io
 import os
-import numpy as np
+import math
 
 settings_bp = Blueprint("settings", __name__)
 
@@ -428,7 +428,10 @@ def get_student_dashboard_data(roll_no):
 
     target_needed = 0
     if attendance_pct < 75.0:
-        target_needed = max(0, int(np.ceil((0.75 * total_classes - classes_attended) / 0.25)))
+        target_needed = max(
+            0,
+            math.ceil((0.75 * total_classes - classes_attended) / 0.25)
+        )
 
     today_str = datetime.now().strftime("%d-%m-%Y")
     today_record = next((h for h in history_rows if h.get("date") == today_str), None)
