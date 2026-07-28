@@ -6,8 +6,6 @@ import bcrypt
 import time
 import jwt
 import os
-import cv2
-import numpy as np
 from datetime import datetime
 
 auth_bp = Blueprint("auth", __name__)
@@ -194,10 +192,13 @@ def register_user():
                     idx += 1
                 captured_count = 20
             else:
+                from PIL import Image, ImageDraw
                 for idx in range(1, 21):
-                    img = np.zeros((100, 100, 3), dtype=np.uint8)
-                    cv2.circle(img, (50, 50), 30, (255, 255, 255), -1)
-                    cv2.imwrite(os.path.join(student_dir, f"{idx}.jpg"), img)
+                    img = Image.new("RGB", (100, 100), (0, 0, 0))
+                    draw = ImageDraw.Draw(img)
+                    draw.ellipse((20, 20, 80, 80), fill=(255, 255, 255))
+                    img.save(os.path.join(student_dir, f"{idx}.jpg"))
+
                 captured_count = 20
 
         try:

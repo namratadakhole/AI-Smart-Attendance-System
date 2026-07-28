@@ -22,7 +22,7 @@ class Config:
     JWT_ACCESS_TOKEN_EXPIRES_SECS = 86400  # 24 hours
     
     # CORS Origin Configuration
-    FRONTEND_URL = os.getenv("FRONTEND_URL", "*")
+    FRONTEND_URL = os.getenv("CORS_ORIGIN", "*")
     ALLOWED_ORIGINS = [
         FRONTEND_URL, 
         "http://localhost:5173", 
