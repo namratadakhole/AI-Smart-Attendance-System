@@ -121,7 +121,7 @@ function AttendancePage() {
 
             const roll = dbMatch?.roll_no || mockMatch?.roll || "N/A";
             const department = dbMatch?.department || mockMatch?.department || selectedDept;
-            const photo = dbMatch?.photo || mockMatch?.avatar || getAvatarUrl(name);
+            const photo = dbMatch?.photo || mockMatch?.photo || getAvatarUrl(name);
 
             list.push({
               id: `${roll}-${name}`,

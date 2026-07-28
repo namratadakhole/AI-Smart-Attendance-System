@@ -39,6 +39,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -465,7 +466,7 @@ function EdTechLandingPage() {
   const [activeSection, setActiveSection] = useState("home");
 
   // Set this to a URL string (e.g. YouTube embed or MP4 path) to trigger the popup modal mode.
-  const DEMO_VIDEO_URL = null; 
+  const DEMO_VIDEO_URL = null as string | null; 
 
   const handleWatchDemo = (e: React.MouseEvent) => {
     e.preventDefault();
