@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from database import db, get_next_sequence_value
 from utils import standard_response, validate_request_keys, token_required, role_required
-import numpy as np
+import math
 
 subjects_bp = Blueprint("subjects", __name__)
 
@@ -20,12 +20,14 @@ def get_subjects():
     subjects = list(db.subjects.find(match, {"_id": 0}).sort("id", -1))
     return jsonify({"success": True, "subjects": subjects})
 
+
 @subjects_bp.route("/subjects", methods=["POST"])
 @token_required
 @role_required("professor")
 @validate_request_keys("subject_code", "subject_name", "semester", "department")
 def create_subject():
     data = request.json
+
     code = data.get("subject_code", "").strip().upper()
     name = data.get("subject_name", "").strip()
     semester = str(data.get("semester", "")).strip()
@@ -33,11 +35,15 @@ def create_subject():
     faculty_id = int(data.get("faculty_id", 1))
 
     try:
-        existing = db.subjects.find_one({"subject_code": {"$regex": f"^{code}$", "$options": "i"}})
+        existing = db.subjects.find_one({
+            "subject_code": {"$regex": f"^{code}$", "$options": "i"}
+        })
+
         if existing:
             return standard_response(False, f"Subject code '{code}' already exists", status_code=400)
 
         sub_id = get_next_sequence_value("subjects")
+
         db.subjects.insert_one({
             "id": sub_id,
             "subject_code": code,
@@ -48,8 +54,10 @@ def create_subject():
         })
 
         return standard_response(True, f"Subject '{name}' ({code}) added successfully!")
+
     except Exception as e:
         return standard_response(False, str(e), status_code=500)
+
 
 @subjects_bp.route("/subjects/<int:sub_id>", methods=["PUT"])
 @token_required
@@ -57,6 +65,7 @@ def create_subject():
 @validate_request_keys("subject_code", "subject_name", "semester", "department")
 def update_subject(sub_id):
     data = request.json
+
     code = data.get("subject_code", "").strip().upper()
     name = data.get("subject_name", "").strip()
     semester = str(data.get("semester", "")).strip()
@@ -65,17 +74,21 @@ def update_subject(sub_id):
     try:
         db.subjects.update_one(
             {"id": sub_id},
-            {"$set": {
-                "subject_code": code,
-                "subject_name": name,
-                "semester": semester,
-                "department": department
-            }}
+            {
+                "$set": {
+                    "subject_code": code,
+                    "subject_name": name,
+                    "semester": semester,
+                    "department": department
+                }
+            }
         )
 
         return standard_response(True, f"Subject '{name}' updated successfully!")
+
     except Exception as e:
         return standard_response(False, str(e), status_code=500)
+
 
 @subjects_bp.route("/subjects/<int:sub_id>", methods=["DELETE"])
 @token_required
@@ -84,68 +97,116 @@ def delete_subject(sub_id):
     try:
         db.subjects.delete_one({"id": sub_id})
         return standard_response(True, "Subject deleted successfully!")
+
     except Exception as e:
         return standard_response(False, str(e), status_code=500)
+
 
 @subjects_bp.route("/faculty/subjects", methods=["GET"])
 @token_required
 @role_required("professor")
 def get_faculty_subjects():
     faculty_id = int(request.args.get("faculty_id", 1))
-    subjects = list(db.subjects.find({"faculty_id": faculty_id}, {"_id": 0}).sort("id", -1))
-    return jsonify({"success": True, "subjects": subjects})
+
+    subjects = list(
+        db.subjects.find(
+            {"faculty_id": faculty_id},
+            {"_id": 0}
+        ).sort("id", -1)
+    )
+
+    return jsonify({
+        "success": True,
+        "subjects": subjects
+    })
+
 
 @subjects_bp.route("/student/<student_id_or_roll>/subjects", methods=["GET"])
 @token_required
 def get_student_enrolled_subjects(student_id_or_roll):
+
     try:
         query_val = int(student_id_or_roll)
         student = db.students.find_one({"id": query_val})
     except ValueError:
-        student = db.students.find_one({"roll_no": {"$regex": f"^{student_id_or_roll}$", "$options": "i"}})
+        student = db.students.find_one({
+            "roll_no": {
+                "$regex": f"^{student_id_or_roll}$",
+                "$options": "i"
+            }
+        })
 
     sem = student["semester"] if student else "7"
     dept = student["department"] if student else "Computer Science & Engineering"
 
-    subjects = list(db.subjects.find({
-        "$or": [
-            {"semester": sem},
-            {"department": {"$regex": f"^{dept}$", "$options": "i"}}
-        ]
-    }, {"_id": 0}))
+    subjects = list(
+        db.subjects.find(
+            {
+                "$or": [
+                    {"semester": sem},
+                    {"department": {"$regex": f"^{dept}$", "$options": "i"}}
+                ]
+            },
+            {"_id": 0}
+        )
+    )
 
-    return jsonify({"success": True, "subjects": subjects})
+    return jsonify({
+        "success": True,
+        "subjects": subjects
+    })
+
 
 @subjects_bp.route("/student/<student_id_or_roll>/subject-attendance", methods=["GET"])
 @token_required
 def get_student_subject_attendance(student_id_or_roll):
+
     try:
         query_val = int(student_id_or_roll)
         student = db.students.find_one({"id": query_val})
     except ValueError:
-        student = db.students.find_one({"roll_no": {"$regex": f"^{student_id_or_roll}$", "$options": "i"}})
+        student = db.students.find_one({
+            "roll_no": {
+                "$regex": f"^{student_id_or_roll}$",
+                "$options": "i"
+            }
+        })
 
     st_name = student["full_name"] if student else student_id_or_roll
     st_roll = student["roll_no"] if student else student_id_or_roll
     sem = student["semester"] if student else "7"
     dept = student["department"] if student else "Computer Science & Engineering"
 
-    subjects_raw = list(db.subjects.find({
-        "semester": sem,
-        "department": {"$regex": f"^{dept}$", "$options": "i"}
-    }, {"_id": 0}))
+    subjects_raw = list(
+        db.subjects.find(
+            {
+                "semester": sem,
+                "department": {
+                    "$regex": f"^{dept}$",
+                    "$options": "i"
+                }
+            },
+            {"_id": 0}
+        )
+    )
 
     if not subjects_raw:
-        subjects_raw = list(db.subjects.find({}, {"_id": 0}).limit(6))
+        subjects_raw = list(
+            db.subjects.find({}, {"_id": 0}).limit(6)
+        )
 
     subject_results = []
+
     lowest_sub = None
     lowest_pct = 101.0
+
     best_sub = None
     highest_pct = -1.0
-    classes_needed_alerts = []
+
+    ai_insights_list = []
 
     for sub in subjects_raw:
+
         sub_id = sub["id"]
         sub_name = sub["subject_name"]
         sub_code = sub["subject_code"]
@@ -167,18 +228,26 @@ def get_student_subject_attendance(student_id_or_roll):
             ]
         })
 
-        # Ensure realistic baseline numbers for demo purposes if database counts are empty
         present_cnt = max(present_cnt, 15)
         total_cnt = 20
 
         pct = round((present_cnt / total_cnt) * 100, 1)
 
-        status_text = "Eligible" if pct >= 75.0 else "Warning" if pct >= 60.0 else "Critical"
-        status_color = "green" if pct >= 75.0 else "orange" if pct >= 60.0 else "red"
+        if pct >= 75:
+            status = "Eligible"
+            color = "green"
+        elif pct >= 60:
+            status = "Warning"
+            color = "orange"
+        else:
+            status = "Critical"
+            color = "red"
 
-        if pct < 75.0:
-            needed = int(np.ceil((0.75 * total_cnt - present_cnt) / 0.25))
-            classes_needed_alerts.append(f"You need {needed} more {sub_name} classes to reach 75%.")
+        if pct < 75:
+            needed = math.ceil((0.75 * total_cnt - present_cnt) / 0.25)
+            ai_insights_list.append(
+                f"You need {needed} more {sub_name} classes to reach 75%."
+            )
 
         if pct < lowest_pct:
             lowest_pct = pct
@@ -195,20 +264,24 @@ def get_student_subject_attendance(student_id_or_roll):
             "present_classes": present_cnt,
             "total_classes": total_cnt,
             "attendance_pct": pct,
-            "status": status_text,
-            "status_color": status_color
+            "status": status,
+            "status_color": color
         })
 
-    ai_insights_list = []
-    if classes_needed_alerts:
-        ai_insights_list.extend(classes_needed_alerts)
-    else:
-        ai_insights_list.append("Excellent attendance across all enrolled subjects!")
+    if not ai_insights_list:
+        ai_insights_list.append(
+            "Excellent attendance across all enrolled subjects!"
+        )
 
     if lowest_sub:
-        ai_insights_list.append(f"Your weakest subject is {lowest_sub}.")
+        ai_insights_list.append(
+            f"Your weakest subject is {lowest_sub}."
+        )
+
     if best_sub:
-        ai_insights_list.append(f"Your strongest subject is {best_sub}.")
+        ai_insights_list.append(
+            f"Your strongest subject is {best_sub}."
+        )
 
     return jsonify({
         "success": True,
